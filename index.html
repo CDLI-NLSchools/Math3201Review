@@ -493,7 +493,7 @@ E("u1-npv-linear",1,["3.2"],1,"gen",function(){
   var shape=ri(1,3),numDen,root,solSteps;
   var num=pick([linS(ri(2,6),ri(-5,5)),ri(2,9)+"x",quadS(1,ri(-4,4),ri(-9,9)),""+ri(2,12)]);
   if(shape===1){root=ri(-9,9);numDen=linF(root);solSteps="Set the denominator equal to zero: \\("+linF(root)+" = 0\\), so \\(x = "+root+"\\)";}
-  else if(shape===2){var a=ri(2,5);root=ri(-6,6);while(root===0)root=ri(-6,6);numDen=linS(a,-a*root);solSteps="Set the denominator equal to zero: \\("+linS(a,-a*root)+" = 0\\), so \\("+a+"x = "+(a*root)+"\\) and \\(x = "+root+"\\)";}
+  else if(shape===2){var a=ri(2,5);root=ri(-6,6);while(root===0)root=ri(-6,6);numDen=linS(a,-a*root);solSteps="Set the denominator equal to zero and solve: \\[ \\begin{aligned} "+linS(a,-a*root)+" &= 0 \\\\ "+a+"x &= "+(a*root)+" \\\\ x &= "+root+" \\end{aligned} \\]";}
   else{var a2=pick([1,2,3,4,5,6,7,8,9]);root=0;numDen=(a2===1?"x":a2+"x");solSteps="Set the denominator equal to zero: \\("+numDen+" = 0\\), so \\(x = 0\\)";}
   return numq("What is the <b>non-permissible value</b> of the rational expression \\("+FR(num,numDen)+"\\)?",
     root,0.001,
@@ -603,7 +603,7 @@ E("u1-simplify-monomial",1,["3.5"],1,"gen",function(){
   return mcq("Simplify: \\("+FR(quadS(a2,b2,0),c2+"x")+"\\)",
     corr,
     [MV(FR(linS(a2,b2),""+c2)),MV(FR(linS(a2/g,b2/g),""+c2)),MV(FR(linS(a2,b2/g),""+(c2/g)))],
-    "Factor the numerator and divide every term by the common factor \\("+g+"x\\): \\(\\frac{"+quadS(a2,b2,0)+"}{"+c2+"x} = \\frac{x("+linS(a2,b2)+")}{"+c2+"x}\\). Cancelling \\(x\\) and reducing by \\("+g+"\\) gives <b>"+corr.replace(/\\/g,"\\")+"</b>.",
+    "Factor the numerator and divide every term by the common factor \\("+g+"x\\), then cancel \\(x\\) and reduce by \\("+g+"\\): \\[ \\begin{aligned} \\frac{"+quadS(a2,b2,0)+"}{"+c2+"x} &= \\frac{x("+linS(a2,b2)+")}{"+c2+"x} \\\\ &= "+corr.slice(2,-2)+" \\end{aligned} \\]",
     {a:a2,b:b2,c:c2,g:g});
 });
 E("u1-simplify-gcf",1,["3.5"],1,"gen",function(){
@@ -744,14 +744,14 @@ E("u1-solve-simple",1,["3.14"],1,"gen",function(){
     x=a*c/b;
     return numq("Solve: \\("+FR(""+a,"x")+" = "+FR(""+b,""+c)+"\\)",
       x,0.001,
-      "Cross-multiply: \\("+b+"x = "+(a*c)+"\\), so \\(x = \\frac{"+(a*c)+"}{"+b+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+      "Cross-multiply and solve: \\[ \\begin{aligned} "+b+"x &= "+(a*c)+" \\\\ x &= \\frac{"+(a*c)+"}{"+b+"} = "+x+" \\end{aligned} \\] The solution is <b>\\(x = "+x+"\\)</b>.",
       {a:a,b:b,c:c,shape:"a/x"});
   }
   do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*b)%c!==0&&t<90);
   x=a*b/c;
   return numq("Solve: \\("+FR("x",""+a)+" = "+FR(""+b,""+c)+"\\)",
     x,0.001,
-    "Cross-multiply: \\("+c+"x = "+(a*b)+"\\), so \\(x = \\frac{"+(a*b)+"}{"+c+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+    "Cross-multiply and solve: \\[ \\begin{aligned} "+c+"x &= "+(a*b)+" \\\\ x &= \\frac{"+(a*b)+"}{"+c+"} = "+x+" \\end{aligned} \\] The solution is <b>\\(x = "+x+"\\)</b>.",
     {a:a,b:b,c:c,shape:"x/a"});
 });
 E("u1-solve-cross",1,["3.14"],2,"gen",function(){
@@ -761,14 +761,14 @@ E("u1-solve-cross",1,["3.14"],2,"gen",function(){
     x=p+a*c/b;
     return numq("Solve: \\("+FR(""+a,linF(p))+" = "+FR(""+b,""+c)+"\\)",
       x,0.001,
-      "Cross-multiply: \\("+a*c+" = "+b+linF(p)+"\\). So \\("+b+"x = "+(a*c+b*p)+"\\) and \\(x = \\frac{"+(a*c+b*p)+"}{"+b+"} = "+x+"\\). This is not the non-permissible value \\(x = "+p+"\\), so the solution is <b>\\(x = "+x+"\\)</b>.",
+      "Cross-multiply and solve: \\[ \\begin{aligned} "+(a*c)+" &= "+b+linF(p)+" \\\\ "+b+"x &= "+(a*c+b*p)+" \\\\ x &= \\frac{"+(a*c+b*p)+"}{"+b+"} = "+x+" \\end{aligned} \\] This is not the non-permissible value \\(x = "+p+"\\), so the solution is <b>\\(x = "+x+"\\)</b>.",
       {p:p,a:a,b:b,c:c,shape:"shift"});
   }
   do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*b)%c!==0&&t<90);
   x=p+a*b/c;
   return numq("Solve: \\("+FR(linF(p),""+a)+" = "+FR(""+b,""+c)+"\\)",
     x,0.001,
-    "Cross-multiply: \\("+c+linF(p)+" = "+(a*b)+"\\). So \\("+c+"x = "+(a*b+c*p)+"\\) and \\(x = \\frac{"+(a*b+c*p)+"}{"+c+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+    "Cross-multiply and solve: \\[ \\begin{aligned} "+c+linF(p)+" &= "+(a*b)+" \\\\ "+c+"x &= "+(a*b+c*p)+" \\\\ x &= \\frac{"+(a*b+c*p)+"}{"+c+"} = "+x+" \\end{aligned} \\] The solution is <b>\\(x = "+x+"\\)</b>.",
     {p:p,a:a,b:b,c:c,shape:"numshift"});
 });
 E("u1-solve-quad-eq",1,["3.14"],2,"gen",function(){
@@ -780,7 +780,7 @@ E("u1-solve-quad-eq",1,["3.14"],2,"gen",function(){
   return mcq("Solve: \\("+FR(linS(1,a),""+d)+" = "+FR(""+b,"x")+"\\)",
     pair(s2,s1),
     ["\\(x = "+s1+"\\) only",pair(-s1,-s2),pair(s1+s2,s1*s2)],
-    "Multiply both sides by \\("+d+"x\\): \\(x(x "+(a>=0?"+ ":"- ")+Math.abs(a)+") = "+(b*d)+"\\), which gives \\(x^2 "+(a>=0?"+ ":"- ")+Math.abs(a)+"x - "+(b*d)+" = 0\\). Factoring gives \\("+linF(s1)+linF(s2)+" = 0\\), so \\(x = "+s1+"\\) or \\(x = "+s2+"\\). Neither value is 0, so both are permissible: <b>"+pair(s2,s1)+"</b>.",
+    "Multiply both sides by \\("+d+"x\\) and expand: \\[ \\begin{aligned} x(x "+(a>=0?"+ ":"- ")+Math.abs(a)+") &= "+(b*d)+" \\\\ x^2 "+(a>=0?"+ ":"- ")+Math.abs(a)+"x - "+(b*d)+" &= 0 \\\\ "+linF(s1)+linF(s2)+" &= 0 \\end{aligned} \\] So \\(x = "+s1+"\\) or \\(x = "+s2+"\\). Neither value is 0, so both are permissible: <b>"+pair(s2,s1)+"</b>.",
     {s1:s1,s2:s2,d:d,b:b,a:a});
 });
 E("u1-extraneous",1,["3.15"],2,"var",varset([
@@ -808,7 +808,7 @@ E("u1-context-work",1,["3.16"],3,"gen",function(){
     {w:"mow and line the ball field in Gander",p:["Noah","Priya"]}]);
   return numq(ctx.p[0]+" can "+ctx.w+" alone in "+a+" hours, and "+ctx.p[1]+" can do the same job alone in "+b+" hours. How long, in hours, will the job take if they work together?",
     t,0.011,
-    "Work rates add. In one hour "+ctx.p[0]+" does \\(\\frac{1}{"+a+"}\\) of the job and "+ctx.p[1]+" does \\(\\frac{1}{"+b+"}\\). Together: \\(\\frac{1}{"+a+"} + \\frac{1}{"+b+"} = \\frac{"+(a+b)+"}{"+(a*b)+"}\\) of the job per hour, so the whole job takes \\(\\frac{"+(a*b)+"}{"+(a+b)+"} = "+fmt(t)+"\\) hours. The time together is <b>"+fmt(t)+" hours</b>, less than either time alone, as it should be.",
+    "Work rates add. In one hour "+ctx.p[0]+" does \\(\\frac{1}{"+a+"}\\) of the job and "+ctx.p[1]+" does \\(\\frac{1}{"+b+"}\\). Together: \\[ \\begin{aligned} \\frac{1}{"+a+"} + \\frac{1}{"+b+"} &= \\frac{"+(a+b)+"}{"+(a*b)+"} \\\\ \\text{time} &= \\frac{"+(a*b)+"}{"+(a+b)+"} = "+fmt(t)+" \\end{aligned} \\] The combined rate is the job per hour, so the whole job takes "+fmt(t)+" hours. The time together is <b>"+fmt(t)+" hours</b>, less than either time alone, as it should be.",
     {a:a,b:b,t:t});
 });
 E("u1-context-wind",1,["3.16"],3,"gen",function(){
@@ -821,7 +821,7 @@ E("u1-context-wind",1,["3.16"],3,"gen",function(){
     "A tour boat out of Bay Bulls travels "+d1+" km against the current in the same time it travels "+d2+" km with the current. The current flows at "+w+" km/h. What is the speed of the boat in still water, in km/h?";
   return numq(stem,
     v,0.001,
-    "Let the still-air speed be \\(v\\). Equal times give \\(\\frac{"+d1+"}{v - "+w+"} = \\frac{"+d2+"}{v + "+w+"}\\). Cross-multiplying: \\("+d1+"(v + "+w+") = "+d2+"(v - "+w+")\\), so \\("+d1+"v + "+(d1*w)+" = "+d2+"v - "+(d2*w)+"\\), and \\("+(d2-d1)+"v = "+(w*(d1+d2))+"\\). The speed is <b>\\(v = "+v+"\\) km/h</b>.",
+    "Let the still-air speed be \\(v\\). Equal times give \\(\\frac{"+d1+"}{v - "+w+"} = \\frac{"+d2+"}{v + "+w+"}\\). Cross-multiplying and collecting the \\(v\\) terms: \\[ \\begin{aligned} "+d1+"(v + "+w+") &= "+d2+"(v - "+w+") \\\\ "+d1+"v + "+(d1*w)+" &= "+d2+"v - "+(d2*w)+" \\\\ "+(d2-d1)+"v &= "+(w*(d1+d2))+" \\\\ v &= "+v+" \\end{aligned} \\] The speed is <b>\\(v = "+v+"\\) km/h</b>.",
     {v:v,w:w,d1:d1,d2:d2});
 });
 E("u1-context-cost",1,["3.16"],3,"gen",function(){
@@ -832,7 +832,7 @@ E("u1-context-cost",1,["3.16"],3,"gen",function(){
   var dest=pick(["a class trip to Gros Morne","a ski trip to Marble Mountain","a band trip to St. John's","a geography field trip to the Tablelands"]);
   return numq("The total cost of "+dest+" is $"+C+", shared equally among the students who go. When "+k+" students could not go, each of the remaining students had to pay $"+e+" more. How many students actually went on the trip?",
     went,0.001,
-    "Let \\(n\\) be the number who first signed up. Then \\(\\frac{"+C+"}{n - "+k+"} - \\frac{"+C+"}{n} = "+e+"\\). Combining the fractions gives \\(\\frac{"+(C*k)+"}{n(n - "+k+")} = "+e+"\\), so \\(n(n - "+k+") = "+(C*k/e)+"\\). Trying the factor pair: \\("+n+" \\times "+went+" = "+(C*k/e)+"\\), so \\(n = "+n+"\\). The number who actually went is <b>"+went+"</b>.",
+    "Let \\(n\\) be the number who first signed up. The cost condition gives: \\[ \\begin{aligned} \\frac{"+C+"}{n - "+k+"} - \\frac{"+C+"}{n} &= "+e+" \\\\ \\frac{"+(C*k)+"}{n(n - "+k+")} &= "+e+" \\\\ n(n - "+k+") &= "+(C*k/e)+" \\end{aligned} \\] Trying the factor pair: \\("+n+" \\times "+went+" = "+(C*k/e)+"\\), so \\(n = "+n+"\\). The number who actually went is <b>"+went+"</b>.",
     {C:C,n:n,k:k,e:e});
 });
 E("u1-two-step-simplify",1,["3.12"],3,"gen",function(){
@@ -1068,14 +1068,14 @@ E("u2-sketch-match",2,["3.17"],2,"gen",function(){
 E("u2-interpret-model",2,["3.21"],2,"var",varset([
   function(){return numq("An open-top box is made by cutting squares of side \\(x\\) cm from the corners of a 20 cm by 14 cm sheet and folding up the sides. The volume is modelled by \\(V(x) = x(20 - 2x)(14 - 2x)\\). What is the volume, in cm\\(^3\\), when squares of side 2 cm are cut?",
     320,1,
-    "Substitute \\(x = 2\\): \\(V(2) = 2(20 - 4)(14 - 4) = 2 \\times 16 \\times 10 = 320\\). The volume is <b>320 cm\\(^3\\)</b>. The three factors are the height and the two reduced inside dimensions.",{});},
+    "Substitute \\(x = 2\\): \\[ \\begin{aligned} V(2) &= 2(20 - 4)(14 - 4) \\\\ &= 2 \\times 16 \\times 10 \\\\ &= 320 \\end{aligned} \\] The volume is <b>320 cm\\(^3\\)</b>. The three factors are the height and the two reduced inside dimensions.",{});},
   function(){return mcq("A food truck's monthly profit, in dollars, is modelled by \\(P(x) = -2x^3 + 30x^2 - 4500\\), where \\(x\\) is the number of months since opening. What does the value \\(P(0) = -4500\\) represent?",
     "The truck started $4500 in the hole (start-up costs) before any monthly profit was made",
     ["The truck loses $4500 every month","The truck breaks even after 4500 months","The profit in the first month was $4500"],
     "At \\(x = 0\\) no time has passed, so the value is the starting position: negative because of the initial costs. It is a one-time starting value, not a monthly rate.",{});},
   function(){return numq("The population of a town, in hundreds of people, \\(t\\) years after 2015 is modelled by \\(P(t) = 0.02t^3 - 0.3t^2 + 2t + 48\\). According to the model, how many <b>people</b> live in the town in 2025?",
     5800,1,
-    "2025 is \\(t = 10\\): \\(P(10) = 0.02(1000) - 0.3(100) + 2(10) + 48 = 20 - 30 + 20 + 48 = 58\\) hundred people, which is <b>5800 people</b>.",{});}
+    "2025 is \\(t = 10\\): \\[ \\begin{aligned} P(10) &= 0.02(1000) - 0.3(100) + 2(10) + 48 \\\\ &= 20 - 30 + 20 + 48 \\\\ &= 58 \\end{aligned} \\] That is 58 hundred people, which is <b>5800 people</b>.",{});}
 ]));
 E("u2-reverse-intercepts",2,["3.18"],3,"gen",function(){
   var r1=ri(-5,5),r2=ri(-5,5),r3=ri(-5,5),t=0;
@@ -1085,7 +1085,7 @@ E("u2-reverse-intercepts",2,["3.18"],3,"gen",function(){
   var fv=a*(x0-r1)*(x0-r2)*(x0-r3);
   return numq("A cubic function has x-intercepts "+r1+", "+r2+" and "+r3+", and a y-intercept of "+Y+". What is the value of the function at \\(x = "+x0+"\\)?",
     fv,0.001,
-    "The intercepts give \\(f(x) = a"+linF(r1)+linF(r2)+linF(r3)+"\\). Use the y-intercept: \\(f(0) = a("+(-r1)+")("+(-r2)+")("+(-r3)+") = "+(a*(-r1)*(-r2)*(-r3)/a)+"a = "+Y+"\\), so \\(a = "+a+"\\). Then \\(f("+x0+") = "+a+"("+ (x0-r1) +")("+(x0-r2)+")("+(x0-r3)+") = "+fv+"\\). The value is <b>"+fv+"</b>.",
+    "The intercepts give \\(f(x) = a"+linF(r1)+linF(r2)+linF(r3)+"\\). Use the y-intercept to solve for \\(a\\): \\[ \\begin{aligned} f(0) &= a("+(-r1)+")("+(-r2)+")("+(-r3)+") \\\\ "+(a*(-r1)*(-r2)*(-r3)/a)+"a &= "+Y+" \\\\ a &= "+a+" \\end{aligned} \\] Then \\(f("+x0+") = "+a+"("+ (x0-r1) +")("+(x0-r2)+")("+(x0-r3)+") = "+fv+"\\). The value is <b>"+fv+"</b>.",
     {r1:r1,r2:r2,r3:r3,a:a,x0:x0});
 });
 E("u2-model-decision",2,["3.22"],3,"var",varset([
@@ -1495,7 +1495,7 @@ E("u4-match-by-description",4,["4.11"],2,"gen",function(){
   return mcq("An exponential function of the form \\(y = a(b)^x\\) has y-intercept "+A+" and passes through the point \\(("+step+", "+fmt(yv)+")\\). Which equation is it?",
     "\\(y = "+expS(A,bp[0],bp[1])+"\\)",
     ["\\(y = "+expS(A,recip[0],recip[1])+"\\)","\\(y = "+expS(A2,bp[0],bp[1])+"\\)","\\(y = "+expS(1,bp[0],bp[1])+"\\)"],
-    "The y-intercept gives \\(a = "+A+"\\). Substitute the point: \\("+fmt(yv)+" = "+A+"(b)^{"+step+"}\\), so \\(b^{"+step+"} = "+fmt(yv/A)+"\\) and \\(b = "+fmt(bv)+"\\). The trap options use the reciprocal base (which flips growth to decay) or mistake the point's y-value for \\(a\\). The function is \\(y = "+expS(A,bp[0],bp[1])+"\\).",
+    "The y-intercept gives \\(a = "+A+"\\). Substitute the point and solve for \\(b\\): \\[ \\begin{aligned} "+fmt(yv)+" &= "+A+"(b)^{"+step+"} \\\\ b^{"+step+"} &= "+fmt(yv/A)+" \\\\ b &= "+fmt(bv)+" \\end{aligned} \\] The trap options use the reciprocal base (which flips growth to decay) or mistake the point's y-value for \\(a\\). The function is \\(y = "+expS(A,bp[0],bp[1])+"\\).",
     {A:A,bp:bp,step:step});
 });
 
@@ -1574,7 +1574,7 @@ E("u4-solve-rewrite-base",4,["4.7"],2,"gen",function(){
   var eqStr=flip?("\\("+N+" = "+B+"^x\\)"):("\\("+B+"^x = "+N+"\\)");
   return numq("Solve for \\(x\\): "+eqStr,
     x,0.01,
-    "Both numbers are powers of "+c+": \\("+B+" = "+c+"^{"+m+"}\\) and \\("+N+" = "+c+"^{"+n+"}\\). The equation becomes \\("+c+"^{"+m+"x} = "+c+"^{"+n+"}\\), so \\("+m+"x = "+n+"\\) and \\(x = "+(gcd2(n,m)>1?("\\frac{"+(n/gcd2(n,m))+"}{"+(m/gcd2(n,m))+"}"):("\\frac{"+n+"}{"+m+"}"))+" = "+fmt(x,2)+"\\) .",
+    "Both numbers are powers of "+c+": \\("+B+" = "+c+"^{"+m+"}\\) and \\("+N+" = "+c+"^{"+n+"}\\). Rewrite with the common base and equate the exponents: \\[ \\begin{aligned} "+c+"^{"+m+"x} &= "+c+"^{"+n+"} \\\\ "+m+"x &= "+n+" \\\\ x &= "+(gcd2(n,m)>1?("\\frac{"+(n/gcd2(n,m))+"}{"+(m/gcd2(n,m))+"}"):("\\frac{"+n+"}{"+m+"}"))+" = "+fmt(x,2)+" \\end{aligned} \\]",
     {c:c,m:m,n:n});
 });
 E("u4-solve-two-sided",4,["4.7"],2,"gen",function(){
@@ -1623,13 +1623,13 @@ E("u4-solve-isolate",4,["4.8"],2,"gen",function(){
     var x0=pick([3,4]),mult=pick([3,5]),A3=Math.pow(2,x0)*mult;
     return numq("Solve for \\(x\\): \\("+A3+"\\left(\\frac{1}{2}\\right)^x = "+mult+"\\)",
       x0,0.001,
-      "Isolate the power first: divide both sides by "+A3+" to get \\(\\left(\\frac{1}{2}\\right)^x = \\frac{"+mult+"}{"+A3+"} = \\frac{1}{"+Math.pow(2,x0)+"}\\). The right side is \\(\\left(\\frac{1}{2}\\right)^{"+x0+"}\\), so \\(x = "+x0+"\\). The equation as written has no matching bases; isolating the power creates them.",
+      "Isolate the power first: \\[ \\begin{aligned} "+A3+"\\left(\\frac{1}{2}\\right)^x &= "+mult+" \\\\ \\left(\\frac{1}{2}\\right)^x &= \\frac{"+mult+"}{"+A3+"} = \\frac{1}{"+Math.pow(2,x0)+"} \\\\ x &= "+x0+" \\end{aligned} \\] The right side is \\(\\left(\\frac{1}{2}\\right)^{"+x0+"}\\), which is what makes the last step work. The equation as written has no matching bases; isolating the power creates them.",
       {x0:x0});
   }
   var b=pick([2,3,5]),x1=pick([2,3,4,5]),a=pick([2,3,4,6,7,8,9]),C=a*Math.pow(b,x1);
   return numq("Solve for \\(x\\): \\("+a+"("+b+")^x = "+C+"\\)",
     x1,0.001,
-    "Isolate the power first: divide both sides by "+a+" to get \\("+b+"^x = "+Math.pow(b,x1)+"\\). The right side is \\("+b+"^{"+x1+"}\\), so \\(x = "+x1+"\\) with matching bases. (Dividing "+C+" by "+a+" early is the step that makes the bases match.)",
+    "Isolate the power first: \\[ \\begin{aligned} "+a+"("+b+")^x &= "+C+" \\\\ "+b+"^x &= "+Math.pow(b,x1)+" \\\\ x &= "+x1+" \\end{aligned} \\] The right side in the middle line is \\("+b+"^{"+x1+"}\\), so the bases match. (Dividing "+C+" by "+a+" early is the step that makes the bases match.)",
     {b:b,x1:x1,a:a});
 });
 E("u4-growth-model-eval",4,["4.9"],2,"gen",function(){
@@ -1642,13 +1642,13 @@ E("u4-growth-model-eval",4,["4.9"],2,"gen",function(){
     var kk=pick([2,3]),t=D*kk,ans=P0*Math.pow(b,kk);
     return numq(ctx.w+" is modelled by \\(P(t) = "+P0+"("+b+")^{t/"+D+"}\\), where \\(t\\) is in "+ctx.u+". What is the population after "+t+" "+ctx.u+"?",
       ans,0.01,
-      "Substitute \\(t = "+t+"\\): the exponent is \\(\\frac{"+t+"}{"+D+"} = "+kk+"\\), so \\(P("+t+") = "+P0+" \\times "+b+"^{"+kk+"} = "+P0+" \\times "+Math.pow(b,kk)+" = "+ans+"\\). The fraction in the exponent counts how many growth periods have passed.",
+      "Substitute \\(t = "+t+"\\): the exponent is \\(\\frac{"+t+"}{"+D+"} = "+kk+"\\), the number of growth periods that have passed. \\[ \\begin{aligned} P("+t+") &= "+P0+" \\times "+b+"^{"+kk+"} \\\\ &= "+P0+" \\times "+Math.pow(b,kk)+" \\\\ &= "+ans+" \\end{aligned} \\]",
       {fam:fam,P0:P0,b:b,D:D});
   }
   var kk2=pick([2,3,4]),target=P0*Math.pow(b,kk2),ans2=D*kk2;
   return numq(ctx.w+" is modelled by \\(P(t) = "+P0+"("+b+")^{t/"+D+"}\\), where \\(t\\) is in "+ctx.u+". After how many "+ctx.u+" does the population reach "+target+"?",
     ans2,0.01,
-    "Set \\("+target+" = "+P0+"("+b+")^{t/"+D+"}\\). Dividing by "+P0+", \\("+Math.pow(b,kk2)+" = ("+b+")^{t/"+D+"}\\), so \\(\\frac{t}{"+D+"} = "+kk2+"\\) and \\(t = "+ans2+"\\) "+ctx.u+". The target is "+kk2+" growth periods of "+D+" "+ctx.u+" each.",
+    "Set the model equal to the target and solve: \\[ \\begin{aligned} "+P0+"("+b+")^{t/"+D+"} &= "+target+" \\\\ ("+b+")^{t/"+D+"} &= "+Math.pow(b,kk2)+" \\\\ \\frac{t}{"+D+"} &= "+kk2+" \\\\ t &= "+ans2+" \\end{aligned} \\] The target is "+kk2+" growth periods of "+D+" "+ctx.u+" each, so \\(t = "+ans2+"\\) "+ctx.u+".",
     {fam:fam,P0:P0,b:b,D:D});
 });
 E("u4-half-life",4,["4.9"],2,"gen",function(){
@@ -1732,7 +1732,7 @@ E("u4-find-base",4,["4.13"],3,"gen",function(){
     bdisp=""+b;ratioDisp=""+Math.pow(b,kk);}
   return numq("An exponential function \\(f(x) = a(b)^x\\) satisfies \\(f(0) = "+a+"\\) and \\(f("+kk+") = "+fmt(v)+"\\). What is the value of \\(b\\)?",
     b,0.01,
-    "From \\(f(0)\\), \\(a = "+a+"\\) (the starting value). Then \\(f("+kk+")\\) gives \\(b^{"+kk+"} = \\frac{"+fmt(v)+"}{"+a+"} = "+ratioDisp+"\\), and \\("+ratioDisp+" = \\left("+bdisp+"\\right)^{"+kk+"}\\), so the base is \\(b = "+bdisp+"\\). Recognizing the perfect power is the key step; no logarithm is needed.",
+    "From \\(f(0)\\), \\(a = "+a+"\\) (the starting value). Then \\(f("+kk+")\\) gives: \\[ \\begin{aligned} b^{"+kk+"} &= \\frac{"+fmt(v)+"}{"+a+"} = "+ratioDisp+" \\\\ b &= "+bdisp+" \\end{aligned} \\] Recognizing the perfect power (\\("+ratioDisp+" = \\left("+bdisp+"\\right)^{"+kk+"}\\)) is the key step; no logarithm is needed.",
     {kk:kk,a:a,b:b});
 });
 E("u4-compare-models",4,["4.13"],3,"gen",function(){
