@@ -599,11 +599,12 @@ function detexClone(node){
   return c;
 }
 var state={units:[],inds:[],midCap:false};
-/* Report-a-problem: a Google Form on the maintainer's personal account receives the
-   reports, and a nightly job reads them back, fixes what is verifiably fixable, and
-   flags the rest. The entry IDs are the form's pre-filled-link IDs. If url is ever
-   emptied, the panel falls back to copying the report text for the teacher. */
-var REPORT_FORM={url:"https://docs.google.com/forms/d/e/1FAIpQLSed8tcgNkhD-S0eAUxJGG1nwoGgPBYRhAjK9xGC8tRXf4TbsQ/viewform",typeEntry:"entry.1011402329",detailsEntry:"entry.309249440",extraEntry:"entry.2093753318"};
+/* Report-a-problem: one Google Form, "Math Review Apps: Report a Problem", serves
+   every review app. The app name, the unit and indicators, and the full report text
+   are pre-filled through the entry IDs below, which are the form's pre-filled-link
+   IDs. If url is ever emptied, the panel falls back to copying the report text for
+   the teacher. */
+var REPORT_FORM={url:"https://docs.google.com/forms/d/e/1FAIpQLSetn4AeZSWxcO_3zawHsAPNqZPLsQzu_bCCw6Li-J3PAy9knw/viewform",appEntry:"entry.2102073803",appName:"Math 3201 Review",unitEntry:"entry.1142563169",detailsEntry:"entry.1416174508"};
 function unitCheckboxes(){
   $("unitGrid").innerHTML=Object.keys(UNITS).map(function(u){
     return '<label class="chk"><input type="checkbox" class="unitChk" value="'+u+'"'+(state.units.indexOf(+u)>=0?" checked":"")+'> Unit '+u+": "+UNITS[u]+"</label>";
@@ -709,9 +710,10 @@ function reportText(q,reason){
   return lines.join("\n");
 }
 function openReport(i){
-  var q=current[i],reason=$("reptype"+i).value,note=$("repnote"+i).value.trim();
-  var u=REPORT_FORM.url+"?usp=pp_url&"+REPORT_FORM.typeEntry+"="+encodeURIComponent(reason)+"&"+REPORT_FORM.detailsEntry+"="+encodeURIComponent(reportText(q,reason));
-  if(note)u+="&"+REPORT_FORM.extraEntry+"="+encodeURIComponent(note);
+  var q=current[i],e=q._entry,reason=$("reptype"+i).value,note=$("repnote"+i).value.trim();
+  var details=reportText(q,reason)+(note?("\nReporter note: "+note):"");
+  var unit="Unit "+e.unit+" ("+UNITS[e.unit]+") | Indicators: "+e.indicators.join(", ");
+  var u=REPORT_FORM.url+"?usp=pp_url&"+REPORT_FORM.appEntry+"="+encodeURIComponent(REPORT_FORM.appName)+"&"+REPORT_FORM.unitEntry+"="+encodeURIComponent(unit)+"&"+REPORT_FORM.detailsEntry+"="+encodeURIComponent(details);
   window.open(u,"_blank");
   $("repstat"+i).textContent="The report form opened in a new tab with everything filled in - just press Submit there. Thank you for flagging it.";
 }
