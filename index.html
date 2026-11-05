@@ -852,8 +852,11 @@ function plotSVG(fn,x0,x1,y0,y1,o){
   var X=function(x){return pad+(x-x0)/(x1-x0)*(W-2*pad);};
   var Y=function(y){return H-pad-(y-y0)/(y1-y0)*(H-2*pad);};
   var out='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:440px;background:#fff;border:1px solid #d8d2c4;border-radius:6px" xmlns="http://www.w3.org/2000/svg">';
-  for(var gx=Math.ceil(x0);gx<=Math.floor(x1);gx++)out+='<line x1="'+fmt(X(gx),1)+'" y1="'+pad+'" x2="'+fmt(X(gx),1)+'" y2="'+(H-pad)+'" stroke="#eae5d6" stroke-width="1"/>';
-  for(var gy=Math.ceil(y0);gy<=Math.floor(y1);gy++)out+='<line x1="'+pad+'" y1="'+fmt(Y(gy),1)+'" x2="'+(W-pad)+'" y2="'+fmt(Y(gy),1)+'" stroke="#eae5d6" stroke-width="1"/>';
+  var gsx=o.gx||1,gsy=o.gy||1,gx,gy;
+  for(gx=Math.ceil(x0/gsx)*gsx;gx<=x1;gx+=gsx){out+='<line x1="'+fmt(X(gx),1)+'" y1="'+pad+'" x2="'+fmt(X(gx),1)+'" y2="'+(H-pad)+'" stroke="#eae5d6" stroke-width="1"/>';
+    if(o.labelX)out+='<text x="'+fmt(X(gx),1)+'" y="'+(H-6)+'" font-size="9" fill="#5a5344" text-anchor="middle">'+fmt(gx)+'</text>';}
+  for(gy=Math.ceil(y0/gsy)*gsy;gy<=y1;gy+=gsy){out+='<line x1="'+pad+'" y1="'+fmt(Y(gy),1)+'" x2="'+(W-pad)+'" y2="'+fmt(Y(gy),1)+'" stroke="#eae5d6" stroke-width="1"/>';
+    if(o.labelY&&gy!==0)out+='<text x="'+(pad-4)+'" y="'+fmt(Y(gy)+3,1)+'" font-size="9" fill="#5a5344" text-anchor="end">'+fmt(gy)+'</text>';}
   if(y0<0&&y1>0)out+='<line x1="'+pad+'" y1="'+fmt(Y(0),1)+'" x2="'+(W-pad)+'" y2="'+fmt(Y(0),1)+'" stroke="#17352a" stroke-width="1.3"/>';
   if(x0<0&&x1>0)out+='<line x1="'+fmt(X(0),1)+'" y1="'+pad+'" x2="'+fmt(X(0),1)+'" y2="'+(H-pad)+'" stroke="#17352a" stroke-width="1.3"/>';
   out+='<text x="'+(W-pad-2)+'" y="'+fmt(Y(0)-6,1)+'" font-size="12" fill="#17352a" text-anchor="end">x</text>';
@@ -1098,6 +1101,271 @@ E("u2-model-decision",2,["3.22"],3,"var",varset([
     "No low-degree polynomial fits well: the first differences (2, 4, 8, 16) keep doubling, which is exponential behaviour, not polynomial",
     ["A cubic model fits the data exactly","A quadratic model fits the data exactly","A linear model fits the data exactly"],
     "For a polynomial fit, some level of differences must settle to a constant. Here the differences double each step (2, 4, 8, 16), and the second and third differences grow too. That doubling pattern is the signature of exponential growth, so a polynomial is the wrong family.",{});}
+]));
+
+/* ================= Unit 3: Sinusoidal Functions ================= */
+function radFrac(deg){var g=gcd2(deg,180);return [deg/g,180/g];}
+function radStr(n,d){if(n===0)return "0";if(d===1)return n===1?"\\pi":(n+"\\pi");if(n===1)return "\\frac{\\pi}{"+d+"}";return "\\frac{"+n+"\\pi}{"+d+"}";}
+function sinS(a,trig,b,c,d){
+  var s=(a===1?"":(a===-1?"-":(a<0?"- "+Math.abs(a):""+a)))+" \\"+trig+" ";
+  if(b!==1)s+=fmt(b);
+  s+=" (x"+(c===0?"":(c>0?" - "+c+"^\\circ":" + "+(-c)+"^\\circ"))+")";
+  if(d!==0)s+=(d>0?" + ":" - ")+Math.abs(d);
+  return "y = "+s;
+}
+function sinFn(a,trig,b,c,d){return function(x){var ang=b*(x-c)*Math.PI/180;return a*(trig==="sin"?Math.sin(ang):Math.cos(ang))+d;};}
+E("u3-deg-to-rad",3,["7.1"],1,"gen",function(){
+  var pool=[];for(var v=15;v<=345;v+=5){if(v!==180)pool.push(v);}
+  var d,opts,tries=0;
+  do{d=pick(pool);var f=radFrac(d);
+    var d45=(d+45<=360)?d+45:d-45;
+    var cands=[radStr(f[0],f[1]),radStr.apply(null,radFrac(360-d)),radStr.apply(null,radFrac(d45)),radStr.apply(null,radFrac(2*d))];
+    opts=cands;tries++;}
+  while(new Set(cands).size<4&&tries<40);
+  return mcq("Express \\("+d+"^\\circ\\) in radians.",
+    radStr(f[0],f[1]),[cands[1],cands[2],cands[3]],
+    "Multiply by \\(\\frac{\\pi}{180^\\circ}\\): \\("+d+"^\\circ \\times \\frac{\\pi}{180^\\circ} = "+radStr(f[0],f[1])+"\\) (the fraction \\(\\frac{"+d+"}{180}\\) reduces by "+gcd2(d,180)+").",
+    {d:d});
+});
+E("u3-rad-to-deg",3,["7.1"],1,"gen",function(){
+  var pool5=[];for(var v=15;v<=345;v+=5){if(v!==180)pool5.push(v);}
+  var d=pick(pool5),f=radFrac(d),pool,tries=0;
+  do{pool=[d/2,(d+90)%360||360,(3*d/2)%360||(3*d/2),360-d,2*d].filter(function(v){return v!==d&&v>0;});
+    pool=pool.filter(function(v,i){return pool.indexOf(v)===i;});tries++;}
+  while(pool.length<3&&tries<20);
+  return mcq("Express \\("+radStr(f[0],f[1])+"\\) radians in degrees.",
+    ""+d,[""+pool[0],""+pool[1],""+pool[2]],
+    "Multiply by \\(\\frac{180^\\circ}{\\pi}\\): \\("+radStr(f[0],f[1])+" \\times \\frac{180^\\circ}{\\pi} = "+d+"^\\circ\\).",
+    {d:d});
+});
+E("u3-decimal-convert",3,["7.1"],1,"gen",function(){
+  if(Math.random()<0.5){
+    var r=pick([0.2,0.3,0.5,0.7,0.8,0.9,1.1,1.2,1.4,1.6,1.9,2.2,2.4,2.7,2.9,3.3,3.6,3.9,4.2,4.5,4.8,5.1,5.5,5.9,6.1]);
+    var deg=r*180/Math.PI;
+    return numq("Convert "+r+" radians to degrees, to the nearest degree.",
+      Math.round(deg),1.5,
+      "Multiply by \\(\\frac{180^\\circ}{\\pi}\\): \\("+r+" \\times \\frac{180^\\circ}{\\pi} \\approx "+fmt(deg,1)+"^\\circ\\), which rounds to <b>"+Math.round(deg)+"°</b>. A proportion works the same way: \\(\\frac{180^\\circ}{\\pi} = \\frac{x}{"+r+"}\\).",
+      {r:r});
+  }
+  var dg=pick([55,65,70,80,85,95,100,105,115,125,140,155,160,170,185,195,200,205,215,230,245,250,260,275,290,305,320,325,335,350]);
+  var rad=dg*Math.PI/180;
+  return numq("Convert \\("+dg+"^\\circ\\) to radians, to two decimal places.",
+    Math.round(rad*100)/100,0.02,
+    "Multiply by \\(\\frac{\\pi}{180^\\circ}\\): \\("+dg+" \\times \\frac{\\pi}{180} \\approx "+fmt(rad,3)+"\\), which rounds to <b>"+fmt(Math.round(rad*100)/100,2)+"</b> radians.",
+    {dg:dg});
+});
+E("u3-graph-amplitude",3,["7.2"],2,"gen",function(){
+  var a=pick([2,3,4,5]),d=pick([-3,-2,-1,1,2,3,4]),trig=pick(["sin","cos"]),b=pick([1,2]);
+  while(d===a||d===2*a)d=pick([-3,-2,-1,1,2,3,4]);
+  var fn=sinFn(a,trig,b,0,d);
+  var corr=""+a;
+  var q=mcq("What is the <b>amplitude</b> of the sinusoidal function shown?",
+    corr,[""+(a+d),""+d,""+(2*a)],
+    "The graph peaks at \\(y = "+(a+d)+"\\) and bottoms out at \\(y = "+(d-a)+"\\), so the midline is \\(y = "+d+"\\). The amplitude is the distance from the midline to a peak: \\("+ (a+d) +" - "+d+" = "+a+"\\). It is not the maximum value "+(a+d)+", which is the trap here.",
+    {a:a,d:d,trig:trig});
+  q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
+  return q;
+});
+E("u3-graph-period-midline",3,["7.2"],2,"gen",function(){
+  var feat=pick(["period","midline"]);
+  var b=pick([1,2]),a=pick([2,3,4]),d=pick([-3,-2,-1,0,1,2,3]),trig=pick(["sin","cos"]);
+  while(new Set([d,a,d+a,(-d===0?1:-d)]).size<4){a=pick([2,3,4]);d=pick([-3,-2,-1,0,1,2,3]);}
+  var fn=sinFn(a,trig,b,0,d),per=360/b;
+  if(feat==="period"){
+    var pd=(b===1)?["180","720","90"]:[""+b,""+(360*b),""+(per/2)];
+    var q=mcq("What is the <b>period</b> of the sinusoidal function shown, in degrees?",
+      ""+per,pd,
+      "One complete cycle of the graph spans "+per+"° before the pattern repeats (measure peak to peak or start to start of a cycle). The period is <b>"+per+"°</b>. The coefficient \\(b = "+b+"\\) is not itself the period; the period is \\(\\frac{360^\\circ}{b}\\).",
+      {feat:feat,b:b});
+    q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
+    return q;
+  }
+  var q2=mcq("What is the <b>equation of the midline</b> (sinusoidal axis) of the function shown?",
+    "y = "+d,["y = "+a,"y = "+(d+a),"y = "+(-d===0?1:-d)],
+    "The graph oscillates evenly between \\(y = "+(d+a)+"\\) and \\(y = "+(d-a)+"\\); the midline sits halfway between them: \\(\\frac{"+(d+a)+" + ("+(d-a)+")}{2} = "+d+"\\). The midline is <b>\\(y = "+d+"\\)</b>.",
+    {feat:feat,d:d});
+  q2.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
+  return q2;
+});
+E("u3-graph-range",3,["7.2"],2,"gen",function(){
+  var a=pick([2,3,4,5]),d=pick([-4,-3,-1,2,3,5]),trig=pick(["sin","cos"]),bb=pick([1,2]);
+  var fn=sinFn(a,trig,bb,0,d),lo=d-a,hi=d+a;
+  var corr="\\(\\{y \\mid "+lo+" \\le y \\le "+hi+", \\ y \\in \\mathbb{R}\\}\\)";
+  var q=mcq("What is the <b>range</b> of the sinusoidal function shown?",
+    corr,
+    ["\\(\\{y \\mid "+(-a)+" \\le y \\le "+a+", \\ y \\in \\mathbb{R}\\}\\)",
+     "\\(\\{y \\mid "+d+" \\le y \\le "+hi+", \\ y \\in \\mathbb{R}\\}\\)",
+     "\\(\\{y \\mid y \\le "+hi+", \\ y \\in \\mathbb{R}\\}\\)"],
+    "The lowest point of the graph is \\(y = "+lo+"\\) and the highest is \\(y = "+hi+"\\), and the smooth wave takes every value in between. The range is <b>"+corr+"</b>. Forgetting the vertical shift gives the \\([-"+a+", "+a+"]\\) distractor.",
+    {a:a,d:d});
+  q.figure=plotSVG(fn,0,720,lo-2,hi+2,{gx:90,gy:1,labelX:true,labelY:true});
+  return q;
+});
+E("u3-periodic-or-sinusoidal",3,["7.3"],2,"gen",function(){
+  var fam=pick(["sinusoidal","triangle","square","parabola"]),fn,x1=pick([9,10,12]);
+  if(fam==="sinusoidal"){var A1=pick([1.5,2,2.5]),W1=pick([1.2,1.6,2.1]),D1=pick([-0.5,0,0.8]);fn=function(x){return A1*Math.sin(W1*x)+D1;};}
+  else if(fam==="triangle"){var P1=pick([3,4,5]),A2=pick([1,1.5]);fn=function(x){var t=((x%P1)+P1)%P1,u=t/P1*4;return A2*(u<1?u:(u<3?2-u:u-4));};}
+  else if(fam==="square"){var A3=pick([1,1.4]),W3=pick([Math.PI/2,Math.PI/3]);fn=function(x){return Math.sin(W3*x)>=0?A3:-A3;};}
+  else{var VX=pick([4,5,6]),CF=pick([0.1,0.15]);fn=function(x){return CF*(x-VX)*(x-VX)-1.5;};}
+  var corr=fam==="sinusoidal"?"Periodic and sinusoidal":(fam==="parabola"?"Not periodic":"Periodic, but not sinusoidal");
+  var q=mcq("Which statement best describes the function shown in the graph?",
+    corr,
+    ["Periodic and sinusoidal","Periodic, but not sinusoidal","Not periodic","Sinusoidal, but not periodic"].filter(function(v){return v!==corr;}),
+    (fam==="sinusoidal"?"The pattern repeats every cycle and each cycle is a smooth wave, so the function is periodic and sinusoidal.":
+     fam==="parabola"?"The graph never repeats a cycle; it is a single U-shape, so it is not periodic (and therefore not sinusoidal either).":
+     "The pattern does repeat, so the function is periodic, but the cycles are "+(fam==="triangle"?"straight-line zigzags":"flat steps")+", not the smooth wave shape of a sine or cosine curve. Every sinusoidal function is periodic, but not every periodic function is sinusoidal.")+" The answer is: <b>"+corr.toLowerCase()+"</b>.",
+    {fam:fam});
+  q.figure=plotSVG(fn,0,x1,-3,4,{gx:1,gy:1});
+  return q;
+});
+E("u3-ferris-interpret",3,["7.3"],2,"var",varset([
+  function(){var fn=function(t){return 9-7*Math.cos(30*t*Math.PI/180);};
+    var q=mcq("The graph shows the height of a rider on a Ferris wheel at a St. John's fair, in metres, over time in minutes. Riders board at the lowest point of the ride. What is the <b>boarding height</b>?",
+      "2 m",["9 m","16 m","7 m"],
+      "Boarding happens at the lowest point of the graph. The curve bottoms out at 2 m (it peaks at 16 m, and the midline y = 9 m is the axle height). The boarding height is <b>2 m</b>.",{});
+    q.figure=plotSVG(fn,0,24,0,18,{gx:2,gy:2,labelX:true,labelY:true});return q;},
+  function(){var fn=function(t){return 11-9*Math.cos(22.5*t*Math.PI/180);};
+    var q=mcq("The graph shows a rider's height on a Ferris wheel over one full rotation. The period of the graph is 16 minutes. What does the <b>period</b> represent in this situation?",
+      "The time the wheel takes to complete one full rotation",
+      ["The time it takes to first reach the top of the wheel","The height of the centre (axle) of the wheel","The diameter of the wheel"],
+      "The period is the length of one complete cycle of the repeating pattern. Here one cycle is one full trip around the wheel, so the period is the time for one complete rotation, 16 minutes.",{});
+    q.figure=plotSVG(fn,0,16,0,22,{gx:2,gy:2,labelX:true,labelY:true});return q;},
+  function(){var fn=function(t){return 10-8*Math.cos(36*t*Math.PI/180);};
+    var q=mcq("The graph shows a rider's height on a Ferris wheel, in metres, over time. The midline of the graph is \\(y = 10\\). What does the <b>midline</b> represent in this situation?",
+      "The height of the wheel's centre (axle) above the ground",
+      ["The greatest height a rider reaches","The diameter of the wheel","The height where riders board the wheel"],
+      "The height oscillates evenly between 2 m and 18 m around the midline y = 10. Halfway between the top and bottom of the ride is the centre of the wheel, so the midline gives the axle height, 10 m.",{});
+    q.figure=plotSVG(fn,0,10,0,20,{gx:1,gy:2,labelX:true,labelY:true});return q;}
+]));
+E("u3-eq-amplitude-period",3,["7.4"],2,"gen",function(){
+  var feat=pick(["amplitude","period"]);
+  var a=pick([2,3,4,5])*pick([1,-1]),b=pick([0.5,1,2,3]),c=pick([0,20,40]),d=pick([-3,-1,0,2]),trig=pick(["sin","cos"]),tries=0;
+  while((Math.abs(a)===b||d===Math.abs(a)||b===d)&&tries<40){a=pick([2,3,4,5])*pick([1,-1]);b=pick([0.5,1,2,3]);d=pick([-3,-1,0,2]);tries++;}
+  var eq=sinS(a,trig,b,c,d);
+  if(feat==="amplitude"){
+    return mcq("What is the <b>amplitude</b> of \\("+eq+"\\)?",
+      ""+Math.abs(a),[""+b,""+d,""+(2*Math.abs(a))],
+      "The amplitude is \\(|a|\\), the size of the coefficient in front of the "+trig+" term: \\(|"+a+"| = "+Math.abs(a)+"\\). The sign of \\(a\\) only flips the graph; it does not change the amplitude.",
+      {feat:feat,a:a,b:b});
+  }
+  var per=360/b;
+  return mcq("What is the <b>period</b>, in degrees, of \\("+eq+"\\)?",
+    ""+per,[""+b,""+(360*b===per?180:360*b),""+(per===360?90:360)],
+    "The period is \\(\\frac{360^\\circ}{b} = \\frac{360^\\circ}{"+b+"} = "+per+"^\\circ\\). The coefficient \\(b = "+b+"\\) compresses or stretches the basic cycle; it is not the period itself.",
+    {feat:feat,b:b,per:per});
+});
+E("u3-eq-range-midline",3,["7.4"],2,"gen",function(){
+  var feat=pick(["range","midline"]);
+  var a=pick([2,3,4,5])*pick([1,-1]),d=pick([-4,-2,-1,1,3]),trig=pick(["sin","cos"]),tg=0;
+  while((new Set([d,a,-d,d+Math.abs(a)]).size<4||d===0)&&tg<60){a=pick([2,3,4,5])*pick([1,-1]);d=pick([-4,-2,-1,1,3]);tg++;}
+  var eq=sinS(a,trig,pick([1,2]),pick([0,30]),d),lo=d-Math.abs(a),hi=d+Math.abs(a);
+  if(feat==="midline"){
+    return mcq("What is the <b>equation of the midline</b> of \\("+eq+"\\)?",
+      "y = "+d,["y = "+a,"y = "+(-d),"y = "+(d+Math.abs(a))],
+      "The midline is set by the vertical shift \\(d\\): the graph oscillates evenly around \\(y = d = "+d+"\\). The value \\("+hi+"\\) is the maximum, not the midline.",
+      {feat:feat,d:d});
+  }
+  return mcq("What is the <b>range</b> of \\("+eq+"\\)?",
+    "\\(\\{y \\mid "+lo+" \\le y \\le "+hi+"\\}\\)",
+    ["\\(\\{y \\mid "+(-Math.abs(a))+" \\le y \\le "+Math.abs(a)+"\\}\\)","\\(\\{y \\mid "+d+" \\le y \\le "+hi+"\\}\\)","\\(\\{y \\mid "+lo+" \\le y \\le "+d+"\\}\\)"],
+    "The amplitude is \\(|a| = "+Math.abs(a)+"\\), so the graph runs from \\(d - |a| = "+lo+"\\) up to \\(d + |a| = "+hi+"\\) around the midline \\(y = "+d+"\\). The interval that stops at the midline, and the one that forgets the vertical shift, are the traps.",
+    {feat:feat,a:a,d:d});
+});
+E("u3-eq-phase-shift",3,["7.4"],2,"gen",function(){
+  var c=pick([15,30,45,60,90])*pick([1,-1]),a=pick([1,2,3]),d=pick([-2,0,1]),trig=pick(["sin","cos"]);
+  var eq=sinS(a,trig,pick([1,2]),c,d);
+  var corr=(c>0)?("Shifted right "+c+"°"):("Shifted left "+(-c)+"°");
+  return mcq("Compared with the graph of \\(y = "+(a===1?"":a)+" \\"+trig+" x"+(d!==0?((d>0?" + ":" - ")+Math.abs(d)):"")+"\\), how is the graph of \\("+eq+"\\) shifted horizontally?",
+    corr,
+    [(c>0?("Shifted left "+c+"°"):("Shifted right "+(-c)+"°")),"Shifted up "+Math.abs(c)+"°","There is no horizontal shift"],
+    "In the form \\(y = a \\"+trig+" b(x - c) + d\\), the value inside the brackets with \\(x\\) gives the horizontal shift: here \\(c = "+c+"\\), so the graph moves "+(c>0?"right by "+c+"°":"left by "+(-c)+"°")+". The trap is reading the sign backwards: \\((x - "+Math.abs(c)+"^\\circ)\\) shifts right, not left.",
+    {c:c});
+});
+E("u3-match-eq-graph",3,["7.5"],2,"gen",function(){
+  var a=pick([2,3,4]),b=pick([1,2,3]),d=pick([-3,-2,-1,1,2,3]),trig=pick(["sin","cos"]);
+  var fn=sinFn(a,trig,b,0,d);
+  var alt=(trig==="sin")?"cos":"sin";
+  var q=mcq("Which equation matches the graphed sinusoidal function?",
+    "\\("+sinS(a,trig,b,0,d)+"\\)",
+    ["\\("+sinS(a,alt,b,0,d)+"\\)","\\("+sinS(a,trig,2*b,0,d)+"\\)","\\("+sinS(a,trig,b,0,-d)+"\\)"],
+    "Read the graph: the maximum is "+(a+d)+" and the minimum is "+(d-a)+", giving amplitude "+a+" and midline \\(y = "+d+"\\). A full cycle takes "+(360/b)+"°, so \\(b = "+b+"\\). The curve "+(trig==="sin"?"starts on the midline and rises, the sine pattern":"starts at its maximum, the cosine pattern")+", which pins down the correct equation.",
+    {a:a,b:b,d:d,trig:trig});
+  q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
+  return q;
+});
+E("u3-build-equation",3,["7.5"],2,"gen",function(){
+  var M=pick([6,8,9,10,12]),m=pick([-4,-2,-1,1,2]),P=pick([120,180,360,720]);
+  while(((M+m)%2!==0)||m===0||(M-m)/2<1){M=pick([6,8,9,10,12]);m=pick([-4,-2,-1,1,2]);}
+  var a=(M-m)/2,d=(M+m)/2,b=360/P;
+  var q=mcq("A sinusoidal function has maximum value "+M+", minimum value "+m+", and period "+P+"°. It starts at its midline and rises first. Which equation models it?",
+    "\\("+sinS(a,"sin",b,0,d)+"\\)",
+    ["\\("+sinS(-a,"sin",b,0,d)+"\\)","\\("+sinS(a,"sin",360/(2*P),0,d)+"\\)","\\("+sinS(a,"sin",b,0,a)+"\\)"],
+    "Amplitude: \\(\\frac{"+M+" - ("+m+")}{2} = "+a+"\\). Midline: \\(\\frac{"+M+" + ("+m+")}{2} = "+d+"\\). Period "+P+"° gives \\(b = \\frac{360}{"+P+"} = "+fmt(b)+"\\). Starting at the midline and rising is the sine pattern with a positive amplitude, so the model is \\("+sinS(a,"sin",b,0,d)+"\").",
+    {M:M,m:m,P:P});
+  return q;
+});
+E("u3-graph-full-equation",3,["7.2","7.5"],3,"gen",function(){
+  var a=pick([2,3,4]),c=pick([30,45,60,90,120]),d=pick([-3,-2,-1,1,2,3]);
+  var fn=sinFn(a,"sin",1,c,d);
+  var q=mcq("Which equation, in degrees, matches the graphed sinusoidal function?",
+    "\\("+sinS(a,"sin",1,c,d)+"\\)",
+    ["\\("+sinS(a,"sin",1,-c,d)+"\\)","\\("+sinS(a,"cos",1,c,d)+"\\)","\\("+sinS(a,"sin",1,c,-d)+"\\)"],
+    "Extract all four values from the graph: the maximum "+(a+d)+" and minimum "+(d-a)+" give amplitude "+a+" and midline \\(y = "+d+"\\); one cycle spans 360°, so \\(b = 1\\); and the rising midline crossing is shifted "+c+"° right of the origin, so the phase shift is \\(c = "+c+"^\\circ\\) in a sine model. Only the correct option gets all four right.",
+    {a:a,c:c,d:d});
+  q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:30,gy:1,labelX:true,labelY:true});
+  return q;
+});
+E("u3-data-fit-params",3,["7.6"],2,"gen",function(){
+  var a=pick([1.5,2,2.5,3,3.5,4]),d=pick([2,3,4,5,6,8,10]),feat=pick(["amplitude","period"]);
+  while(d===a||2*a===d)d=pick([2,3,4,5,6,8,10]);
+  var xs=[0,3,6,9,12],ys=[d,d+a,d,d-a,d];
+  var tbl=tblHTML(xs,ys.map(function(v){return fmt(v);}),"Time (h)","Height (m)");
+  if(feat==="amplitude"){
+    return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value is the <b>amplitude</b> of a sinusoidal model of this data?",
+      fmt(a)+" m",[fmt(d)+" m",fmt(d+a)+" m",fmt(2*a)+" m"],
+      "The heights run from a low of "+fmt(d-a)+" m to a high of "+fmt(d+a)+" m around a midline of "+fmt(d)+" m. The amplitude is the distance from the midline to the high: "+fmt(d+a)+" - "+fmt(d)+" = <b>"+fmt(a)+" m</b>.",
+      {feat:feat,a:a,d:d});
+  }
+  return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value is the <b>period</b> of a sinusoidal model of this data?",
+    "12 h",["6 h","24 h","3 h"],
+    "The pattern high, mid, low, mid returns to its starting height at 12 h (high at 3 h repeats at 15 h), so one full cycle takes <b>12 h</b>. The 6 h figure is only the high-to-low half cycle.",
+    {feat:feat,a:a,d:d});
+});
+E("u3-data-equation",3,["7.6"],2,"gen",function(){
+  var a=pick([2,3,4]),d=pick([3,4,5,6,8,10]),b=pick([15,30]),fam=pick(["sin","cos"]);
+  while(d===a)d=pick([3,4,5,6,8,10]);
+  var per=360/b,xs=[0,per/4,per/2,3*per/4,per];
+  var ys=(fam==="sin")?[d,d+a,d,d-a,d]:[d+a,d,d-a,d,d+a];
+  var alt=(fam==="sin")?"cos":"sin";
+  var tbl=tblHTML(xs,ys,"Time (h)","Depth (m)");
+  function eqFor(aa,tr,bb,dd){return sinS(aa,tr,bb,0,dd).replace("y =","D(t) =").replace("(x","(t");}
+  return mcq("The depth of water at a wharf is recorded over one full tidal cycle. "+tbl+" Which equation, with \\(t\\) in hours, models the depth?",
+    "\\("+eqFor(a,fam,b,d)+"\\)",
+    ["\\("+eqFor(a,alt,b,d)+"\\)",
+     "\\("+eqFor(d,fam,b,a)+"\\)",
+     "\\("+eqFor(a,fam,2*b,d)+"\\)"],
+    (fam==="sin"?"The depth starts at the midline value "+d+" and rises to "+(d+a)+", the sine pattern starting at its midline.":"The depth starts at its maximum "+(d+a)+" and falls, the cosine pattern starting at a peak.")+" The midline is "+d+", the amplitude is "+a+", and the cycle takes "+per+" h, so \\(b = \\frac{360}{"+per+"} = "+b+"\\) with the cycle measured in degrees. The model is \\("+eqFor(a,fam,b,d)+"\\).",
+    {a:a,d:d,b:b,fam:fam});
+});
+E("u3-tide-predict",3,["7.7"],3,"gen",function(){
+  var H=pick([3.6,4.2,4.8,5.4]),L=pick([0.4,0.6,0.8,1.2]);
+  var h1=pick([1,2,3]),off=pick([0,3,6,9]),cycles=pick([1,2]);
+  var t=h1+6+12*cycles+off,ans=(off===0?L:(off===6?H:(H+L)/2));
+  return numq("At a harbour, high tide of "+H+" m occurs at "+h1+":00 and the following low tide of "+L+" m occurs 6 hours later. The tides follow a sinusoidal pattern with a period of 12 hours. What is the height of the tide, in metres, at time "+t+":00?",
+    Math.round(ans*100)/100,0.01,
+    "Work out where "+t+":00 falls in the cycle. Low tide is at "+(h1+6)+":00 and the pattern repeats every 12 hours, so lows also occur at "+(h1+6+12)+":00 and "+(h1+6+24)+":00, and highs 6 hours after each low. "+(off===0?"The time "+t+":00 lands exactly on a low tide.":(off===6?"The time "+t+":00 lands exactly on a high tide.":"The time "+t+":00 lands halfway between a high and a low, on the midline, whose height is the average \\(\\frac{"+H+" + "+L+"}{2}\\)."))+" The height is <b>"+fmt(Math.round(ans*100)/100)+" m</b>.",
+    {H:H,L:L,t:t,off:off});
+});
+E("u3-temp-model",3,["7.7"],3,"var",varset([
+  function(){return numq("The temperature in Gander over a day is modelled by \\(T(t) = 6 \\sin 15^\\circ(t - 9) + 14\\), where \\(t\\) is the hour of the day. At what hour does the temperature first reach its daily maximum?",
+    15,0.01,
+    "The maximum occurs when the sine factor first equals 1, at an angle of 90°: \\(15(t - 9) = 90\\) gives \\(t - 9 = 6\\), so \\(t = 15\\). The temperature first peaks at <b>15:00</b> (3 PM), at 20°C.",{});},
+  function(){return numq("A Ferris wheel rider's height is modelled by \\(h(t) = 10 - 9 \\cos 36^\\circ t\\), with \\(h\\) in metres and \\(t\\) in minutes. The wheel starts at the bottom. What is the rider's height after 2.5 minutes?",
+    10,0.01,
+    "The period is \\(\\frac{360}{36} = 10\\) minutes, so 2.5 minutes is a quarter of a rotation: the rider has climbed to the level of the axle, halfway between the bottom (1 m) and the top (19 m). Checking with the model: \\(\\cos(36 \\times 2.5) = \\cos 90^\\circ = 0\\), so \\(h = 10 - 0 = 10\\) m.",{});},
+  function(){return numq("The depth of water at a dock is modelled by \\(H(t) = 1.8 \\sin 30^\\circ(t - 3) + 2.6\\), with \\(H\\) in metres and \\(t\\) in hours. What is the depth at \\(t = 9\\) hours?",
+    2.6,0.01,
+    "Evaluate the phase first: \\(30(9 - 3) = 180^\\circ\\), and \\(\\sin 180^\\circ = 0\\). So \\(H(9) = 1.8(0) + 2.6 = 2.6\\) m, the midline depth, halfway between high and low water.",{});}
 ]));
 /* BANK-SRC-END */
 </script>
