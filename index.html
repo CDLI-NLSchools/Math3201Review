@@ -459,16 +459,393 @@ var UNIT_IND={
 </script>
 
 <script>
-/* ============ THE BANK (empty in tranche 1) ============ */
-/* Tranche 1 (November 5, 2026): chassis and curriculum skeleton only; the bank is
-   intentionally empty. Entries are authored per indicator from the ExamView
-   coverage map, mid-course units (1 to 4) first, under the same admission rule as
-   the 2201 bank: a "gen" entry must produce at least 50 unique canonical questions
-   in 2,000 test draws, or be registered as a "var" set holding at least 3 genuinely
-   different static questions, and every multiple-choice question must have exactly
-   4 options. verify-bank.js must print PASS before any push that adds entries. */
+/* ============ THE BANK ============ */
+/* Tranche 1 (November 5, 2026): chassis and curriculum skeleton. Tranche 2 (same
+   day): the mid-course bank, Units 1 to 4, authored per indicator. Type selection
+   is led by the old public-exam record (the June 2014 table of specifications for
+   Mathematics 3200 and 3201, the June 2016 Math 3201 item analysis, and the
+   Holy Heart unit reviews and Winter 2017 workbook in the shared Drive archive),
+   with the Nelson ExamView coverage map as the second source; every stem, context
+   and value is original. Admission rule (as in the 2201 bank): a "gen" entry must
+   produce at least 50 unique canonical questions in 2,000 test draws, or be a
+   "var" set of at least 3 genuinely different static questions, and every
+   multiple-choice question must have exactly 4 options. No graphing calculators
+   are permitted on the PEP exams, so every instance is solvable by hand.
+   verify-bank.js and harness.js must pass before any push that adds entries.
+   Entry source is maintained in bank-src.js and spliced in by inject_bank.py
+   between the BANK-SRC markers. */
 var BANK=[];
 function E(id,unit,indicators,level,kind,gen){BANK.push({id:id,unit:unit,indicators:indicators,level:level,kind:kind,gen:gen});}
+/* BANK-SRC-BEGIN */
+/* ================= bank-local helpers (Unit 1-4 builds) ================= */
+function gcd2(x,y){x=Math.abs(x);y=Math.abs(y);while(y){var t=x%y;x=y;y=t;}return x||1;}
+function frN(n,d){var g=gcd2(n,d);n/=g;d/=g;if(d<0){n=-n;d=-d;}if(d===1)return ""+n;return "\\frac{"+n+"}{"+d+"}";}
+function linS(a,b){var s;if(a===1)s="x";else if(a===-1)s="-x";else if(a===0)s="";else s=a+"x";if(b===0)return s===""?"0":s;if(s==="")return ""+b;return s+(b>0?" + "+b:" - "+(-b));}
+function linF(r){if(r===0)return "x";return "(x "+(r>0?"- "+r:"+ "+(-r))+")";}
+function quadS(a,b,c){var s;if(a===1)s="x^2";else if(a===-1)s="-x^2";else s=a+"x^2";if(b!==0)s+=(b>0?" + ":" - ")+(Math.abs(b)===1?"x":Math.abs(b)+"x");if(c!==0)s+=(c>0?" + ":" - ")+Math.abs(c);return s;}
+function quadR(r1,r2){return quadS(1,-(r1+r2),r1*r2);}
+function FR(n,d){return "\\frac{"+n+"}{"+d+"}";}
+function MV(s){return "\\("+s+"\\)";}
+
+/* ================= Unit 1: Rational Expressions and Equations ================= */
+/* --- non-permissible values and equivalence (3.1, 3.2, 3.3, 3.4, 3.6, 3.7) --- */
+E("u1-npv-linear",1,["3.2"],1,"gen",function(){
+  var shape=ri(1,3),numDen,root,solSteps;
+  var num=pick([linS(ri(2,6),ri(-5,5)),ri(2,9)+"x",quadS(1,ri(-4,4),ri(-9,9)),""+ri(2,12)]);
+  if(shape===1){root=ri(-9,9);numDen=linF(root);solSteps="Set the denominator equal to zero: \\("+linF(root)+" = 0\\), so \\(x = "+root+"\\)";}
+  else if(shape===2){var a=ri(2,5);root=ri(-6,6);while(root===0)root=ri(-6,6);numDen=linS(a,-a*root);solSteps="Set the denominator equal to zero: \\("+linS(a,-a*root)+" = 0\\), so \\("+a+"x = "+(a*root)+"\\) and \\(x = "+root+"\\)";}
+  else{var a2=pick([1,2,3,4,5,6,7,8,9]);root=0;numDen=(a2===1?"x":a2+"x");solSteps="Set the denominator equal to zero: \\("+numDen+" = 0\\), so \\(x = 0\\)";}
+  return numq("What is the <b>non-permissible value</b> of the rational expression \\("+FR(num,numDen)+"\\)?",
+    root,0.001,
+    solSteps+". Division by zero is undefined, so the non-permissible value is <b>\\(x = "+root+"\\)</b>.",
+    {root:root,shape:shape});
+});
+E("u1-npv-why",1,["3.1"],1,"var",varset([
+  function(){return mcq("Why is \\(x = 3\\) a non-permissible value for the expression \\("+FR("5","x - 3")+"\\)?",
+    "Substituting \\(x = 3\\) makes the denominator equal to 0, and division by zero is undefined",
+    ["Substituting \\(x = 3\\) makes the numerator equal to 0","Substituting \\(x = 3\\) makes the value of the expression negative","The expression has no numerator when \\(x = 3\\)"],
+    "A value is non-permissible when it makes a denominator zero: \\(3 - 3 = 0\\). The numerator being zero would be fine; it is the denominator that cannot be 0.",{});},
+  function(){return mcq("Why is \\(x = -4\\) a non-permissible value for the expression \\("+FR("2x + 1","x + 4")+"\\)?",
+    "Substituting \\(x = -4\\) makes the denominator equal to 0, and division by zero is undefined",
+    ["Substituting \\(x = -4\\) makes the numerator equal to 0","Substituting \\(x = -4\\) makes the expression equal to 1","The variable cannot be negative in a rational expression"],
+    "Check the denominator: \\(-4 + 4 = 0\\). Any value that makes a denominator 0 is non-permissible, whether it is positive or negative.",{});},
+  function(){return mcq("Why is \\(x = 2\\) a non-permissible value for the expression \\("+FR("x^2","3x - 6")+"\\)?",
+    "Substituting \\(x = 2\\) makes the denominator equal to 0, and division by zero is undefined",
+    ["Substituting \\(x = 2\\) makes the numerator equal to 0","Substituting \\(x = 2\\) makes the expression equal to 0","The denominator is a multiple of the numerator when \\(x = 2\\)"],
+    "In the denominator, \\(3(2) - 6 = 0\\). Non-permissible values always come from the denominator being zero, never from the numerator.",{});}
+]));
+E("u1-npv-quadratic",1,["3.2"],2,"gen",function(){
+  var r1=ri(-8,8),r2=ri(-8,8),t=0;
+  while((r1===0||r2===0||r1===r2||r1+r2===0)&&t<60){r1=ri(-8,8);r2=ri(-8,8);t++;}
+  var lo=Math.min(r1,r2),hi=Math.max(r1,r2);
+  var num=pick([linS(ri(1,4),ri(-6,6)),""+ri(2,10),quadS(1,ri(-3,3),ri(-8,8))]);
+  var pair=function(a,b){return "\\(x = "+a+"\\) and \\(x = "+b+"\\)";};
+  return mcq("What are the <b>non-permissible values</b> of the rational expression \\("+FR(num,quadR(r1,r2))+"\\)?",
+    pair(lo,hi),
+    [pair(-hi,-lo),"\\(x = "+hi+"\\) only",pair(lo+hi,lo*hi)],
+    "Set the denominator equal to zero and factor: \\("+quadR(r1,r2)+" = "+linF(r1)+linF(r2)+" = 0\\). So \\(x = "+lo+"\\) or \\(x = "+hi+"\\). The non-permissible values are <b>\\(x = "+lo+"\\) and \\(x = "+hi+"\\)</b>. Watch the signs: the roots of the factors are the values themselves, not their opposites.",
+    {r1:r1,r2:r2});
+});
+E("u1-equiv-forms",1,["3.3"],1,"gen",function(){
+  var a=ri(2,6),rb=ri(-7,7),rm=ri(-7,7),t=0;
+  while((rm===rb||rm===0)&&t<40){rm=ri(-7,7);t++;}
+  var den=linF(rb),fac=linF(rm);
+  return mcq("Which expression is <b>equivalent</b> to \\("+FR(""+a,den)+"\\)?",
+    MV(FR(a+fac,den+fac)),
+    [MV(FR(a+fac,den)),MV(FR(""+a,den+fac)),MV(FR(a+linF(-rm),den+fac))],
+    "An equivalent expression is made by multiplying the numerator and the denominator by the same nonzero expression, here \\("+fac+"\\). Multiplying only the top, only the bottom, or the top by a different factor changes the value of the expression.",
+    {a:a,rb:rb,rm:rm});
+});
+E("u1-create-equivalent",1,["3.4"],2,"gen",function(){
+  var a=ri(2,5),b=ri(-7,7),c=ri(1,4),d=ri(-7,7),t=0;
+  while((b===0||d===0||(a===c&&b===d))&&t<60){b=ri(-7,7);d=ri(-7,7);t++;}
+  var kf=ri(2,7),s=pick([1,-1]),mid=a*s*kf+b,last=b*s*kf;
+  return mcq("The numerator and denominator of \\("+FR(linS(a,b),linS(c,d))+"\\) are both multiplied by \\((x "+(s>0?"+ ":"- ")+kf+")\\). What is the <b>new numerator</b>?",
+    MV(quadS(a,mid,last)),
+    [MV(quadS(a,mid,-last)),MV(quadS(a,-a*s*kf+b,last)),MV(quadS(c,c*s*kf+d,d*s*kf))],
+    "Multiply out: \\(("+linS(a,b)+")(x "+(s>0?"+ ":"- ")+kf+") = "+quadS(a,mid,last)+"\\). The first distractor flips the sign of the constant term, the second uses the wrong sign on the middle term, and the third is the new denominator, not the numerator.",
+    {a:a,b:b,c:c,d:d,kf:kf,s:s});
+});
+E("u1-npv-simplified",1,["3.6"],2,"var",varset([
+  function(){return mcq("The expression \\("+FR(quadR(2,5),quadR(2,-3))+"\\) simplifies to \\("+FR("x - 5","x + 3")+"\\). A student says the simplified expression is non-permissible only when \\(x = -3\\). Which statement is correct?",
+    "The student is wrong: \\(x = 2\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
+    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = 2\\)","Once an expression is simplified, it has no non-permissible values"],
+    "The original denominator is \\((x - 2)(x + 3)\\), which is zero when \\(x = 2\\) and when \\(x = -3\\). Cancelling \\((x - 2)\\) changes how the expression is written, not where it is defined, so both restrictions carry over.",{});},
+  function(){return mcq("The expression \\("+FR(quadR(-4,1),quadR(-4,6))+"\\) simplifies to \\("+FR("x - 1","x - 6")+"\\). A student says the simplified expression is non-permissible only when \\(x = 6\\). Which statement is correct?",
+    "The student is wrong: \\(x = -4\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
+    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = -4\\)","Once an expression is simplified, it has no non-permissible values"],
+    "The original denominator is \\((x + 4)(x - 6)\\), zero when \\(x = -4\\) and when \\(x = 6\\). The cancelled factor still contributes its restriction to the simplified form.",{});},
+  function(){return mcq("The expression \\("+FR(quadR(3,-2),quadR(3,-5))+"\\) simplifies to \\("+FR("x + 2","x + 5")+"\\). A student says the simplified expression is non-permissible only when \\(x = -5\\). Which statement is correct?",
+    "The student is wrong: \\(x = 3\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
+    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = 3\\)","Once an expression is simplified, it has no non-permissible values"],
+    "The original denominator is \\((x - 3)(x + 5)\\), zero when \\(x = 3\\) and when \\(x = -5\\). Restrictions are a property of the original expression and survive simplification.",{});}
+]));
+E("u1-reverse-restrictions",1,["3.6"],3,"gen",function(){
+  var r1=ri(-7,7),r2=ri(-7,7),r3=ri(-7,7),t=0;
+  while((r1===r2||r1===r3||r2===r3)&&t<80){r1=ri(-7,7);r2=ri(-7,7);r3=ri(-7,7);t++;}
+  var opt=function(n1,n2,d1,d2){return MV(FR(linF(n1)+linF(n2),linF(d1)+linF(d2)));};
+  return mcq("A rational expression simplifies to \\("+FR(linF(r2),linF(r3))+"\\), and its non-permissible values are \\(x = "+r1+"\\) and \\(x = "+r3+"\\). Which expression could it have been <b>before</b> simplifying?",
+    opt(r1,r2,r1,r3),
+    [opt(r2,r3,r1,r3),opt(r1,r2,r2,r3),opt(r1,r3,r1,r3)],
+    "The original denominator must be zero at both non-permissible values, so it needs the factors \\("+linF(r1)+"\\) and \\("+linF(r3)+"\\). Cancelling the shared factor \\("+linF(r1)+"\\) must leave \\("+FR(linF(r2),linF(r3))+"\\), so the numerator needs \\("+linF(r1)+"\\) and \\("+linF(r2)+"\\). Only the correct option satisfies both conditions at once.",
+    {r1:r1,r2:r2,r3:r3});
+});
+E("u1-error-simplify",1,["3.7"],2,"var",varset([
+  function(){return mcq("A student simplifies \\("+FR("5x + 20","5")+"\\) and gets \\(x + 20\\). What is the <b>correct</b> simplified form?",
+    "\\(x + 4\\)",
+    ["\\(x + 20\\)","\\(5x + 4\\)","\\(25x + 20\\)"],
+    "Every term in the numerator must be divided by 5: \\(\\frac{5x}{5} + \\frac{20}{5} = x + 4\\). The student divided only the first term, which is the error.",{});},
+  function(){return mcq("A student simplifies \\("+FR("x^2 - 9","x - 3")+"\\) and gets \\(x - 3\\). What is the <b>correct</b> simplified form?",
+    "\\(x + 3\\), where \\(x \\ne 3\\)",
+    ["\\(x - 3\\), where \\(x \\ne 3\\)","\\(x + 9\\), where \\(x \\ne 3\\)","\\(x - 9\\), where \\(x \\ne 3\\)"],
+    "Factor first: \\(x^2 - 9 = (x - 3)(x + 3)\\), a difference of squares. Cancelling \\((x - 3)\\) leaves \\(x + 3\\). The student treated \\(-9\\) and \\(-3\\) as a common factor, but terms cannot be cancelled, only factors.",{});},
+  function(){return mcq("A student simplifies \\("+FR("6 - 2x","2")+"\\) and gets \\(3 - 2x\\). What is the <b>correct</b> simplified form?",
+    "\\(3 - x\\)",
+    ["\\(3 - 2x\\)","\\(6 - x\\)","\\(3 + x\\)"],
+    "Divide both terms by 2: \\(\\frac{6}{2} - \\frac{2x}{2} = 3 - x\\). The student divided only the constant term and left \\(-2x\\) untouched.",{});}
+]));
+
+/* --- simplifying (3.5) --- */
+E("u1-simplify-monomial",1,["3.5"],1,"gen",function(){
+  if(Math.random()<0.5){
+    var a=ri(2,12),b=ri(2,12),t=0;
+    while((gcd2(a,b)<2||a===b)&&t<80){a=ri(2,12);b=ri(2,12);t++;}
+    var m=ri(2,4),n=ri(1,m-1),pw=m-n,pws=(pw===1?"x":"x^"+pw),coef=frN(a,b);
+    return mcq("Simplify: \\("+FR(a+"x^"+m,b+"x^"+n)+"\\)",
+      MV(coef+pws),
+      [MV(frN(b,a)+pws),MV(coef+"x^"+(m+n)),MV(FR(a,b)+pws)],
+      "Divide the coefficients and subtract the exponents: \\(\\frac{"+a+"}{"+b+"} = "+coef+"\\) and \\(x^"+m+" \\div x^"+n+" = x^"+pw+"\\)"+(pw===1?"":"")+". The simplified form is <b>\\("+coef+pws+"\\)</b>. The coefficient must be reduced, and dividing powers subtracts exponents rather than adding them.",
+      {a:a,b:b,m:m,n:n});
+  }
+  var a2=ri(2,9),b2=ri(-9,9),c2=ri(2,9),g=1,t2=0;
+  while(t2<80){a2=ri(2,9);b2=ri(-9,9);c2=ri(2,9);g=gcd2(gcd2(a2,b2),c2);if(b2!==0&&g>=2)break;t2++;}
+  var corr=(c2/g===1)?MV(linS(a2/g,b2/g)):MV(FR(linS(a2/g,b2/g),""+(c2/g)));
+  return mcq("Simplify: \\("+FR(quadS(a2,b2,0),c2+"x")+"\\)",
+    corr,
+    [MV(FR(linS(a2,b2),""+c2)),MV(FR(linS(a2/g,b2/g),""+c2)),MV(FR(linS(a2,b2/g),""+(c2/g)))],
+    "Factor the numerator and divide every term by the common factor \\("+g+"x\\): \\(\\frac{"+quadS(a2,b2,0)+"}{"+c2+"x} = \\frac{x("+linS(a2,b2)+")}{"+c2+"x}\\). Cancelling \\(x\\) and reducing by \\("+g+"\\) gives <b>"+corr.replace(/\\/g,"\\")+"</b>.",
+    {a:a2,b:b2,c:c2,g:g});
+});
+E("u1-simplify-gcf",1,["3.5"],1,"gen",function(){
+  var c=ri(1,4),d=ri(-8,8),k=ri(2,7),t=0;
+  while(d===0&&t<40){d=ri(-8,8);t++;}
+  return numq("Simplify: \\("+FR(linS(k*c,k*d),linS(c,d))+"\\)",
+    k,0.001,
+    "Factor the numerator: \\("+linS(k*c,k*d)+" = "+k+"("+linS(c,d)+")\\). The factor \\(("+linS(c,d)+")\\) cancels with the denominator, leaving <b>\\("+k+"\\)</b>.",
+    {c:c,d:d,k:k});
+});
+E("u1-simplify-quad",1,["3.5"],2,"gen",function(){
+  var r1=ri(-8,8),r2=ri(-8,8),r3=ri(-8,8),t=0;
+  while((r1===r2||r1===r3||r2===r3)&&t<80){r1=ri(-8,8);r2=ri(-8,8);r3=ri(-8,8);t++;}
+  return mcq("Simplify: \\("+FR(quadR(r1,r2),quadR(r1,r3))+"\\)",
+    MV(FR(linF(r2),linF(r3))),
+    [MV(FR(linF(r1),linF(r3))),MV(FR(linF(r3),linF(r2))),MV(FR(linF(r2),linF(r1)))],
+    "Factor both quadratics: the numerator is \\("+linF(r1)+linF(r2)+"\\) and the denominator is \\("+linF(r1)+linF(r3)+"\\). Cancelling the shared factor \\("+linF(r1)+"\\) leaves <b>\\("+FR(linF(r2),linF(r3))+"\\)</b>, with \\(x \\ne "+r1+"\\) and \\(x \\ne "+r3+"\\).",
+    {r1:r1,r2:r2,r3:r3});
+});
+/* --- operations (3.8, 3.9, 3.10, 3.11, 3.12) --- */
+E("u1-add-same-den",1,["3.10"],2,"gen",function(){
+  var r=ri(-8,8),op=pick(["+","-"]),a1,b1,m,t=0,qa,qb;
+  do{a1=ri(1,4);b1=ri(-8,8);m=ri(-6,6);t++;
+    if(op==="+"){qa=m-a1;qb=-m*r-b1;}else{qa=a1-m;qb=b1+m*r;}
+  }while((m===0||(qa===0&&qb===0))&&t<80);
+  var D=linF(r),P=linS(a1,b1),Q=linS(qa,qb),S=linS(m,-m*r);
+  var other=(op==="+")?linS(a1-qa,b1-qb):linS(a1+qa,b1+qb);
+  return mcq("Determine, in simplified form: \\("+FR(P,D)+" "+op+" "+FR(Q,D)+"\\)",
+    MV(""+m),
+    [MV(FR(S,D)),MV(""+(-m)),MV(FR(other,D))],
+    "The denominators already match, so combine the numerators: the numerator becomes \\("+S+" = "+m+linF(r)+"\\) . Cancelling \\("+linF(r)+"\\) with the denominator leaves <b>\\("+m+"\\)</b> (with \\(x \\ne "+r+"\\)). The first distractor is the combined fraction before cancelling.",
+    {r:r,op:op,m:m});
+});
+E("u1-add-diff-den",1,["3.11"],2,"gen",function(){
+  var p=ri(-8,8),q=ri(-8,8),a=ri(2,6),b=ri(2,6),op=pick(["+","-"]),t=0;
+  while((p===0||q===0||p===q||a===b)&&t<80){p=ri(-8,8);q=ri(-8,8);a=ri(2,6);b=ri(2,6);t++;}
+  var den=linF(p)+linF(q);
+  var nA=(op==="+")?a+b:a-b, nB=(op==="+")?(-a*q-b*p):(-a*q+b*p);
+  var nA2=(op==="+")?a-b:a+b, nB2=(op==="+")?(-a*q+b*p):(-a*q-b*p);
+  return mcq("Determine, in simplified form: \\("+FR(""+a,linF(p))+" "+op+" "+FR(""+b,linF(q))+"\\)",
+    MV(FR(linS(nA,nB),den)),
+    [MV(FR(""+(op==="+"?a+b:a-b),den)),MV(FR(linS(nA2,nB2),den)),MV(FR(linS(nA,nB),quadS(1,p+q,p*q)))],
+    "The lowest common denominator is \\("+den+"\\). Rewrite each fraction with that denominator and combine: the numerator is \\("+a+"(x "+(q>0?"- "+q:"+ "+(-q))+") "+op+" "+b+"(x "+(p>0?"- "+p:"+ "+(-p))+") = "+linS(nA,nB)+"\\). The result is <b>\\("+FR(linS(nA,nB),den)+"\\)</b>. Adding the numerators straight across, or using the wrong operation on the second term, gives the distractors.",
+    {p:p,q:q,a:a,b:b,op:op});
+});
+E("u1-sub-monomial-den",1,["3.11"],2,"gen",function(){
+  var a=ri(2,7),b=ri(2,9),op=pick(["+","-"]);
+  var nb=(op==="-")?-b:b, straight=(op==="-")?(a-b):(a+b);
+  return mcq("Determine, in simplified form: \\("+FR(""+a,"x")+" "+op+" "+FR(""+b,"x^2")+"\\)",
+    MV(FR(linS(a,nb),"x^2")),
+    [MV(FR(""+straight,"x^2")),MV(FR(linS(a,-nb),"x^2")),MV(FR(linS(a,nb),"x"))],
+    "The lowest common denominator is \\(x^2\\), so the first fraction becomes \\(\\frac{"+a+"x}{x^2}\\). Combining gives \\(\\frac{"+linS(a,nb)+"}{x^2}\\). The result is <b>\\("+FR(linS(a,nb),"x^2")+"\\)</b>. The denominators cannot be treated as equal, and the denominator of the answer is \\(x^2\\), not \\(x\\).",
+    {a:a,b:b,op:op});
+});
+E("u1-lcd",1,["3.11"],2,"gen",function(){
+  var pr=pick([[2,3],[3,2],[3,4],[4,3],[4,6],[6,4]]),k1=pr[0],k2=pr[1];
+  var L=k1*k2/gcd2(k1,k2);
+  var p=ri(-6,6),q=ri(-6,6),t=0;
+  while(p===q&&t<40){q=ri(-6,6);t++;}
+  var A=pick(["x",""+ri(2,5),linS(1,ri(-4,4))]),B=pick([""+ri(2,6),"x"]);
+  var D1=k1+linF(p),D2=k2+linF(p)+linF(q),lcd=L+linF(p)+linF(q);
+  return mcq("What is the <b>lowest common denominator</b> of \\("+FR(A,D1)+"\\) and \\("+FR(B,D2)+"\\)?",
+    MV(lcd),
+    [MV(D2),MV(linF(p)+linF(q)),MV((k1*k2)+linF(p)+linF(p)+linF(q))],
+    "The second denominator already contains both variable factors, \\("+linF(p)+"\\) and \\("+linF(q)+"\\). For the coefficients, the least common multiple of \\("+k1+"\\) and \\("+k2+"\\) is \\("+L+"\\), so the LCD is <b>\\("+lcd+"\\)</b>. The second denominator alone uses \\("+k2+"\\) instead of \\("+L+"\\), and multiplying the two denominators gives more than the lowest common one.",
+    {k1:k1,k2:k2,p:p,q:q});
+});
+E("u1-mult",1,["3.12"],2,"gen",function(){
+  var a=ri(-8,8),b=ri(-8,8),c=ri(-8,8),t=0;
+  while((a===b||a===c||b===c)&&t<80){a=ri(-8,8);b=ri(-8,8);c=ri(-8,8);t++;}
+  var m=ri(1,5),n=ri(1,5),coef=frN(m,n),coefI=frN(n,m);
+  var cj=(coef==="1")?"":coef+" \\cdot ",cji=(coefI==="1")?"":coefI+" \\cdot ";
+  var numA=(m===1?"":(""+m))+linF(a),denB=(n===1?"":(""+n))+linF(c);
+  return mcq("Determine, in simplified form: \\("+FR(numA,linF(b))+" \\times "+FR(linF(b),denB)+"\\)",
+    MV(cj+FR(linF(a),linF(c))),
+    [MV(FR(numA+linF(b),linF(b)+denB)),MV(cji+FR(linF(c),linF(a))),MV(cj+FR(linF(a),linF(b)))],
+    "Multiply the numerators and denominators, then cancel the shared factor \\("+linF(b)+"\\): the product is <b>\\("+(cj+FR(linF(a),linF(c)))+"\\)</b>. The first distractor skips the cancellation, and the second flips the result.",
+    {a:a,b:b,c:c,m:m,n:n});
+});
+E("u1-div",1,["3.12"],2,"gen",function(){
+  var a=ri(-8,8),b=ri(-8,8),c=ri(-8,8),t=0;
+  while((a===b||a===c||b===c)&&t<80){a=ri(-8,8);b=ri(-8,8);c=ri(-8,8);t++;}
+  return mcq("Determine, in simplified form: \\("+FR(linF(a),linF(b))+" \\div "+FR(linF(a),linF(c))+"\\)",
+    MV(FR(linF(c),linF(b))),
+    [MV(FR(linF(a)+linF(a),linF(b)+linF(c))),MV(FR(linF(b),linF(c))),MV(FR(linF(a),linF(b)))],
+    "Dividing by a fraction means multiplying by its reciprocal: \\("+FR(linF(a),linF(b))+" \\times "+FR(linF(c),linF(a))+"\\). The factor \\("+linF(a)+"\\) cancels, leaving <b>\\("+FR(linF(c),linF(b))+"\\)</b>. Multiplying straight across without flipping is the first distractor.",
+    {a:a,b:b,c:c});
+});
+E("u1-npv-operations",1,["3.9"],2,"gen",function(){
+  function sample4(){var s=new Set();while(s.size<4)s.add(ri(-8,8));return [...s];}
+  var v=sample4(),s=v[0],p=v[1],q=v[2],r=v[3];
+  function lst(vals){return vals.slice().sort(function(x,y){return x-y;}).map(function(x){return "\\(x \\ne "+x+"\\)";}).join(", ");}
+  if(Math.random()<0.5){
+    var expr=FR(linF(s),linF(p))+" + "+FR(""+ri(2,6),linF(q));
+    return mcq("For the expression \\("+expr+"\\), which values are <b>non-permissible</b>?",
+      lst([p,q]),
+      [lst([p]),lst([q]),lst([p,q,s])],
+      "Only the denominators matter for an addition: \\("+linF(p)+"\\) is zero when \\(x = "+p+"\\) and \\("+linF(q)+"\\) is zero when \\(x = "+q+"\\). The numerator factor \\("+linF(s)+"\\) does not restrict anything, so the non-permissible values are <b>"+lst([p,q])+"</b>.",
+      {shape:"add",p:p,q:q,s:s});
+  }
+  var expr2=FR(linF(s),linF(p))+" \\div "+FR(linF(q),linF(r));
+  return mcq("For the expression \\("+expr2+"\\), which values are <b>non-permissible</b>?",
+    lst([p,q,r]),
+    [lst([p,r]),lst([p,q]),lst([p,q,r,s])],
+    "Three spots cause trouble: the first denominator \\("+linF(p)+"\\) (zero at \\(x = "+p+"\\)) and the divisor \\("+FR(linF(q),linF(r))+"\\), which is undefined at \\(x = "+r+"\\) and equal to zero at \\(x = "+q+"\\), and a divisor of zero is not allowed. The non-permissible values are <b>"+lst([p,q,r])+"</b>. The root of the first numerator does not restrict anything.",
+    {shape:"div",p:p,q:q,r:r,s:s});
+});
+E("u1-strategy-compare",1,["3.8"],2,"var",varset([
+  function(){return mcq("Which statement correctly compares adding rational expressions with adding rational numbers (fractions)?",
+    "Both must first be rewritten with a common denominator; the denominators themselves are never added",
+    ["In both cases, the numerators and the denominators are added straight across","Rational expressions can be added straight across because the denominators contain variables","The common denominator for rational expressions is always the sum of the two denominators"],
+    "Adding \\(\\frac{1}{4} + \\frac{1}{6}\\) needs a common denominator of 12, and adding rational expressions works the same way, with the LCD built from the factors of the denominators. Straight-across addition is wrong in both worlds.",{});},
+  function(){return mcq("Multiplying rational expressions uses the same strategy as multiplying fractions. Which statement explains why the strategies match?",
+    "In both cases the numerators are multiplied, the denominators are multiplied, and common factors may be cancelled before or after multiplying",
+    ["In both cases a common denominator must be found before multiplying","In both cases the numerators are added and the denominators are multiplied","Fractions cannot be simplified before multiplying, but rational expressions can"],
+    "Multiplication never needs a common denominator, for fractions or for rational expressions. Cancelling common factors first, as in \\(\\frac{2}{3} \\times \\frac{9}{4}\\), is the shared strategy.",{});},
+  function(){return mcq("Which statement gives a key difference between simplifying a rational number and simplifying a rational expression?",
+    "A rational expression can be undefined for some values of its variable, so its non-permissible values must be recorded; a rational number is one fixed value",
+    ["A rational expression cannot be written in lowest terms","Factors can be cancelled in a rational number but never in a rational expression","A rational number also has non-permissible values that must be recorded"],
+    "The number \\(\\frac{6}{9}\\) is just \\(\\frac{2}{3}\\). The expression \\(\\frac{6}{x + 9}\\) simplifies nothing and is undefined at \\(x = -9\\); that restriction has no counterpart for a plain number.",{});}
+]));
+
+/* --- equations (3.13, 3.14, 3.15, 3.16) --- */
+E("u1-npv-equation",1,["3.13"],1,"gen",function(){
+  var a=ri(-8,8),b=ri(-8,8),m=ri(2,9),n=ri(2,9),t=0;
+  while((a===b||m===a||m===b||n===a||n===b||m===n)&&t<80){a=ri(-8,8);b=ri(-8,8);m=ri(2,9);n=ri(2,9);t++;}
+  var pair=function(x,y){var lo=Math.min(x,y),hi=Math.max(x,y);return "\\(x \\ne "+lo+"\\) and \\(x \\ne "+hi+"\\)";};
+  return mcq("What are the <b>non-permissible values</b> in the equation \\("+FR(""+m,linF(a))+" = "+FR(""+n,linF(b))+"\\)?",
+    pair(a,b),
+    ["\\(x \\ne "+a+"\\) only","\\(x \\ne "+b+"\\) only",pair(m,n)],
+    "Non-permissible values come from the denominators: \\("+linF(a)+"\\) is zero at \\(x = "+a+"\\) and \\("+linF(b)+"\\) is zero at \\(x = "+b+"\\). The numerators \\("+m+"\\) and \\("+n+"\\) play no part. The non-permissible values are <b>"+pair(a,b)+"</b>.",
+    {a:a,b:b,m:m,n:n});
+});
+E("u1-solve-simple",1,["3.14"],1,"gen",function(){
+  var a,b,c,x,t=0;
+  if(Math.random()<0.5){
+    do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*c)%b!==0&&t<90);
+    x=a*c/b;
+    return numq("Solve: \\("+FR(""+a,"x")+" = "+FR(""+b,""+c)+"\\)",
+      x,0.001,
+      "Cross-multiply: \\("+b+"x = "+(a*c)+"\\), so \\(x = \\frac{"+(a*c)+"}{"+b+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+      {a:a,b:b,c:c,shape:"a/x"});
+  }
+  do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*b)%c!==0&&t<90);
+  x=a*b/c;
+  return numq("Solve: \\("+FR("x",""+a)+" = "+FR(""+b,""+c)+"\\)",
+    x,0.001,
+    "Cross-multiply: \\("+c+"x = "+(a*b)+"\\), so \\(x = \\frac{"+(a*b)+"}{"+c+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+    {a:a,b:b,c:c,shape:"x/a"});
+});
+E("u1-solve-cross",1,["3.14"],2,"gen",function(){
+  var p=ri(-8,8),a,b,c,x,t=0;
+  if(Math.random()<0.5){
+    do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*c)%b!==0&&t<90);
+    x=p+a*c/b;
+    return numq("Solve: \\("+FR(""+a,linF(p))+" = "+FR(""+b,""+c)+"\\)",
+      x,0.001,
+      "Cross-multiply: \\("+a*c+" = "+b+linF(p)+"\\). So \\("+b+"x = "+(a*c+b*p)+"\\) and \\(x = \\frac{"+(a*c+b*p)+"}{"+b+"} = "+x+"\\). This is not the non-permissible value \\(x = "+p+"\\), so the solution is <b>\\(x = "+x+"\\)</b>.",
+      {p:p,a:a,b:b,c:c,shape:"shift"});
+  }
+  do{a=ri(2,9);b=ri(2,9);c=ri(2,9);t++;}while((a*b)%c!==0&&t<90);
+  x=p+a*b/c;
+  return numq("Solve: \\("+FR(linF(p),""+a)+" = "+FR(""+b,""+c)+"\\)",
+    x,0.001,
+    "Cross-multiply: \\("+c+linF(p)+" = "+(a*b)+"\\). So \\("+c+"x = "+(a*b+c*p)+"\\) and \\(x = \\frac{"+(a*b+c*p)+"}{"+c+"} = "+x+"\\). The solution is <b>\\(x = "+x+"\\)</b>.",
+    {p:p,a:a,b:b,c:c,shape:"numshift"});
+});
+E("u1-solve-quad-eq",1,["3.14"],2,"gen",function(){
+  var s1,s2,d,b,a,t=0;
+  do{s1=ri(2,7);s2=-ri(2,7);var prod=Math.abs(s1*s2);var divs=[2,3,4,5,6].filter(function(dd){return prod%dd===0;});t++;}
+  while((!divs.length||s1===-s2)&&t<90);
+  d=pick(divs);b=prod/d;a=-(s1+s2);
+  var pair=function(x,y){return "\\(x = "+x+"\\) and \\(x = "+y+"\\)";};
+  return mcq("Solve: \\("+FR(linS(1,a),""+d)+" = "+FR(""+b,"x")+"\\)",
+    pair(s2,s1),
+    ["\\(x = "+s1+"\\) only",pair(-s1,-s2),pair(s1+s2,s1*s2)],
+    "Multiply both sides by \\("+d+"x\\): \\(x(x "+(a>=0?"+ ":"- ")+Math.abs(a)+") = "+(b*d)+"\\), which gives \\(x^2 "+(a>=0?"+ ":"- ")+Math.abs(a)+"x - "+(b*d)+" = 0\\). Factoring gives \\("+linF(s1)+linF(s2)+" = 0\\), so \\(x = "+s1+"\\) or \\(x = "+s2+"\\). Neither value is 0, so both are permissible: <b>"+pair(s2,s1)+"</b>.",
+    {s1:s1,s2:s2,d:d,b:b,a:a});
+});
+E("u1-extraneous",1,["3.15"],2,"var",varset([
+  function(){return mcq("A student solves \\("+FR("5","x - 2")+" = "+FR("x + 3","x - 2")+"\\) by multiplying both sides by \\((x - 2)\\), gets \\(5 = x + 3\\), and concludes the solution is \\(x = 2\\). Why is \\(x = 2\\) <b>not</b> a solution?",
+    "At \\(x = 2\\) both denominators in the original equation are 0, so the equation is undefined there; multiplying by \\((x - 2)\\) introduced the value, and the equation has no solution",
+    ["The student made an arithmetic error: the correct solution is \\(x = 8\\)","\\(x = 2\\) makes the two numerators equal, which is not allowed","A rational equation can never have a positive solution"],
+    "Multiplying both sides by an expression that can be zero can introduce values that were never solutions. Here the only candidate, \\(x = 2\\), makes the original denominators zero, so it is extraneous and the equation has no solution.",{});},
+  function(){return mcq("A student solves \\("+FR("2x","x + 5")+" = "+FR("x - 5","x + 5")+"\\) by multiplying both sides by \\((x + 5)\\), gets \\(2x = x - 5\\), and concludes the solution is \\(x = -5\\). Why is \\(x = -5\\) <b>not</b> a solution?",
+    "At \\(x = -5\\) both denominators in the original equation are 0, so the equation is undefined there; multiplying by \\((x + 5)\\) introduced the value, and the equation has no solution",
+    ["The student made an arithmetic error: the correct solution is \\(x = 5\\)","\\(x = -5\\) is negative, and lengths in equations must be positive","The value makes the numerator of the left side equal to 0"],
+    "The candidate value is exactly the non-permissible value of the equation. Any value produced by solving must be checked against the original denominators; this one fails the check, so there is no solution.",{});},
+  function(){return mcq("A student solves \\("+FR("x^2","x - 1")+" = "+FR("x","x - 1")+"\\) and reports two solutions, \\(x = 0\\) and \\(x = 1\\). Which statement is correct?",
+    "Only \\(x = 0\\) is a solution: at \\(x = 1\\) the denominators are 0, so \\(x = 1\\) is extraneous even though it satisfies the multiplied-out equation \\(x^2 = x\\)",
+    ["Both are solutions, because both satisfy \\(x^2 = x\\)","Only \\(x = 1\\) is a solution, because \\(x = 0\\) makes a numerator 0","Neither is a solution, because the equation has a fraction in it"],
+    "Multiplying by \\((x - 1)\\) gives \\(x^2 = x\\), with roots 0 and 1. Checking in the original equation: \\(x = 0\\) gives \\(0 = 0\\), which works, but \\(x = 1\\) divides by zero. A numerator of 0 is fine; a denominator of 0 is not.",{});}
+]));
+E("u1-context-work",1,["3.16"],3,"gen",function(){
+  var combos=[[3,6],[4,12],[6,12],[5,20],[8,24],[10,15],[9,18],[12,12],[15,30],[20,30],[6,6],[4,4],[7,7],[14,14]];
+  var pr=pick(combos),a=pr[0],b=pr[1],t=a*b/(a+b);
+  var ctx=pick([
+    {w:"paint the community hall in Harbour Grace",p:["Alicia","Devon"]},
+    {w:"stack the winter firewood at a cabin in Gros Morne",p:["Marcus","Jill"]},
+    {w:"clear the snow from a long driveway in Corner Brook",p:["Erin","Colin"]},
+    {w:"gut and pack a day's catch at the plant in Bay de Verde",p:["Shawn","Tessa"]},
+    {w:"mow and line the ball field in Gander",p:["Noah","Priya"]}]);
+  return numq(ctx.p[0]+" can "+ctx.w+" alone in "+a+" hours, and "+ctx.p[1]+" can do the same job alone in "+b+" hours. How long, in hours, will the job take if they work together?",
+    t,0.011,
+    "Work rates add. In one hour "+ctx.p[0]+" does \\(\\frac{1}{"+a+"}\\) of the job and "+ctx.p[1]+" does \\(\\frac{1}{"+b+"}\\). Together: \\(\\frac{1}{"+a+"} + \\frac{1}{"+b+"} = \\frac{"+(a+b)+"}{"+(a*b)+"}\\) of the job per hour, so the whole job takes \\(\\frac{"+(a*b)+"}{"+(a+b)+"} = "+fmt(t)+"\\) hours. The time together is <b>"+fmt(t)+" hours</b>, less than either time alone, as it should be.",
+    {a:a,b:b,t:t});
+});
+E("u1-context-wind",1,["3.16"],3,"gen",function(){
+  var plane=Math.random()<0.5,v,w,t,d1,d2;
+  if(plane){v=pick([150,180,200,220,240,260,300]);w=pick([10,20,25,30,40]);t=pick([2,2.5,3]);}
+  else{v=pick([12,15,18,20,24,30]);w=pick([2,3,4,5,6]);t=pick([2,3,4]);}
+  d1=t*(v-w);d2=t*(v+w);
+  var stem=plane?
+    "A flight from St. John's to Wabush covers "+d1+" km against the wind in the same time it covers "+d2+" km with the wind on the return flight. The wind speed is "+w+" km/h. What is the speed of the plane in still air, in km/h?":
+    "A tour boat out of Bay Bulls travels "+d1+" km against the current in the same time it travels "+d2+" km with the current. The current flows at "+w+" km/h. What is the speed of the boat in still water, in km/h?";
+  return numq(stem,
+    v,0.001,
+    "Let the still-air speed be \\(v\\). Equal times give \\(\\frac{"+d1+"}{v - "+w+"} = \\frac{"+d2+"}{v + "+w+"}\\). Cross-multiplying: \\("+d1+"(v + "+w+") = "+d2+"(v - "+w+")\\), so \\("+d1+"v + "+(d1*w)+" = "+d2+"v - "+(d2*w)+"\\), and \\("+(d2-d1)+"v = "+(w*(d1+d2))+"\\). The speed is <b>\\(v = "+v+"\\) km/h</b>.",
+    {v:v,w:w,d1:d1,d2:d2});
+});
+E("u1-context-cost",1,["3.16"],3,"gen",function(){
+  var n,k,s1,C,e,t=0;
+  do{n=ri(18,48);k=ri(2,9);s1=ri(15,40);C=n*s1;t++;}
+  while((C%(n-k)!==0||C/(n-k)-s1<2)&&t<200);
+  e=C/(n-k)-s1;var went=n-k;
+  var dest=pick(["a class trip to Gros Morne","a ski trip to Marble Mountain","a band trip to St. John's","a geography field trip to the Tablelands"]);
+  return numq("The total cost of "+dest+" is $"+C+", shared equally among the students who go. When "+k+" students could not go, each of the remaining students had to pay $"+e+" more. How many students actually went on the trip?",
+    went,0.001,
+    "Let \\(n\\) be the number who first signed up. Then \\(\\frac{"+C+"}{n - "+k+"} - \\frac{"+C+"}{n} = "+e+"\\). Combining the fractions gives \\(\\frac{"+(C*k)+"}{n(n - "+k+")} = "+e+"\\), so \\(n(n - "+k+") = "+(C*k/e)+"\\). Trying the factor pair: \\("+n+" \\times "+went+" = "+(C*k/e)+"\\), so \\(n = "+n+"\\). The number who actually went is <b>"+went+"</b>.",
+    {C:C,n:n,k:k,e:e});
+});
+E("u1-two-step-simplify",1,["3.12"],3,"gen",function(){
+  var s=ri(2,6),t=ri(-6,6),k=ri(2,5),tr=0;
+  while((t===0||t===s||t===-s)&&tr<60){t=ri(-6,6);tr++;}
+  var numQuad=quadS(1,0,-s*s);
+  var prompt="Simplify completely: \\("+FR(k+"("+numQuad+")",linF(s)+linF(t))+" \\div "+FR(linF(-s),linF(t))+"\\)";
+  return numq(prompt,
+    k,0.001,
+    "Factor the difference of squares: \\("+numQuad+" = "+linF(s)+linF(-s)+"\\). Cancelling \\("+linF(s)+"\\) leaves \\(\\frac{"+k+linF(-s)+"}{"+linF(t)+"}\\). Dividing by \\("+FR(linF(-s),linF(t))+"\\) means multiplying by its reciprocal, and both remaining factors cancel, leaving <b>\\("+k+"\\)</b>. (Restrictions: \\(x \\ne "+s+"\\), \\(x \\ne "+t+"\\), \\(x \\ne "+(-s)+"\\).)",
+    {s:s,t:t,k:k});
+});
+/* BANK-SRC-END */
 </script>
 
 <script>
