@@ -1367,6 +1367,386 @@ E("u3-temp-model",3,["7.7"],3,"var",varset([
     2.6,0.01,
     "Evaluate the phase first: \\(30(9 - 3) = 180^\\circ\\), and \\(\\sin 180^\\circ = 0\\). So \\(H(9) = 1.8(0) + 2.6 = 2.6\\) m, the midline depth, halfway between high and low water.",{});}
 ]));
+
+/* ================= Unit 4: Exponential Functions ================= */
+function bStr(bn,bd){return bd===1?(""+bn):"\\left(\\frac{"+bn+"}{"+bd+"}\\right)";}
+function expS(a,bn,bd){return (a===1?"":(""+a))+"("+bStr(bn,bd)+")^x";}
+function powVal(bn,bd,k){var n=1,d=1,i;if(k>=0){for(i=0;i<k;i++){n*=bn;d*=bd;}}else{for(i=0;i<-k;i++){n*=bd;d*=bn;}}var g=gcd2(n,d);return [n/g,d/g];}
+function valStr(n,d){return d===1?(""+n):("\\frac{"+n+"}{"+d+"}");}
+E("u4-identify-exponential",4,["4.12"],1,"gen",function(){
+  var A=pick([2,3,4,5,6,7,8,9]),bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4],[4,5],[5,4],[3,2]]);
+  var corr="\\(y = "+expS(A,bp[0],bp[1])+"\\)";
+  var pool=["\\(y = x^2 + "+ri(1,9)+"\\)","\\(y = "+ri(2,7)+"x + "+ri(1,9)+"\\)","\\(y = x^"+pick([3,4,5])+"\\)","\\(y = (-"+pick([2,3])+")^x\\)","\\(y = \\frac{"+pick([2,3,6])+"}{x}\\)","\\(y = "+pick([5,7,11])+"\\)","\\(y = \\sqrt{x} + "+ri(1,4)+"\\)"];
+  var ds=[];while(ds.length<3){var c=pick(pool);if(ds.indexOf(c)<0)ds.push(c);}
+  return mcq("Which of the following is an <b>exponential function</b>?",
+    corr,ds,
+    "An exponential function has the variable in the exponent with a positive constant base (not 1): \\(y = a(b)^x\\). The correct choice has that form. The others are a polynomial, a linear function, a power of \\(x\\), a negative base (not allowed for exponential functions in this course), a reciprocal, a constant, or a root function.",
+    {A:A,bp:bp});
+});
+E("u4-growth-or-decay",4,["4.13"],1,"gen",function(){
+  var A=pick([2,3,4,5,6,8,10,12,15,20]),bp=pick([[2,1],[3,1],[4,1],[5,1],[1,2],[1,3],[1,4],[2,5],[5,2]]);
+  var bv=bp[0]/bp[1],growth=bv>1;
+  return mcq("The function \\(y = "+expS(A,bp[0],bp[1])+"\\) is:",
+    growth?"Increasing, because the base is greater than 1":"Decreasing, because the base is between 0 and 1",
+    [growth?"Decreasing, because the base is between 0 and 1":"Increasing, because the base is greater than 1",
+     "Constant, because the coefficient "+A+" does not change",
+     growth?"Increasing, because the coefficient "+A+" is positive":"Decreasing, because the coefficient "+A+" is positive"],
+    "For \\(y = a(b)^x\\) with \\(a > 0\\), the base decides the direction: here \\(b = "+fmt(bv)+"\\), which is "+(growth?"greater than 1, so each step multiplies by more than 1 and the function increases.":"between 0 and 1, so each step multiplies by a fraction and the function decreases.")+" The coefficient \\(a\\) sets the starting value, not the direction.",
+    {A:A,bp:bp});
+});
+E("u4-express-as-power",4,["4.7"],1,"gen",function(){
+  var mode=pick(["int","int","frac"]);
+  if(mode==="frac"){
+    var bp2=pick([2,3,4,5]),k2=pick([2,3,4]),v=powVal(1,bp2,k2);
+    var ans="\\(\\left(\\frac{1}{"+bp2+"}\\right)^{"+k2+"}\\)";
+    return mcq("Which expression is equivalent to \\("+valStr(v[0],v[1])+"\\)?",
+      ans,
+      ["\\(\\left(\\frac{1}{"+bp2+"}\\right)^{"+(k2+1)+"}\\)","\\(\\left(\\frac{1}{"+(bp2+1)+"}\\right)^{"+k2+"}\\)","\\("+bp2+"^{"+k2+"}\\)"],
+      "\\(\\frac{1}{"+Math.pow(bp2,k2)+"}\\) is \\(\\frac{1}{"+bp2+"}\\) multiplied by itself "+k2+" times: "+ans+". Writing it as a single power of "+bp2+", it is also \\("+bp2+"^{-"+k2+"}\\).",
+      {mode:mode});
+  }
+  var B=pick([2,3,4,5,6,7,8,9,10]),k=(B<=3?pick([2,3,4]):pick([2,3])),N=Math.pow(B,k),tmpl=pick([1,2]);
+  if(tmpl===1){
+    var candE=["\\("+B+"^"+(k+1)+"\\)","\\("+(B+1)+"^"+k+"\\)","\\("+k+"^"+B+"\\)","\\(("+B+" + "+k+")^"+k+"\\)","\\("+B+"^{"+k+"} + "+B+"\\)"],corrE="\\("+B+"^"+k+"\\)",dsE=[];
+    for(var ei=0;ei<candE.length&&dsE.length<3;ei++){if(candE[ei]!==corrE&&dsE.indexOf(candE[ei])<0)dsE.push(candE[ei]);}
+    return mcq("Express "+N+" as a power of "+B+".",
+      corrE,dsE,
+      N+" is "+B+" multiplied by itself "+k+" times ("+Array(k).fill(B).join(" \\times ")+"), so "+N+" = \\("+B+"^"+k+"\\) as a single power.",
+      {B:B,k:k});
+  }
+  var candV=[""+Math.pow(B,k+1),""+Math.pow(B+1,k),""+(B*k),""+(N+B),""+(2*N)],dsV=[];
+  for(var vi=0;vi<candV.length&&dsV.length<3;vi++){if(candV[vi]!==""+N&&dsV.indexOf(candV[vi])<0)dsV.push(candV[vi]);}
+  return mcq("Which expression is equivalent to \\("+B+"^"+k+"\\)?",
+    ""+N,dsV,
+    "\\("+B+"^"+k+"\\) means "+B+" multiplied by itself "+k+" times: "+Array(k).fill(B).join(" \\times ")+" = "+N+". (Multiplying the base by the exponent, "+(B*k)+", is the classic trap.)",
+    {B:B,k:k});
+});
+E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
+  var feat=pick(["range","yint","direction"]);
+  var A=pick([1,2,3,4,5]),bp=pick([[2,1],[3,1],[1,2],[1,3]]),bv=bp[0]/bp[1];
+  var fn=function(x){return A*Math.pow(bv,x);};
+  var win={x0:-3,x1:3.5,y0:-4,y1:Math.max(20,A*Math.pow(bv,2.5)+6)};
+  function yintDistrs(){var cand=["0",""+fmt(A*bv),""+(A+2),""+(2*A),""+(A+1)],out=[];for(var i=0;i<cand.length&&out.length<3;i++){if(cand[i]!==""+A&&out.indexOf(cand[i])<0)out.push(cand[i]);}return out;}
+  if(feat==="range"){
+    var q=mcq("What is the <b>range</b> of the exponential function shown?",
+      "\\(\\{y \\mid y > 0, \\ y \\in \\mathbb{R}\\}\\)",
+      ["\\(\\{y \\mid y > "+A+", \\ y \\in \\mathbb{R}\\}\\)","\\(\\{y \\mid y \\ge 0, \\ y \\in \\mathbb{R}\\}\\)","\\(\\{y \\mid y \\in \\mathbb{R}\\}\\)"],
+      "The curve stays above the x-axis and approaches it without ever touching: there are no zero or negative outputs, but every positive value occurs. The range is <b>\\(\\{y \\mid y > 0\\}\\)</b>. Note the curve passes through \\((0, "+A+")\\) but "+A+" is the y-intercept, not a boundary of the range.",
+      {feat:feat,A:A,bp:bp});
+    q.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q;
+  }
+  if(feat==="yint"){
+    var q2=mcq("What is the <b>y-intercept</b> of the exponential function shown?",
+      ""+A,yintDistrs(),
+      "The y-intercept is where the curve crosses the y-axis, at \\(x = 0\\). Reading the graph there gives <b>"+A+"</b>.",
+      {feat:feat,A:A,bp:bp});
+    q2.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q2;
+  }
+  var growth=bv>1;
+  var q3=mcq("Which statement describes the graphed exponential function?",
+    growth?"Increasing: the values grow as x increases":"Decreasing: the values shrink as x increases",
+    [growth?"Decreasing: the values shrink as x increases":"Increasing: the values grow as x increases",
+     "It has an x-intercept where the curve crosses the axis",
+     "Its range includes negative values"],
+    "Reading left to right, the curve "+(growth?"climbs steadily, so the function is increasing":"falls steadily toward the x-axis, so the function is decreasing")+". An exponential of the form \\(y = a(b)^x\\) with \\(a > 0\\) never crosses the x-axis and never takes negative values, which rules out the other two statements.",
+    {feat:feat,A:A,bp:bp});
+  q3.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q3;
+});
+E("u4-eq-characteristics",4,["4.13"],2,"gen",function(){
+  var feat=pick(["yint","range","factor"]);
+  var A=pick([2,3,4,5,6,8]),bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4]]),bv=bp[0]/bp[1],tries=0;
+  while(new Set([bv,A,A*bv,bv*bv,A+1]).size<5&&tries<60){A=pick([2,3,4,5,6,8]);bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4]]);bv=bp[0]/bp[1];tries++;}
+  var eq="y = "+expS(A,bp[0],bp[1]);
+  if(feat==="yint"){
+    return mcq("What is the <b>y-intercept</b> of \\("+eq+"\\)?",
+      ""+A,[""+fmt(bv),""+(A+1),"1"],
+      "Set \\(x = 0\\): any base to the power 0 is 1, so \\(y = "+A+" \\times 1 = "+A+"\\). The y-intercept of \\(y = a(b)^x\\) is always \\(a\\): <b>"+A+"</b>.",
+      {feat:feat,A:A});
+  }
+  if(feat==="range"){
+    return mcq("What is the <b>range</b> of \\("+eq+"\\)?",
+      "\\(\\{y \\mid y > 0, \\ y \\in \\mathbb{R}\\}\\)",
+      ["\\(\\{y \\mid y > "+A+", \\ y \\in \\mathbb{R}\\}\\)","\\(\\{y \\mid y \\ge 0, \\ y \\in \\mathbb{R}\\}\\)","\\(\\{y \\mid y < 0, \\ y \\in \\mathbb{R}\\}\\)"],
+      "Powers of a positive base are always positive, and multiplying by \\(a = "+A+" > 0\\) keeps them positive, so every output is greater than 0 and the x-axis is a horizontal asymptote. The range is <b>\\(\\{y \\mid y > 0\\}\\)</b>, whatever the values of \\(a\\) and \\(b\\).",
+      {feat:feat,A:A});
+  }
+  return mcq("For \\("+eq+"\\), by what <b>factor</b> does the value of \\(y\\) change each time \\(x\\) increases by 1?",
+    fmt(bv),[""+A,""+fmt(A*bv),""+fmt(bv*bv)],
+    "Each increase of 1 in \\(x\\) adds one more multiplication by the base: \\(y\\) is multiplied by \\(b = "+fmt(bv)+"\\) every step. That constant multiple is the growth (or decay) factor; \\(a = "+A+"\\) is only the starting value at \\(x = 0\\).",
+    {feat:feat,A:A,bp:bp});
+});
+E("u4-match-graph",4,["4.11"],2,"gen",function(){
+  var A=pick([1,2,3,4,5,6,7,8]),bp=pick([[2,1],[3,1],[4,1],[5,1],[1,2],[1,3],[1,4],[1,5],[4,5],[3,2]]),bv=bp[0]/bp[1];
+  var fn=function(x){return A*Math.pow(bv,x);};
+  var A2=(A===1?3:A+1),recip=[bp[1],bp[0]];
+  var q=mcq("Which equation matches the graphed exponential function?",
+    "\\(y = "+expS(A,bp[0],bp[1])+"\\)",
+    ["\\(y = "+expS(A,recip[0],recip[1])+"\\)","\\(y = "+expS(A2,bp[0],bp[1])+"\\)","\\(y = "+expS(A2,recip[0],recip[1])+"\\)"],
+    "Read two things off the graph: it crosses the y-axis at "+A+", so \\(a = "+A+"\\); and it is "+(bv>1?"increasing":"decreasing")+", so the base is "+(bv>1?"greater than 1":"between 0 and 1")+". Checking the value at \\(x = 1\\) (\\(y = "+fmt(A*bv)+"\\) on the graph) pins the base at \\("+fmt(bv)+"\\). Only the correct option matches the intercept, the direction, and the steepness.",
+    {A:A,bp:bp});
+  q.figure=plotSVG(fn,-3,3.5,-4,Math.max(20,A*Math.pow(bv,2.5)+6),{gx:1,gy:5,labelX:true});
+  return q;
+});
+E("u4-match-by-description",4,["4.11"],2,"gen",function(){
+  var table=[[[2,1],[3,5,12,20,25]],[[3,1],[3,5,12,20,25]],[[4,1],[2,3,5,10]],[[1,2],[4,6,10,20,30]],[[1,3],[6,12,24,30]],[[1,4],[8,16,20,40]],[[1,5],[10,25,50]]];
+  var row=pick(table),bp=row[0],A=pick(row[1]),bv=bp[0]/bp[1],step=pick([1,2]);
+  var yv=A*Math.pow(bv,step),recip=[bp[1],bp[0]];
+  var A2=Math.round(yv);if(A2===1)A2=A+2;
+  return mcq("An exponential function of the form \\(y = a(b)^x\\) has y-intercept "+A+" and passes through the point \\(("+step+", "+fmt(yv)+")\\). Which equation is it?",
+    "\\(y = "+expS(A,bp[0],bp[1])+"\\)",
+    ["\\(y = "+expS(A,recip[0],recip[1])+"\\)","\\(y = "+expS(A2,bp[0],bp[1])+"\\)","\\(y = "+expS(1,bp[0],bp[1])+"\\)"],
+    "The y-intercept gives \\(a = "+A+"\\). Substitute the point: \\("+fmt(yv)+" = "+A+"(b)^{"+step+"}\\), so \\(b^{"+step+"} = "+fmt(yv/A)+"\\) and \\(b = "+fmt(bv)+"\\). The trap options use the reciprocal base (which flips growth to decay) or mistake the point's y-value for \\(a\\). The function is \\(y = "+expS(A,bp[0],bp[1])+"\\).",
+    {A:A,bp:bp,step:step});
+});
+
+var EXP_CTX=[
+  {n:"A bacteria culture in a lab grows",xu:"Time (h)",yu:"Mass (mg)",thing:"mass"},
+  {n:"The population of a pond's trout population changes",xu:"Time (yr)",yu:"Trout",thing:"population"},
+  {n:"The value of a snowmobile bought in Corner Brook changes",xu:"Time (yr)",yu:"Value ($)",thing:"value"}
+];
+function expDataGen(){
+  var bp=pick([[2,1],[2,1],[3,1],[4,1],[1,2],[1,2],[1,3]]);
+  var bv=bp[0]/bp[1];
+  var apool=(bv===2?[3,5,6,10,15]:(bv===3?[2,4,5,10]:(bv===4?[3,5,10]:(bv===0.5?[16,32,48,80,160]:[27,54,81,162]))));
+  var A=pick(apool),step=pick([1,1,2]);
+  var xs=[0,1,2,3,4].map(function(i){return i*step;});
+  var ys=xs.map(function(x,i){return A*Math.pow(bv,i);});
+  return {bp:bp,bv:bv,A:A,step:step,xs:xs,ys:ys,ctx:pick(EXP_CTX)};
+}
+E("u4-data-fit-equation",4,["4.1"],2,"gen",function(){
+  var g=expDataGen(),recip=[g.bp[1],g.bp[0]];
+  var tbl=tblHTML(g.xs,g.ys.map(function(v){return fmt(v);}),g.ctx.xu,g.ctx.yu);
+  var eqv=function(aa,bp){return "P(t) = "+(aa===1?"":aa)+"("+bStr(bp[0],bp[1])+")^{t"+(g.step===1?"":"/"+g.step)+"}" ;};
+  return mcq(g.ctx.n+" as shown in the table. "+tbl+" Which function models the data, where \\(t\\) is the time?",
+    "\\("+eqv(g.A,g.bp)+"\\)",
+    ["\\("+eqv(g.A,recip)+"\\)","\\("+eqv(g.ys[1],g.bp)+"\\)","\\(P(t) = "+g.A+" + "+fmt(g.ys[1]-g.A)+"t\\)"],
+    "Check the pattern: each step multiplies the value by "+fmt(g.bv)+" ("+g.ys.slice(0,3).map(function(v){return fmt(v);}).join(" to ")+" ...), a constant ratio, so the model is exponential, not linear. The starting value at \\(t = 0\\) is "+g.A+", giving \\(a = "+g.A+"\\), and the ratio gives \\(b = "+fmt(g.bv)+"\\). The model is \\("+eqv(g.A,g.bp)+"\\).",
+    {A:g.A,bp:g.bp,step:g.step});
+});
+E("u4-data-next-value",4,["4.1"],2,"gen",function(){
+  var g=expDataGen(),ask=pick(["next","missing"]);
+  if(ask==="next"){
+    var ans=g.A*Math.pow(g.bv,5);
+    return numq(g.ctx.n+" as shown in the table. "+tblHTML(g.xs,g.ys.map(function(v){return fmt(v);}),g.ctx.xu,g.ctx.yu)+" Following the pattern, what is the "+g.ctx.yu.replace(/\(.*\)/,"").trim().toLowerCase()+" at time "+(5*g.step)+"?",
+      ans,0.01,
+      "The values multiply by "+fmt(g.bv)+" at each step ("+g.ys.map(function(v){return fmt(v);}).join(", ")+"). One more step: "+fmt(g.ys[4])+" \\(\\times "+fmt(g.bv)+" = "+fmt(ans)+"\\).",
+      {ask:ask,A:g.A,bp:g.bp});
+  }
+  var ys2=g.ys.slice();var missing=ys2[2];ys2[2]=null;
+  return numq(g.ctx.n+" as shown in the table, with one value missing. "+tblHTML(g.xs,ys2.map(function(v){return v===null?null:fmt(v);}),g.ctx.xu,g.ctx.yu)+" What is the missing value?",
+    missing,0.01,
+    "The values change by a constant ratio: "+fmt(g.ys[1])+" / "+fmt(g.ys[0])+" = "+fmt(g.bv)+", confirmed by "+fmt(g.ys[4])+" / "+fmt(g.ys[3])+" = "+fmt(g.bv)+". So the missing value is "+fmt(g.ys[1])+" \\(\\times "+fmt(g.bv)+" = "+fmt(missing)+"\\). (Adding a constant difference instead is the linear trap; the differences here grow.)",
+    {ask:ask,A:g.A,bp:g.bp});
+});
+E("u4-interpret-graph-model",4,["4.3"],2,"var",varset([
+  function(){var fn=function(t){return 150*Math.pow(2,t/2);};
+    var q=mcq("The graph models the population of bacteria in a sample, over time in hours. What does the value where the graph crosses the vertical axis represent?",
+      "The initial population: 150 bacteria at time 0",
+      ["The population after 150 hours","The doubling time of the bacteria","The maximum population the sample can hold"],
+      "The crossing point is at t = 0, the start of the experiment, and its value is 150. In a model P(t) = a(b)^t, that starting value is a, the initial population.",{});
+    q.figure=plotSVG(fn,0,8,0,1300,{gx:1,gy:200,labelX:true});return q;},
+  function(){var fn=function(t){return 18000*Math.pow(0.5,t/6);};
+    var q=mcq("The graph models the value of a side-by-side ATV bought in Labrador, in dollars, over time in years. Which statement is correct?",
+      "The value halves every 6 years, dropping toward $0 without ever reaching it",
+      ["The value drops by $3000 every year","The value reaches $0 after 36 years","The value halves every year"],
+      "The curve falls by a constant ratio, not a constant amount: it passes $9000 at 6 years and $4500 at 12 years, halving every 6 years. Like all decay of the form a(b)^t with 0 < b < 1, it approaches $0 but mathematically never arrives.",{});
+    q.figure=plotSVG(fn,0,24,0,19000,{gx:2,gy:3000,labelX:true});return q;},
+  function(){var fn=function(t){return 60*Math.pow(3,t/4);};
+    var q=mcq("The graph models the number of people who have heard a rumour in a school, over time in days. After how many days have 540 people heard the rumour?",
+      "8 days",
+      ["4 days","6 days","12 days"],
+      "Read across from 540 on the vertical axis to the curve and down: the graph passes through (4, 180) and (8, 540), since the count triples every 4 days (60, 180, 540). It takes 8 days.",{});
+    q.figure=plotSVG(fn,0,10,0,2000,{gx:1,gy:250,labelX:true});return q;}
+]));
+E("u4-solve-common-base",4,["4.7"],2,"gen",function(){
+  var bp=pick([[2,1],[3,1],[4,1],[5,1],[9,1],[25,1],[1,2],[1,3]]),k=pick([-3,-2,-1,1,2,3,4]);
+  var v=powVal(bp[0],bp[1],k);
+  return numq("Solve for \\(x\\): \\("+bStr(bp[0],bp[1])+"^x = "+valStr(v[0],v[1])+"\\)",
+    k,0.001,
+    "Rewrite the right side as a power of the same base: \\("+valStr(v[0],v[1])+" = "+bStr(bp[0],bp[1])+"^{"+k+"}\\). With equal bases, the exponents are equal, so \\(x = "+k+"\\)"+(k<0?" (a negative exponent, matching the fraction on the right)":"")+".",
+    {bp:bp,k:k});
+});
+E("u4-solve-rewrite-base",4,["4.7"],2,"gen",function(){
+  var cdata={2:{ms:[2,3,4,5],nmax:8},3:{ms:[2,3,4],nmax:6},5:{ms:[2,3],nmax:4},7:{ms:[2],nmax:3}};
+  var c=pick([2,3,5,7]),m=pick(cdata[c].ms),nmax=cdata[c].nmax,n=ri(1,nmax),tries=0;
+  while((n%m===0||n===m)&&tries<60){n=ri(1,nmax);tries++;}
+  var B=Math.pow(c,m),N=Math.pow(c,n),x=n/m,flip=Math.random()<0.5;
+  var eqStr=flip?("\\("+N+" = "+B+"^x\\)"):("\\("+B+"^x = "+N+"\\)");
+  return numq("Solve for \\(x\\): "+eqStr,
+    x,0.01,
+    "Both numbers are powers of "+c+": \\("+B+" = "+c+"^{"+m+"}\\) and \\("+N+" = "+c+"^{"+n+"}\\). The equation becomes \\("+c+"^{"+m+"x} = "+c+"^{"+n+"}\\), so \\("+m+"x = "+n+"\\) and \\(x = "+(gcd2(n,m)>1?("\\frac{"+(n/gcd2(n,m))+"}{"+(m/gcd2(n,m))+"}"):("\\frac{"+n+"}{"+m+"}"))+" = "+fmt(x,2)+"\\) .",
+    {c:c,m:m,n:n});
+});
+E("u4-solve-two-sided",4,["4.7"],2,"gen",function(){
+  var fam=pick(["shift","scale","recip"]);
+  if(fam==="shift"){
+    var B=pick([2,3,5]),s=pick([-2,-1,1,2]),K=pick([-1,1,2,3,4,5]),x=K-s;
+    var ex=(s>0?("x + "+s):("x - "+(-s)));
+    return numq("Solve for \\(x\\): \\("+B+"^{"+ex+"} = "+Math.pow(B,K)+"\\)",
+      x,0.001,
+      "The right side is \\("+B+"^{"+K+"}\\). With equal bases, \\("+ex+" = "+K+"\\), so \\(x = "+x+"\\) (undo the "+(s>0?"addition":"subtraction")+" inside the exponent).",
+      {fam:fam,B:B});
+  }
+  if(fam==="scale"){
+    var B2=pick([2,3]),m2=pick([2,3]),x0=pick([-2,-1,1,2,3]),K2=m2*x0,v2=powVal(B2,1,K2);
+    return numq("Solve for \\(x\\): \\("+B2+"^{"+m2+"x} = "+valStr(v2[0],v2[1])+"\\)",
+      x0,0.001,
+      "The right side is \\("+B2+"^{"+K2+"}\\). With equal bases, \\("+m2+"x = "+K2+"\\), so \\(x = "+x0+"\\) after dividing by "+m2+".",
+      {fam:fam,B:B2});
+  }
+  var B3=pick([2,3]),K3=pick([1,2,3]),x3=-K3,v3=powVal(B3,1,K3);
+  return numq("Solve for \\(x\\): \\(\\left(\\frac{1}{"+B3+"}\\right)^x = "+valStr(v3[0],v3[1])+"\\)",
+    x3,0.001,
+    "Rewrite the fraction base: \\(\\left(\\frac{1}{"+B3+"}\\right)^x = "+B3+"^{-x}\\), and the right side is \\("+B3+"^{"+K3+"}\\). So \\(-x = "+K3+"\\), giving \\(x = "+x3+"\\). A fraction base with a positive value greater than 1 on the right forces a negative solution.",
+    {fam:fam,B:B3});
+});
+E("u4-estimate-solution",4,["4.8"],2,"gen",function(){
+  if(Math.random()<0.35){
+    var k2=pick([2,3,4]),lo2=Math.pow(2,k2),hi2=Math.pow(2,k2+1);
+    var N2=lo2+ri(1,hi2-lo2-1);
+    return mcq("The solution of \\(\\left(\\frac{1}{2}\\right)^x = \\frac{1}{"+N2+"}\\) lies between which two consecutive integers?",
+      "Between "+k2+" and "+(k2+1),
+      ["Between "+(k2-1)+" and "+k2,"Between "+(k2+1)+" and "+(k2+2),"Exactly "+k2],
+      "Rewrite with base 2: the equation is \\(2^{-x} = \\frac{1}{"+N2+"}\\), equivalently \\(2^x = "+N2+"\\). Since \\(2^{"+k2+"} = "+lo2+"\\) and \\(2^{"+(k2+1)+"} = "+hi2+"\\), and "+N2+" sits between them, the solution lies <b>between "+k2+" and "+(k2+1)+"</b>. This bracketing by consecutive powers is the systematic-trial estimate.",
+      {decay:true,k:k2});
+  }
+  var B=pick([2,3,4,5,6,10]),k=pick([1,2,3]),lo=Math.pow(B,k),hi=Math.pow(B,k+1);
+  var N=lo+ri(1,hi-lo-1);
+  return mcq("The solution of \\("+B+"^x = "+N+"\\) lies between which two consecutive integers?",
+    "Between "+k+" and "+(k+1),
+    ["Between "+(k-1)+" and "+k,"Between "+(k+1)+" and "+(k+2),"Exactly "+k],
+    "Compute the consecutive powers: \\("+B+"^{"+k+"} = "+lo+"\\) and \\("+B+"^{"+(k+1)+"} = "+hi+"\\). Since "+lo+" < "+N+" < "+hi+", and the function is increasing, the solution lies <b>between "+k+" and "+(k+1)+"</b>. No logarithm is needed for the estimate; the powers bracket the answer.",
+    {B:B,k:k,N:N});
+});
+E("u4-solve-isolate",4,["4.8"],2,"gen",function(){
+  if(Math.random()<0.3){
+    var x0=pick([3,4]),mult=pick([3,5]),A3=Math.pow(2,x0)*mult;
+    return numq("Solve for \\(x\\): \\("+A3+"\\left(\\frac{1}{2}\\right)^x = "+mult+"\\)",
+      x0,0.001,
+      "Isolate the power first: divide both sides by "+A3+" to get \\(\\left(\\frac{1}{2}\\right)^x = \\frac{"+mult+"}{"+A3+"} = \\frac{1}{"+Math.pow(2,x0)+"}\\). The right side is \\(\\left(\\frac{1}{2}\\right)^{"+x0+"}\\), so \\(x = "+x0+"\\). The equation as written has no matching bases; isolating the power creates them.",
+      {x0:x0});
+  }
+  var b=pick([2,3,5]),x1=pick([2,3,4,5]),a=pick([2,3,4,6,7,8,9]),C=a*Math.pow(b,x1);
+  return numq("Solve for \\(x\\): \\("+a+"("+b+")^x = "+C+"\\)",
+    x1,0.001,
+    "Isolate the power first: divide both sides by "+a+" to get \\("+b+"^x = "+Math.pow(b,x1)+"\\). The right side is \\("+b+"^{"+x1+"}\\), so \\(x = "+x1+"\\) with matching bases. (Dividing "+C+" by "+a+" early is the step that makes the bases match.)",
+    {b:b,x1:x1,a:a});
+});
+E("u4-growth-model-eval",4,["4.9"],2,"gen",function(){
+  var fam=pick(["eval","inverse"]);
+  var P0=pick([50,120,300,800]),b=pick([2,3]),D=pick([2,3,4]),ctx=pick([
+    {w:"A trout population in a stocked pond",u:"years"},
+    {w:"A bacteria culture",u:"hours"},
+    {w:"The population of a growing town in Labrador",u:"years"}]);
+  if(fam==="eval"){
+    var kk=pick([2,3]),t=D*kk,ans=P0*Math.pow(b,kk);
+    return numq(ctx.w+" is modelled by \\(P(t) = "+P0+"("+b+")^{t/"+D+"}\\), where \\(t\\) is in "+ctx.u+". What is the population after "+t+" "+ctx.u+"?",
+      ans,0.01,
+      "Substitute \\(t = "+t+"\\): the exponent is \\(\\frac{"+t+"}{"+D+"} = "+kk+"\\), so \\(P("+t+") = "+P0+" \\times "+b+"^{"+kk+"} = "+P0+" \\times "+Math.pow(b,kk)+" = "+ans+"\\). The fraction in the exponent counts how many growth periods have passed.",
+      {fam:fam,P0:P0,b:b,D:D});
+  }
+  var kk2=pick([2,3,4]),target=P0*Math.pow(b,kk2),ans2=D*kk2;
+  return numq(ctx.w+" is modelled by \\(P(t) = "+P0+"("+b+")^{t/"+D+"}\\), where \\(t\\) is in "+ctx.u+". After how many "+ctx.u+" does the population reach "+target+"?",
+    ans2,0.01,
+    "Set \\("+target+" = "+P0+"("+b+")^{t/"+D+"}\\). Dividing by "+P0+", \\("+Math.pow(b,kk2)+" = ("+b+")^{t/"+D+"}\\), so \\(\\frac{t}{"+D+"} = "+kk2+"\\) and \\(t = "+ans2+"\\) "+ctx.u+". The target is "+kk2+" growth periods of "+D+" "+ctx.u+" each.",
+    {fam:fam,P0:P0,b:b,D:D});
+});
+E("u4-half-life",4,["4.9"],2,"gen",function(){
+  var fam=pick(["amount","time"]);
+  var A0=pick([160,240,320,480,640,800]),h=pick([4,5,6,8,10,12]),ctx=pick([
+    {w:"A medical isotope",u:"days",amt:"mg"},
+    {w:"A pain medication in the bloodstream",u:"hours",amt:"mg"},
+    {w:"A radioactive sample in a physics lab",u:"years",amt:"g"}]);
+  if(fam==="amount"){
+    var kk=pick([2,3,4]),t=h*kk,ans=A0/Math.pow(2,kk);
+    return numq(ctx.w+" has a half-life of "+h+" "+ctx.u+" and starts at "+A0+" "+ctx.amt+". The amount remaining is modelled by \\(A(t) = "+A0+"\\left(\\frac{1}{2}\\right)^{t/"+h+"}\\). How many "+ctx.amt+" remain after "+t+" "+ctx.u+"?",
+      ans,0.01,
+      "The exponent counts half-lives: \\(\\frac{"+t+"}{"+h+"} = "+kk+"\\). So \\(A("+t+") = "+A0+" \\times \\left(\\frac{1}{2}\\right)^{"+kk+"} = \\frac{"+A0+"}{"+Math.pow(2,kk)+"} = "+ans+"\\) "+ctx.amt+".",
+      {fam:fam,A0:A0,h:h});
+  }
+  var kk2=pick([2,3,4]),target=A0/Math.pow(2,kk2),ans2=h*kk2;
+  return numq(ctx.w+" has a half-life of "+h+" "+ctx.u+" and starts at "+A0+" "+ctx.amt+". After how many "+ctx.u+" will only "+target+" "+ctx.amt+" remain?",
+    ans2,0.01,
+    "Count the halvings: "+A0+" halves to "+(A0/2)+", then "+(A0/4)+", reaching "+target+" after "+kk2+" half-lives. Each takes "+h+" "+ctx.u+", so the time is \\("+kk2+" \\times "+h+" = "+ans2+"\\) "+ctx.u+".",
+    {fam:fam,A0:A0,h:h});
+});
+E("u4-compound-model",4,["4.9"],2,"gen",function(){
+  var fam=pick(["choose","read"]);
+  var pairs=[[4,4],[6,2],[8,4],[6,12],[5,2],[8,2],[4,2],[6,4]];
+  var pr=pick(pairs),r=pr[0],n=pr[1],i=r/100/n;
+  var nName=(n===2?"semi-annually":(n===4?"quarterly":"monthly"));
+  var istr=fmt(i,4);
+  if(fam==="choose"){
+    var P=pick([1000,2500,4000,5000]);
+    var model=function(ii,ee){return "A(t) = "+P+"(1 + "+ii+")^{"+ee+"}";};
+    return mcq("An investment of $"+P+" earns "+r+"% per year, compounded "+nName+". Which function models the amount after \\(t\\) years?",
+      "\\("+model(istr,n+"t")+"\\)",
+      ["\\("+model(fmt(r/100,2),n+"t")+"\\)","\\("+model(istr,"t")+"\\)","\\("+model(fmt(r/100/n/n,4),n+"t")+"\\)"],
+      "Compound interest uses \\(A = P\\left(1 + \\frac{r}{n}\\right)^{nt}\\): the rate per period is \\(\\frac{"+r+"\\%}{"+n+"} = "+fmt(r/n,2)+"% = "+istr+"\\), and there are \\("+n+"t\\) periods in \\(t\\) years. Forgetting to divide the rate, or forgetting to multiply the exponent by "+n+", gives the traps.",
+      {fam:fam,P:P,r:r,n:n});
+  }
+  var P2=pick([1200,1800,2400,3000,3600]);
+  var ask=pick(["rate","freq"]);
+  if(ask==="rate"){
+    return mcq("An investment is modelled by \\(A(t) = "+P2+"(1 + "+istr+")^{"+n+"t}\\). What is the <b>annual</b> interest rate?",
+      r+"%",[fmt(r/n,2)+"%",(r*n)+"%",fmt(i*100,2)+"% compounded "+nName],
+      "The amount inside the brackets is the rate per period: "+istr+" = "+fmt(r/n,2)+"% per period, with "+n+" periods per year. The annual (nominal) rate is "+n+" \\(\\times\\) "+fmt(r/n,2)+"% = <b>"+r+"%</b>. Reading "+istr+" itself as the annual rate is the trap.",
+      {fam:fam,ask:ask,r:r,n:n});
+  }
+  return mcq("An investment is modelled by \\(A(t) = "+P2+"(1 + "+istr+")^{"+n+"t}\\). How often is the interest compounded?",
+    n===2?"Semi-annually (twice a year)":(n===4?"Quarterly (four times a year)":"Monthly (twelve times a year)"),
+    ["Annually (once a year)","Semi-annually (twice a year)","Quarterly (four times a year)","Monthly (twelve times a year)"].filter(function(v){return v.indexOf(n===2?"Semi":(n===4?"Quarterly":"Monthly"))!==0;}),
+    "In \\(A = P(1 + i)^{nt}\\), the coefficient of \\(t\\) in the exponent counts the compounding periods per year: here it is "+n+", so interest is compounded "+n+" times a year, "+(n===2?"semi-annually":(n===4?"quarterly":"monthly"))+". (The per-period rate \\(i = "+istr+"\\) agrees: it is the "+r+"% annual rate divided by "+n+".)",
+    {fam:fam,ask:ask,r:r,n:n});
+});
+E("u4-app-decision",4,["4.5"],3,"var",varset([
+  function(){return mcq("A town's population is recorded every five years: "+tblHTML([0,5,10],[120,360,1080],"Year","Population")+" Which statement best models the data and predicts the population in year 15?",
+    "Exponential model P(t) = 120(3)^(t/5); year 15 population is 3240",
+    ["Linear model P(t) = 120 + 96t; year 15 population is 1560","Exponential model P(t) = 120(2)^(t/5); year 15 population is 960","Exponential model P(t) = 360(3)^(t/5); year 15 population is 9720"],
+    "The ratios are constant: 360 / 120 = 3 and 1080 / 360 = 3, so the growth is exponential with factor 3 every 5 years, starting from 120. One more period: 1080 x 3 = 3240. The linear option uses the average increase and steadily falls further behind.",{});},
+  function(){return mcq("A truck bought for $24,000 loses half its value every 6 years, as shown: "+tblHTML([0,6,12],[24000,12000,6000],"Year","Value ($)")+" At which of these times is the value <b>first</b> below $2500?",
+    "24 years",
+    ["12 years","18 years","30 years"],
+    "Keep halving: year 18 gives $3000, which is still above $2500; year 24 gives $1500, the first value below $2500. Counting halvings beats trying to solve with technology here: 24000, 12000, 6000, 3000, 1500.",{});},
+  function(){return mcq("A yeast culture's mass is measured hourly: "+tblHTML([0,1,2],[5,20,80],"Time (h)","Mass (g)")+" Which statement best models the data and gives the mass at 4 hours?",
+    "Exponential model M(t) = 5(4)^t; mass at 4 h is 1280 g",
+    ["Exponential model M(t) = 5(4)^t; mass at 4 h is 320 g","Exponential model M(t) = 20(4)^t; mass at 4 h is 5120 g","Linear model M(t) = 5 + 37.5t; mass at 4 h is 155 g"],
+    "The ratio is constant: 20 / 5 = 4 and 80 / 20 = 4, so M(t) = 5(4)^t with the initial mass 5 g (not 20 g, the value at t = 1). At t = 4: 5 x 256 = 1280 g.",{});}
+]));
+E("u4-reverse-half-life",4,["4.9"],3,"gen",function(){
+  var R=pick([5,10,15,20,25,40]),kk=pick([2,3,4]),h=pick([3,4,5,6,8,10,12]);
+  var A0=R*Math.pow(2,kk),t=h*kk;
+  var chain=[],cur=A0;for(var ci=0;ci<=kk;ci++){chain.push(cur);cur/=2;}
+  var ctx=pick([{w:"A radioactive isotope",u:"days"},{w:"A medication",u:"hours"},{w:"A sample of a decaying element",u:"years"}]);
+  return numq(ctx.w+" starts with "+A0+" mg. After "+t+" "+ctx.u+", only "+R+" mg remains. Assuming the decay follows a half-life model, what is the half-life, in "+ctx.u+"?",
+    h,0.001,
+    "First count the halvings: "+A0+" to "+R+" is a factor of "+Math.pow(2,kk)+", which is "+kk+" halvings ("+chain.join(" \\(\\to\\) ")+"). Those "+kk+" half-lives took "+t+" "+ctx.u+", so one half-life is \\(\\frac{"+t+"}{"+kk+"} = "+h+"\\) "+ctx.u+". The extra step is counting the halvings before dividing.",
+    {R:R,kk:kk,h:h});
+});
+E("u4-find-base",4,["4.13"],3,"gen",function(){
+  var useFrac=Math.random()<0.3;
+  var kk,a,b,v,bdisp,ratioDisp;
+  if(useFrac){var den=pick([2,3]);b=1/den;kk=2;a=(den===2?pick([8,12,18,24,36,40]):pick([18,36,45,63,90]));v=a*Math.pow(b,kk);
+    bdisp="\\frac{1}{"+den+"}";ratioDisp="\\frac{1}{"+Math.pow(den,kk)+"}";}
+  else{b=pick([2,3,4,5]);kk=pick([2,3]);a=pick([2,3,4,5,6,10,12]);v=a*Math.pow(b,kk);
+    bdisp=""+b;ratioDisp=""+Math.pow(b,kk);}
+  return numq("An exponential function \\(f(x) = a(b)^x\\) satisfies \\(f(0) = "+a+"\\) and \\(f("+kk+") = "+fmt(v)+"\\). What is the value of \\(b\\)?",
+    b,0.01,
+    "From \\(f(0)\\), \\(a = "+a+"\\) (the starting value). Then \\(f("+kk+")\\) gives \\(b^{"+kk+"} = \\frac{"+fmt(v)+"}{"+a+"} = "+ratioDisp+"\\), and \\("+ratioDisp+" = \\left("+bdisp+"\\right)^{"+kk+"}\\), so the base is \\(b = "+bdisp+"\\). Recognizing the perfect power is the key step; no logarithm is needed.",
+    {kk:kk,a:a,b:b});
+});
+E("u4-compare-models",4,["4.13"],3,"gen",function(){
+  var t=pick([3,4]),a1,a2,b1,b2,V1,V2,tries=0;
+  do{a1=pick([40,60,100,150,200,300,500,750]);a2=pick([40,60,100,150,200,300,500,750]);b1=pick([2,3]);b2=pick([2,3]);
+    V1=a1*Math.pow(b1,t);V2=a2*Math.pow(b2,t);tries++;}
+  while((b1===b2||V1===V2||Math.max(V1,V2)/Math.min(V1,V2)>25)&&tries<60);
+  var winner=(V1>V2)?"Town A":"Town B";
+  return mcq("Two towns model their populations with \\(P(t) = a(b)^t\\), \\(t\\) in years. Town A starts with "+a1+" people and multiplies by "+b1+" each year. Town B starts with "+a2+" people and multiplies by "+b2+" each year. Which town has the larger population after "+t+" years?",
+    winner,
+    [(V1>V2?"Town B":"Town A"),"They are equal","It cannot be determined from the information given"],
+    "Evaluate both at \\(t = "+t+"\\): Town A: \\("+a1+" \\times "+b1+"^{"+t+"} = "+V1+"\\). Town B: \\("+a2+" \\times "+b2+"^{"+t+"} = "+V2+"\\). Town "+winner.slice(-1)+" is larger: the starting value and the growth factor trade off, so the bigger factor does not automatically win after only "+t+" years; both parts of the model must be evaluated.",
+    {t:t,a1:a1,a2:a2,b1:b1,b2:b2});
+});
 /* BANK-SRC-END */
 </script>
 
