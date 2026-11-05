@@ -1747,6 +1747,632 @@ E("u4-compare-models",4,["4.13"],3,"gen",function(){
     "Evaluate both at \\(t = "+t+"\\): Town A: \\("+a1+" \\times "+b1+"^{"+t+"} = "+V1+"\\). Town B: \\("+a2+" \\times "+b2+"^{"+t+"} = "+V2+"\\). Town "+winner.slice(-1)+" is larger: the starting value and the growth factor trade off, so the bigger factor does not automatically win after only "+t+" years; both parts of the model must be evaluated.",
     {t:t,a1:a1,a2:a2,b1:b1,b2:b2});
 });
+
+/* ================= Unit 5: Logarithmic Functions ================= */
+/* Bank-local helpers for Units 5 to 9. lgS builds a log string with the
+   argument as given; dis3 / dis3s build three distractors guaranteed distinct
+   from the correct answer and from each other (numeric and string forms). */
+function lgS(b,arg){return "\\log_{"+b+"} "+arg;}
+function dis3(correct,cands){
+  var out=[],seen={},c=String(correct);seen[c]=1;
+  for(var i=0;i<cands.length&&out.length<3;i++){var s=String(cands[i]);if(!seen[s]){seen[s]=1;out.push(s);}}
+  var offs=[2,-2,3,-3,4,-4,5,-5,6,-6,8,-8,10,-10,15,-15,20,-20],oi=0;
+  while(out.length<3&&oi<offs.length){var s2=String(Number(correct)+offs[oi]);oi++;if(!seen[s2]){seen[s2]=1;out.push(s2);}}
+  return out;
+}
+function dis3s(correct,cands,fallbacks){
+  var out=[],seen={},c=String(correct);seen[c]=1;
+  var all=cands.concat(fallbacks||[]);
+  for(var i=0;i<all.length&&out.length<3;i++){var s=String(all[i]);if(!seen[s]){seen[s]=1;out.push(s);}}
+  return out;
+}
+
+/* --- converting and evaluating (1.1, 1.2) --- */
+E("u5-convert-form",5,["1.1"],1,"gen",function(){
+  var pairs=[[2,3],[2,5],[3,2],[3,4],[3,5],[4,3],[4,5],[5,2],[5,3],[5,4],[6,2],[6,3],[6,4],[7,2],[7,3],[7,4],[8,2],[8,3],[8,4],[9,2],[9,3],[9,4],[10,2],[10,3],[10,4],[10,5],[12,2],[12,3]];
+  var pr=pick(pairs),b=pr[0],e=pr[1],v=Math.pow(b,e),toExp=Math.random()<0.5;
+  var lg=lgS(b,""+v)+" = "+e, ex=b+"^{"+e+"} = "+v;
+  if(toExp){
+    return mcq("Which exponential equation is equivalent to \\("+lg+"\\)?",
+      MV(ex),
+      [MV(e+"^{"+b+"} = "+v),MV(b+"^{"+v+"} = "+e),MV(v+"^{"+b+"} = "+e)],
+      "In \\("+lg+"\\), the base is \\("+b+"\\), the logarithm itself is the exponent, and the argument \\("+v+"\\) is the result of the power: \\("+ex+"\\). The distractors move the exponent onto the wrong base or swap the exponent with the result.",
+      {b:b,e:e,toExp:1});
+  }
+  return mcq("Which logarithmic equation is equivalent to \\("+ex+"\\)?",
+    MV(lg),
+    [MV(lgS(b,""+e)+" = "+v),MV(lgS(v,""+b)+" = "+e),MV(lgS(e,""+v)+" = "+b)],
+    "The base of the power stays the base of the logarithm, the exponent \\("+e+"\\) becomes the value of the logarithm, and the result \\("+v+"\\) becomes the argument: \\("+lg+"\\). The distractors swap the argument with the exponent, or use the wrong base.",
+    {b:b,e:e,toExp:0});
+});
+E("u5-solve-log-basic",5,["1.1"],2,"gen",function(){
+  var shape=ri(1,3);
+  if(shape===1){
+    var b=pick([2,3,4,5,6,7,8,9]),e=pick([-1,2,2,3]),ans=e<0?1/b:Math.pow(b,e);
+    return numq("Solve for \\(x\\): \\("+lgS(b,"x")+" = "+e+"\\)",
+      ans,0.01,
+      "Rewrite in exponential form: \\(x = "+b+"^{"+e+"}\\). "+(e<0?"A negative exponent gives the reciprocal, so \\(x = \\frac{1}{"+b+"}\\).":"So \\(x = "+ans+"\\)."),
+      {shape:shape,b:b,e:e});
+  }
+  if(shape===2){
+    var b2=pick([2,3,4,5,6,7,8,9]),e2=pick([2,3]),s=ri(1,9),ans2=Math.pow(b2,e2)+s;
+    return numq("Solve for \\(x\\): \\("+lgS(b2,linS(1,-s))+" = "+e2+"\\)",
+      ans2,0.01,
+      "Rewrite in exponential form, then undo the shift: \\[ \\begin{aligned} "+linS(1,-s)+" &= "+b2+"^{"+e2+"} \\\\ x &= "+Math.pow(b2,e2)+" + "+s+" \\\\ &= "+ans2+" \\end{aligned} \\] The conversion comes first; the shift is undone afterwards.",
+      {shape:shape,b:b2,e:e2,s:s});
+  }
+  var m=pick([2,3,4,5,6,7,8,9]),e3=pick([2,3]),a=Math.pow(m,e3);
+  return numq("Solve for \\(x\\): \\("+lgS("x",""+a)+" = "+e3+"\\)",
+    m,0.01,
+    "Rewrite in exponential form: \\(x^{"+e3+"} = "+a+"\\). Taking the "+(e3===2?"square":"cube")+" root gives \\(x = "+m+"\\) (the base of a logarithm must be positive, so the negative root is not allowed).",
+    {shape:shape,m:m,e:e3});
+});
+E("u5-evaluate-log",5,["1.2"],1,"gen",function(){
+  var shape=pick(["int","int","int","neg","half","threehalf","neghalf","zero"]);
+  var b,arg,ans;
+  if(shape==="int"){b=pick([2,3,4,5,6,7,8,9,10]);var k=pick([2,3]);ans=k;arg=""+Math.pow(b,k);}
+  else if(shape==="neg"){b=pick([2,3,4,5,6,7,8,9,10]);var k2=pick([1,2,3]);ans=-k2;arg=FR("1",""+Math.pow(b,k2));}
+  else if(shape==="half"){b=pick([4,9,16,25,36]);ans=0.5;arg="\\sqrt{"+b+"}";}
+  else if(shape==="threehalf"){b=pick([4,9,16,25]);ans=1.5;arg=""+Math.pow(Math.sqrt(b),3);}
+  else if(shape==="neghalf"){b=pick([4,9,16,25,36]);ans=-0.5;arg=FR("1","\\sqrt{"+b+"}");}
+  else{b=pick([2,3,4,5,6,7,8,9,10]);ans=0;arg="1";}
+  return numq("Without technology, determine the value of \\("+lgS(b,arg)+"\\)",
+    ans,0.01,
+    "Ask what power of \\("+b+"\\) gives the argument: \\("+b+"^{"+fmt(ans)+"}\\) equals the argument"+(shape==="zero"?", since any base to the power 0 is 1":"")+", so \\("+lgS(b,arg)+" = "+fmt(ans)+"\\) by the definition of a logarithm.",
+    {shape:shape,b:b});
+});
+E("u5-evaluate-mixed",5,["1.2"],1,"gen",function(){
+  var shape=pick(["power","logpower","one","recip","root"]);
+  var b=pick([2,3,4,5,6,7,8,9]),m=pick([2,3,4,5,6,7,8,9,10,11,12]),t=0;
+  while(m===b&&t<40){m=pick([2,3,4,5,6,7,8,9,10,11,12]);t++;}
+  if(shape==="power"){
+    return mcq("What is the value of \\("+b+"^{"+lgS(b,""+m)+"}\\)?",
+      ""+m,dis3(m,[b,m+b,m*b]),
+      "A base raised to its own logarithm returns the argument: \\("+b+"^{"+lgS(b,""+m)+"} = "+m+"\\). The power and the logarithm undo each other exactly.",
+      {shape:shape,b:b,m:m});
+  }
+  if(shape==="logpower"){
+    return mcq("What is the value of \\("+lgS(b,b+"^{"+m+"}")+"\\)?",
+      ""+m,dis3(m,[b,m+b,0]),
+      "The logarithm asks for the exponent on \\("+b+"\\), and the exponent is sitting in the argument: \\("+lgS(b,b+"^{"+m+"}")+" = "+m+"\\).",
+      {shape:shape,b:b,m:m});
+  }
+  if(shape==="one"){
+    return mcq("What is the value of \\("+lgS(b,"1")+"\\)?",
+      "0",dis3(0,[1,b,-1]),
+      "Every base to the power 0 equals 1, so the exponent that produces 1 is 0: \\("+lgS(b,"1")+" = 0\\) for any base.",
+      {shape:shape,b:b});
+  }
+  if(shape==="recip"){
+    return mcq("What is the value of \\("+lgS(b,FR("1",b+"^{"+m+"}"))+"\\)?",
+      ""+(-m),dis3(-m,[m,0,-b]),
+      "The argument is \\("+b+"^{-"+m+"}\\), a reciprocal power, so the exponent on \\("+b+"\\) is negative: \\("+lgS(b,FR("1",b+"^{"+m+"}"))+" = -"+m+"\\).",
+      {shape:shape,b:b,m:m});
+  }
+  return mcq("What is the value of \\("+lgS(b,"\\sqrt{"+b+"}")+"\\)?",
+    "0.5",dis3(0.5,[2,1,b]),
+    "A square root is the power \\(\\frac{1}{2}\\): \\(\\sqrt{"+b+"} = "+b+"^{1/2}\\), so the exponent, and therefore the logarithm, is \\(\\frac{1}{2}\\).",
+    {shape:shape,b:b});
+});
+E("u5-which-law",5,["1.3"],1,"var",varset([
+  function(){return mcq("A student checks a law of logarithms with numbers and writes \\("+lgS(2,"32")+" = "+lgS(2,"8")+" + "+lgS(2,"4")+"\\). Which law does this illustrate?",
+    "The product law: \\(\\log_b(mn) = \\log_b m + \\log_b n\\)",
+    ["The quotient law: \\(\\log_b\\left(\\frac{m}{n}\\right) = \\log_b m - \\log_b n\\)","The power law: \\(\\log_b(m^n) = n \\log_b m\\)","The sum law: \\(\\log_b(m + n) = \\log_b m + \\log_b n\\)"],
+    "Check the numbers: \\(8 \\times 4 = 32\\), and \\(5 = 3 + 2\\). A product inside the logarithm became a sum of logarithms, which is the product law, coming from \\(2^3 \\times 2^2 = 2^5\\). There is no sum law: the last option is the classic false version.",{});},
+  function(){return mcq("A student checks a law of logarithms with numbers and writes \\("+lgS(3,"27")+" - "+lgS(3,"9")+" = "+lgS(3,"3")+"\\). Which law does this illustrate?",
+    "The quotient law: \\(\\log_b\\left(\\frac{m}{n}\\right) = \\log_b m - \\log_b n\\)",
+    ["The product law: \\(\\log_b(mn) = \\log_b m + \\log_b n\\)","The power law: \\(\\log_b(m^n) = n \\log_b m\\)","The difference law: \\(\\log_b(m - n) = \\log_b m - \\log_b n\\)"],
+    "Check the numbers: \\(27 \\div 9 = 3\\), and \\(3 - 2 = 1\\). A quotient inside the logarithm became a difference of logarithms, the quotient law, coming from \\(3^3 \\div 3^2 = 3^1\\). The last option is false: a difference inside a logarithm does not split.",{});},
+  function(){return mcq("A student checks a law of logarithms with numbers and writes \\(2"+lgS(10,"5")+" = "+lgS(10,"25")+"\\). Which law does this illustrate?",
+    "The power law: \\(\\log_b(m^n) = n \\log_b m\\)",
+    ["The product law: \\(\\log_b(mn) = \\log_b m + \\log_b n\\)","The quotient law: \\(\\log_b\\left(\\frac{m}{n}\\right) = \\log_b m - \\log_b n\\)","The coefficient law: \\(\\log_b(m^n) = (\\log_b m)^n\\)"],
+    "Check the numbers: \\(5^2 = 25\\), so \\(\\log_{10} 25 = 2 \\times \\log_{10} 5\\). An exponent inside the logarithm moved out front as a multiplier, which is the power law. The last option raises the whole logarithm to a power, which is a different and false statement.",{});}
+]));
+
+/* --- laws of logarithms (1.3, 1.4) --- */
+E("u5-law-numeric",5,["1.3"],2,"gen",function(){
+  var LV={2:0.3010,3:0.4771,5:0.6990,7:0.8451},LVS={2:"0.3010",3:"0.4771",5:"0.6990",7:"0.8451"};
+  var pr=pick([[2,3],[2,5],[2,7],[3,5],[3,7],[5,7]]),p=pr[0],q=pr[1],lp=LV[p],lq=LV[q],lps=LVS[p],lqs=LVS[q];
+  var forms=[
+    {disp:""+(p*q),expr:"\\log_{10} "+p+" + \\log_{10} "+q,nexp:lps+" + "+lqs,val:lp+lq},
+    {disp:FR(""+p,""+q),expr:"\\log_{10} "+p+" - \\log_{10} "+q,nexp:lps+" - "+lqs,val:lp-lq},
+    {disp:FR(""+q,""+p),expr:"\\log_{10} "+q+" - \\log_{10} "+p,nexp:lqs+" - "+lps,val:lq-lp},
+    {disp:""+(p*p),expr:"2\\log_{10} "+p,nexp:"2("+lps+")",val:2*lp},
+    {disp:""+(q*q),expr:"2\\log_{10} "+q,nexp:"2("+lqs+")",val:2*lq},
+    {disp:""+(p*p*q),expr:"2\\log_{10} "+p+" + \\log_{10} "+q,nexp:"2("+lps+") + "+lqs,val:2*lp+lq},
+    {disp:""+(p*q*q),expr:"\\log_{10} "+p+" + 2\\log_{10} "+q,nexp:lps+" + 2("+lqs+")",val:lp+2*lq},
+    {disp:FR(""+(p*p),""+q),expr:"2\\log_{10} "+p+" - \\log_{10} "+q,nexp:"2("+lps+") - "+lqs,val:2*lp-lq},
+    {disp:FR(""+(q*q),""+p),expr:"2\\log_{10} "+q+" - \\log_{10} "+p,nexp:"2("+lqs+") - "+lps,val:2*lq-lp},
+    {disp:""+(p*p*q*q),expr:"2\\log_{10} "+p+" + 2\\log_{10} "+q,nexp:"2("+lps+") + 2("+lqs+")",val:2*lp+2*lq}
+  ];
+  var f=pick(forms);
+  return numq("Given \\(\\log_{10} "+p+" \\approx "+lps+"\\) and \\(\\log_{10} "+q+" \\approx "+lqs+"\\), determine the approximate value of \\(\\log_{10} "+f.disp+"\\)",
+    f.val,0.002,
+    "Split the argument into the two given values using the laws of logarithms: \\[ \\begin{aligned} \\log_{10} "+f.disp+" &= "+f.expr+" \\\\ &= "+f.nexp+" \\\\ &= "+fmt(f.val,4)+" \\end{aligned} \\] Products become sums, quotients become differences, and powers become multipliers.",
+    {p:p,q:q});
+});
+E("u5-expand-log",5,["1.4"],2,"gen",function(){
+  var b=pick([2,3,5,10]),shape=pick(["prod","quot","three","root"]);
+  var m=ri(2,5),n=ri(2,5),t=0;while(n===m&&t<40){n=ri(2,5);t++;}
+  var p=ri(2,5);
+  var T=function(coef,v){return (coef==="1"?"":coef+" ")+"\\log_{"+b+"} "+v;};
+  var parts,arg;
+  if(shape==="prod"){parts=[{c:""+m,v:"x",s:"+"},{c:""+n,v:"y",s:"+"}];arg="x^{"+m+"} y^{"+n+"}";}
+  else if(shape==="quot"){parts=[{c:""+m,v:"x",s:"+"},{c:""+n,v:"y",s:"-"}];arg=FR("x^{"+m+"}","y^{"+n+"}");}
+  else if(shape==="three"){parts=[{c:""+m,v:"x",s:"+"},{c:""+n,v:"y",s:"+"},{c:""+p,v:"z",s:"-"}];arg=FR("x^{"+m+"} y^{"+n+"}","z^{"+p+"}");}
+  else{parts=[{c:""+n,v:"y",s:"+"},{c:"\\frac{1}{2}",v:"x",s:"+"}];arg="y^{"+n+"} \\sqrt{x}";}
+  var join=function(ps,flipLast,dropC,swapC){
+    var cs=ps.map(function(o){return o.c;});
+    if(swapC&&cs.length>1){var tmp=cs[0];cs[0]=cs[1];cs[1]=tmp;}
+    return ps.map(function(o,i){
+      var s=o.s;if(flipLast&&i===ps.length-1)s=(s==="-"?"+":"-");
+      var sgn=i===0?"":(s==="-"?" - ":" + ");
+      return sgn+T(dropC?"1":cs[i],o.v);
+    }).join("");
+  };
+  var corr=join(parts,false,false,false);
+  return mcq("Which expression is equivalent to \\("+lgS(b,arg)+"\\)?",
+    MV(corr),
+    [MV(join(parts,true,false,false)),MV(join(parts,false,true,false)),MV(join(parts,false,false,true))],
+    "The product law turns multiplication into addition, the quotient law turns division into subtraction, and the power law brings each exponent out front as a coefficient: the expansion is <b>\\("+corr+"\\)</b>. The distractors flip the sign of the last term, drop the coefficients, or attach the coefficients to the wrong variables.",
+    {b:b,shape:shape});
+});
+E("u5-condense-log",5,["1.4"],2,"gen",function(){
+  var b=pick([2,3,5,10]),shape=pick(["prod","quot","three","root"]);
+  var m=ri(2,5),n=ri(2,5),t=0;while(n===m&&t<40){n=ri(2,5);t++;}
+  var p=ri(2,5);
+  var expanded,num,den,argAll,argDrop;
+  if(shape==="prod"){
+    expanded=m+"\\log_{"+b+"} x + "+n+"\\log_{"+b+"} y";
+    num="x^{"+m+"} y^{"+n+"}";den=null;argDrop="x y";
+    argAll=null;
+  } else if(shape==="quot"){
+    expanded=m+"\\log_{"+b+"} x - "+n+"\\log_{"+b+"} y";
+    num="x^{"+m+"}";den="y^{"+n+"}";argDrop=FR("x","y");
+  } else if(shape==="three"){
+    expanded=m+"\\log_{"+b+"} x + "+n+"\\log_{"+b+"} y - "+p+"\\log_{"+b+"} z";
+    num="x^{"+m+"} y^{"+n+"}";den="z^{"+p+"}";argDrop=FR("x y","z");
+  } else {
+    expanded=n+"\\log_{"+b+"} y + \\frac{1}{2}\\log_{"+b+"} x";
+    num="y^{"+n+"} \\sqrt{x}";den=null;argDrop="x y";
+  }
+  var corrArg=den?FR(num,den):num;
+  var d1,d2,d3;
+  if(shape==="prod"){d1=MV(lgS(b,FR("x^{"+m+"}","y^{"+n+"}")));d2=MV(lgS(b,argDrop));d3=MV(lgS(b,"\\left(x y\\right)^{"+(m+n)+"}"));}
+  else if(shape==="root"){d1=MV(lgS(b,FR("y^{"+n+"}","\\sqrt{x}")));d2=MV(lgS(b,argDrop));d3=MV("\\frac{1}{2} "+lgS(b,"x y^{"+n+"}"));}
+  else{d1=MV(lgS(b,num+" "+(den||"")));d2=MV(lgS(b,den?FR(den,num):num));d3=MV(lgS(b,argDrop));}
+  return mcq("Which single logarithm is equivalent to \\("+expanded+"\\)?",
+    MV(lgS(b,corrArg)),
+    [d1,d2,d3],
+    "Run the laws in reverse: each coefficient becomes an exponent (the power law), addition combines into a product (the product law), and subtraction combines into a quotient (the quotient law): the result is <b>\\("+lgS(b,corrArg)+"\\)</b>. The distractors put a subtracted term in the numerator, turn the quotient upside down, or drop the exponents.",
+    {b:b,shape:shape});
+});
+E("u5-simplify-eval",5,["1.4"],2,"gen",function(){
+  var shape=pick(["sum","sum","diff","diff","power"]);
+  if(shape==="sum"){
+    var b=pick([2,3,5,10]),r=pick([2,3,4]),P=Math.pow(b,r),divs=[];
+    for(var d=2;d<P;d++){if(P%d===0)divs.push([d,P/d]);}
+    var pr=pick(divs),A=pr[0],B=pr[1];
+    return numq("Determine the exact value of \\("+lgS(b,""+A)+" + "+lgS(b,""+B)+"\\)",
+      r,0.001,
+      "Combine with the product law, then read off the exponent: \\[ \\begin{aligned} "+lgS(b,""+A)+" + "+lgS(b,""+B)+" &= \\log_{"+b+"} "+P+" \\\\ &= "+r+" \\end{aligned} \\] because \\("+b+"^{"+r+"} = "+P+"\\).",
+      {shape:shape,b:b,A:A,B:B});
+  }
+  if(shape==="diff"){
+    var b2=pick([2,3,5,10]),sgn=Math.random()<0.5?1:-1,r2=pick([1,2]),base=pick([2,3,4,5,6,8,10,12]);
+    var A2,B2;if(sgn>0){B2=base;A2=base*Math.pow(b2,r2);}else{A2=base;B2=base*Math.pow(b2,r2);}
+    return numq("Determine the exact value of \\("+lgS(b2,""+A2)+" - "+lgS(b2,""+B2)+"\\)",
+      sgn*r2,0.001,
+      "Combine with the quotient law, then read off the exponent: \\[ \\begin{aligned} "+lgS(b2,""+A2)+" - "+lgS(b2,""+B2)+" &= \\log_{"+b2+"} "+(sgn>0?(""+Math.pow(b2,r2)):FR("1",""+Math.pow(b2,r2)))+" \\\\ &= "+(sgn*r2)+" \\end{aligned} \\] because the quotient of the arguments is \\("+b2+"^{"+(sgn*r2)+"}\\).",
+      {shape:shape,b:b2,A:A2,B:B2});
+  }
+  var tp=pick([[2,4,3],[2,8,2],[2,4,2],[2,16,2],[3,9,2],[3,27,2],[4,16,2],[5,25,2],[9,27,2],[10,100,2],[2,2,5],[3,3,4]]);
+  var bb=tp[0],AA=tp[1],kk=tp[2],rr=Math.round(Math.log(Math.pow(AA,kk))/Math.log(bb));
+  return numq("Determine the exact value of \\("+kk+lgS(bb,""+AA)+"\\)",
+    rr,0.001,
+    "Bring the coefficient inside with the power law, then read off the exponent: \\[ \\begin{aligned} "+kk+lgS(bb,""+AA)+" &= \\log_{"+bb+"} "+Math.pow(AA,kk)+" \\\\ &= "+rr+" \\end{aligned} \\] because \\("+bb+"^{"+rr+"} = "+Math.pow(AA,kk)+"\\).",
+    {shape:shape,b:bb,A:AA,k:kk});
+});
+var U5SC=null;
+E("u5-solve-condense",5,["1.4"],3,"gen",function(){
+  if(!U5SC){
+    U5SC=[];
+    [2,3,4,5,6,10].forEach(function(b){
+      for(var e=2;Math.pow(b,e)<=10000;e++){
+        var P=Math.pow(b,e);
+        for(var x0=3;x0<P;x0++){
+          if(P%x0===0){var k=P/x0;if(k>=2&&k!==x0)U5SC.push({b:b,e:e,P:P,x0:x0,k:k,s:Math.abs(x0-k),fam:k<x0?"A":"B"});}
+        }
+      }
+    });
+  }
+  var tr=pick(U5SC),sgn=tr.fam==="A"?-1:1,arg2=linS(1,sgn*tr.s);
+  return numq("Solve for \\(x\\): \\("+lgS(tr.b,"x")+" + "+lgS(tr.b,arg2)+" = "+tr.e+"\\)",
+    tr.x0,0.001,
+    "Condense with the product law, convert to exponential form, and solve the quadratic: \\[ \\begin{aligned} \\log_{"+tr.b+"} \\left[ x\\left("+arg2+"\\right) \\right] &= "+tr.e+" \\\\ x\\left("+arg2+"\\right) &= "+tr.P+" \\\\ \\left(x - "+tr.x0+"\\right)\\left(x + "+tr.k+"\\right) &= 0 \\end{aligned} \\] The roots are \\(x = "+tr.x0+"\\) and \\(x = -"+tr.k+"\\). The negative root is rejected, because "+(tr.fam==="A"?"it would make the argument \\("+arg2+"\\) negative":"it would make the argument \\(x\\) itself negative")+", and a logarithm's argument must be positive. Only \\(x = "+tr.x0+"\\) works.",
+    {b:tr.b,e:tr.e,x0:tr.x0});
+});
+
+/* --- estimating, data, graphs and models (1.5, 4.2, 4.4, 4.6) --- */
+E("u5-estimate-log",5,["1.5"],2,"gen",function(){
+  var b=pick([2,2,3,3,10]),n,tv,fl,tries=0;
+  do{
+    n=b===2?ri(5,150):b===3?ri(4,120):ri(15,90000);
+    tv=Math.log(n)/Math.log(b);fl=Math.floor(tv);tries++;
+  }while((Math.pow(b,fl)===n||Math.pow(b,fl+1)===n)&&tries<60);
+  var corr=fmt(tv,1);
+  var ds=dis3s(corr,[fmt(tv+0.5,1),fmt(tv-0.5,1),fmt(fl,1),fmt(tv+1,1)],[fmt(tv-1,1),fmt(tv+1.5,1)]);
+  return mcq("Without technology, which is the <b>best approximation</b> of \\("+lgS(b,""+n)+"\\)?",
+    corr,ds,
+    "Bracket the argument between consecutive powers of \\("+b+"\\): \\("+b+"^{"+fl+"} = "+Math.pow(b,fl)+"\\) and \\("+b+"^{"+(fl+1)+"} = "+Math.pow(b,fl+1)+"\\), so the logarithm lies between \\("+fl+"\\) and \\("+(fl+1)+"\\) \\((\\log_{"+b+"} "+n+" \\approx "+fmt(tv,2)+")\\). Of the choices, only \\("+corr+"\\) sits in that bracket at the right distance from the ends.",
+    {b:b,n:n});
+});
+E("u5-data-fit-log",5,["4.2"],2,"gen",function(){
+  var mode=pick(["ten","two","five"]),base=mode==="ten"?10:mode==="two"?2:5;
+  var xs=mode==="ten"?[1,10,100,1000]:mode==="two"?[1,2,4,8,16]:[1,5,25,125];
+  var c=ri(1,9),d=mode==="ten"?pick([2,3,4,5]):mode==="two"?pick([2,3]):pick([2,3,4]),t=0;
+  while(d===c&&t<40){c=ri(1,9);t++;}
+  var ys=xs.map(function(x,i){return c+d*i;});
+  var lt="\\log_{"+base+"} x",tbl=tblHTML(xs,ys,"x","y");
+  var corr="y = "+c+" + "+d+lt;
+  return mcq("Data that follows a logarithmic model is shown in the table: "+tbl+" Which function best models the data?",
+    MV(corr),
+    [MV("y = "+d+" + "+c+lt),MV("y = "+c+"("+d+")^x"),MV("y = "+c+" + "+lt)],
+    "Each time \\(x\\) is multiplied by \\("+base+"\\), \\(y\\) increases by exactly \\("+d+"\\): a constant increase per multiplication is the signature of a logarithmic model (an exponential model would multiply \\(y\\) instead). At \\(x = 1\\) the logarithm is 0, so the constant term is \\("+c+"\\), and the per-step increase is the coefficient of the logarithm: \\("+corr+"\\).",
+    {mode:mode,c:c,d:d});
+});
+E("u5-interpret-graph",5,["4.4"],2,"gen",function(){
+  var bg=pick([{b:2,x1:16,gx:2},{b:3,x1:27,gx:3},{b:10,x1:120,gx:10}]),b=bg.b,k=pick([-1,0,1,2]);
+  var fn=function(x){return Math.log(x)/Math.log(b)+k;};
+  var feats=["valueAt","factor","domain"];if(k>=-1&&k<=1)feats.push("xint");
+  var feat=pick(feats),q;
+  var fig=function(pts){return plotSVG(fn,0.02,bg.x1,-4,6,{gx:bg.gx,gy:1,labelX:true,labelY:true,points:pts||[]});};
+  if(feat==="valueAt"){
+    var m=pick(b===10?[1,2]:[1,2,3]),xv=Math.pow(b,m),yv=m+k;
+    q=mcq("A quantity \\(y\\) is modelled against an input \\(x\\) by the logarithmic function graphed below, with a point marked on the curve. What is the value of \\(y\\) when \\(x = "+xv+"\\)?",
+      ""+yv,dis3(yv,[m,k,yv+1]),
+      "The marked point sits over \\(x = "+xv+"\\). Since \\("+xv+" = "+b+"^{"+m+"}\\), the logarithm contributes \\("+m+"\\) and the vertical shift contributes \\("+k+"\\), so \\(y = "+m+" + "+(k<0?"("+k+")":k)+" = "+yv+"\\). Reading the height of the marked point off the grid confirms it.",
+      {feat:feat,b:b,k:k,m:m});
+    q.figure=fig([[xv,yv]]);
+    return q;
+  }
+  if(feat==="factor"){
+    q=mcq("A quantity \\(y\\) is modelled against an input \\(x\\) by the logarithmic function graphed below. When the input \\(x\\) is multiplied by \\("+b+"\\), what happens to \\(y\\)?",
+      "It increases by exactly 1",
+      ["It increases by "+b,"It is multiplied by "+b,"It stays the same"],
+      "Multiplying the argument of a logarithm by its base raises the logarithm by exactly 1: \\(\\log_{"+b+"}("+b+"x) = \\log_{"+b+"} x + 1\\). Read it off the graph: equal multiplications of \\(x\\) always produce the same increase of 1 in \\(y\\), which is the defining behaviour of this model.",
+      {feat:feat,b:b,k:k});
+    q.figure=fig([]);
+    return q;
+  }
+  if(feat==="domain"){
+    q=mcq("A quantity \\(y\\) is modelled against an input \\(x\\) by the logarithmic function graphed below. Which statement describes the possible inputs for this model?",
+      MV("x > 0"),
+      [MV("x \\ge 0"),"All real numbers",MV("x > 1")],
+      "The curve has a vertical asymptote at \\(x = 0\\) and exists only to the right of it, because a logarithm is defined only for positive arguments: the inputs satisfy \\(x > 0\\). The outputs, by contrast, run over all real numbers.",
+      {feat:feat,b:b,k:k});
+    q.figure=fig([]);
+    return q;
+  }
+  var corr=k===0?"1":k===1?FR("1",""+b):""+b;
+  var dsx=k===0?["0",""+b,FR("1",""+b)]:k===1?[""+b,"1",FR("1",""+(b*b))]:["1",FR("1",""+b),""+(b*b)];
+  q=mcq("A quantity \\(y\\) is modelled against an input \\(x\\) by the logarithmic function graphed below. At what value of \\(x\\) does the graph cross the x-axis?",
+    MV(corr),dsx.map(function(s){return MV(s);}),
+    "The crossing has \\(y = 0\\), so the logarithm part must equal \\("+(0-k)+"\\): \\(\\log_{"+b+"} x = "+(0-k)+"\\), giving \\(x = "+b+"^{"+(0-k)+"} = "+corr+"\\). The shift moves the crossing away from the unshifted position \\(x = 1\\).",
+    {feat:feat,b:b,k:k});
+  q.figure=fig([]);
+  return q;
+});
+E("u5-context-model",5,["4.6"],2,"var",varset([
+  function(){return mcq("The sound level of a noise, in decibels, is modelled by \\(L = 10\\log_{10}\\left(\\frac{I}{I_0}\\right)\\), where \\(I\\) is the intensity of the sound and \\(I_0\\) is a reference intensity. A factory machine produces a sound with intensity \\(I = 10^{7} I_0\\). What is its sound level?",
+    "70 dB",
+    ["7 dB","17 dB","700 dB"],
+    "Substitute: the ratio \\(\\frac{I}{I_0} = 10^{7}\\), and \\(\\log_{10} 10^{7} = 7\\), so \\(L = 10 \\times 7 = 70\\) dB. The 7 dB option stops after the logarithm and forgets the factor of 10 in the model.",{});},
+  function(){return mcq("In a training program, the number of tasks a worker completes per hour after \\(t\\) practice sessions is modelled by \\(N = 25 + 5\\log_{2} t\\). How many tasks per hour does the model give after 32 sessions?",
+    "50",
+    ["30","185","45"],
+    "Substitute \\(t = 32\\): \\(\\log_{2} 32 = 5\\), because \\(2^5 = 32\\). Then \\(N = 25 + 5 \\times 5 = 50\\). The 185 option multiplies 5 by 32 without taking the logarithm; the 45 option uses \\(\\log_{2} 32 = 4\\).",{});},
+  function(){return mcq("A memory experiment models the percent of a word list a student recalls \\(t\\) days later as \\(R = 100 - 20\\log_{10} t\\). What percent does the model give after 100 days?",
+    "60%",
+    ["80%","96%","20%"],
+    "Substitute \\(t = 100\\): \\(\\log_{10} 100 = 2\\), so \\(R = 100 - 20 \\times 2 = 60\\)%. The 80% option treats the logarithm as 1; the model subtracts 20 for every factor of 10 in the time, and 100 days is two factors of 10 past day 1.",{});}
+]));
+/* --- solving with logarithms (4.8) and applications (4.9) --- */
+E("u5-solve-with-logs",5,["4.8"],2,"gen",function(){
+  var shape=pick(["plain","plain","isolate","double","half"]);
+  var b=pick([2,3,5,6,7,10]),c,tries=0;
+  do{c=ri(15,400);tries++;}while((Math.pow(b,Math.round(Math.log(c)/Math.log(b)))===c||c===b)&&tries<60);
+  if(shape==="plain"){
+    return mcq("What is the solution of \\("+b+"^{x} = "+c+"\\)?",
+      MV("x = "+FR("\\log "+c,"\\log "+b)),
+      [MV("x = "+FR("\\log "+b,"\\log "+c)),MV("x = \\log "+FR(""+c,""+b)),MV("x = "+FR("\\log "+c,""+b))],
+      "The bases cannot be matched, so take the logarithm of both sides and bring the exponent down with the power law: \\[ \\begin{aligned} "+b+"^{x} &= "+c+" \\\\ x \\log "+b+" &= \\log "+c+" \\\\ x &= "+FR("\\log "+c,"\\log "+b)+" \\end{aligned} \\] Any logarithm base works here, by the change-of-base formula. Dividing inside the logarithm, or forgetting to log the base, are the planted errors.",
+      {shape:shape,b:b,c:c});
+  }
+  if(shape==="isolate"){
+    var a=pick([2,3,4,5,6,7,8,9]),m=ri(12,90);tries=0;
+    while(Math.pow(b,Math.round(Math.log(m)/Math.log(b)))===m&&tries<60){m=ri(12,90);tries++;}
+    var cc=a*m;
+    return mcq("What is the solution of \\("+a+" \\times "+b+"^{x} = "+cc+"\\)?",
+      MV("x = "+FR("\\log "+m,"\\log "+b)),
+      [MV("x = "+FR("\\log "+cc,"\\log "+b)),MV("x = "+FR("\\log "+b,"\\log "+m)),MV("x = "+FR("\\log "+(cc-a),"\\log "+b))],
+      "Isolate the power first, then take logarithms of both sides: \\[ \\begin{aligned} "+a+" \\times "+b+"^{x} &= "+cc+" \\\\ "+b+"^{x} &= "+m+" \\\\ x \\log "+b+" &= \\log "+m+" \\\\ x &= "+FR("\\log "+m,"\\log "+b)+" \\end{aligned} \\] The coefficient is divided away, never subtracted, and skipping the isolation is the first distractor's error.",
+      {shape:shape,b:b,a:a,m:m});
+  }
+  if(shape==="double"){
+    return mcq("What is the solution of \\("+b+"^{2x} = "+c+"\\)?",
+      MV("x = "+FR("\\log "+c,"2\\log "+b)),
+      [MV("x = "+FR("\\log "+c,"\\log "+b)),MV("x = "+FR("2\\log "+c,"\\log "+b)),MV("x = "+FR("\\log "+b,"\\log "+c))],
+      "Take logarithms of both sides; the power law brings the whole exponent \\(2x\\) down: \\[ \\begin{aligned} "+b+"^{2x} &= "+c+" \\\\ 2x \\log "+b+" &= \\log "+c+" \\\\ x &= "+FR("\\log "+c,"2\\log "+b)+" \\end{aligned} \\] The factor of 2 stays with the logarithm of the base; dropping it is the first distractor's error.",
+      {shape:shape,b:b,c:c});
+  }
+  return mcq("What is the solution of \\("+b+"^{\\frac{x}{2}} = "+c+"\\)?",
+    MV("x = "+FR("2\\log "+c,"\\log "+b)),
+    [MV("x = "+FR("\\log "+c,"\\log "+b)),MV("x = "+FR("\\log "+c,"2\\log "+b)),MV("x = "+FR("\\log "+b,"\\log "+c))],
+    "Take logarithms of both sides; the exponent here is \\(\\frac{x}{2}\\): \\[ \\begin{aligned} "+b+"^{\\frac{x}{2}} &= "+c+" \\\\ \\frac{x}{2} \\log "+b+" &= \\log "+c+" \\\\ x &= "+FR("2\\log "+c,"\\log "+b)+" \\end{aligned} \\] Solving for \\(x\\) doubles the logarithm ratio; halving it instead is the second distractor's error.",
+    {shape:shape,b:b,c:c});
+});
+E("u5-two-bases",5,["4.8"],3,"gen",function(){
+  var shape=Math.random()<0.45?"twoexp":"coeff";
+  if(shape==="twoexp"){
+    var pr=pick([[3,2],[5,2],[5,3],[4,2],[10,2],[10,3]]),b1=pr[0],b2=pr[1],s=pick([1,2]);
+    var num=(s===1?"\\log "+b2:s+"\\log "+b2),den="\\log "+b1+" - \\log "+b2;
+    return mcq("What is the solution of \\("+b1+"^{x} = "+b2+"^{x + "+s+"}\\)?",
+      MV("x = "+FR(num,den)),
+      [MV("x = "+FR(num,"\\log "+b1+" + \\log "+b2)),MV("x = "+FR((s===1?"\\log "+b1:s+"\\log "+b1),den)),MV("x = "+FR(den,num))],
+      "Take logarithms of both sides, expand, and collect the terms containing \\(x\\): \\[ \\begin{aligned} x \\log "+b1+" &= x \\log "+b2+" + "+num+" \\\\ x\\left("+den+"\\right) &= "+num+" \\\\ x &= "+FR(num,den)+" \\end{aligned} \\] The unknown sits in both exponents, so no common-base rewrite exists; the collection step is what makes the problem. Adding the logarithms in the denominator, or collecting on the wrong base, are the planted errors.",
+      {shape:shape,b1:b1,b2:b2,s:s});
+  }
+  var pr2=pick([[3,2],[5,2],[5,3],[4,3],[10,5],[10,2]]),bb=pr2[0],dd=pr2[1];
+  var a=pick([2,3,4,5,6,7,8,9]),m=pick([3,4,5,6,7,8,9,10,12,14,15]),cc=a*m,den2="\\log "+bb+" - \\log "+dd;
+  return mcq("What is the solution of \\("+a+" \\times "+bb+"^{x} = "+cc+" \\times "+dd+"^{x}\\)?",
+    MV("x = "+FR("\\log "+m,den2)),
+    [MV("x = "+FR("\\log "+m,"\\log "+bb+" + \\log "+dd)),MV("x = "+FR("\\log "+cc,den2)),MV("x = "+FR(den2,"\\log "+m))],
+    "Take logarithms of both sides and collect the terms containing \\(x\\); the constants combine into \\(\\log "+m+"\\) because \\(\\frac{"+cc+"}{"+a+"} = "+m+"\\): \\[ \\begin{aligned} x \\log "+bb+" - x \\log "+dd+" &= \\log "+m+" \\\\ x\\left("+den2+"\\right) &= \\log "+m+" \\\\ x &= "+FR("\\log "+m,den2)+" \\end{aligned} \\] Two different bases with the unknown in both exponents is exactly the situation logarithms are needed for.",
+    {shape:shape,b:bb,d:dd,a:a,m:m});
+});
+
+E("u5-growth-time",5,["4.9"],2,"gen",function(){
+  if(Math.random()<0.5){
+    var r=pick([2,3,4]),rw={2:"doubles",3:"triples",4:"quadruples"}[r],m=pick([3,4,5,6]);
+    var A=pick([120,150,200,240,300,320,400,480,500,600,750,900]),T=A*Math.pow(r,m),k=pick([2,3,4,5,6]);
+    var ctx=pick([
+      {q:"A bacteria culture starts with "+A+" cells and "+rw+" every "+k+" hours. After how many hours will the culture contain "+T+" cells?",u:"hours"},
+      {q:"A pond's trout population starts at "+A+" fish and "+rw+" every "+k+" years. After how many years will the population reach "+T+" fish?",u:"years"},
+      {q:"An algae mat covers "+A+" square centimetres, and the covered area "+rw+" every "+k+" days. After how many days will it cover "+T+" square centimetres?",u:"days"}
+    ]);
+    return numq(ctx.q,
+      m*k,0.01,
+      "Model the amount as \\(P(t) = "+A+" \\times "+r+"^{t/"+k+"}\\) and set it equal to "+T+": \\[ \\begin{aligned} "+A+" \\times "+r+"^{t/"+k+"} &= "+T+" \\\\ "+r+"^{t/"+k+"} &= "+Math.pow(r,m)+" \\\\ \\frac{t}{"+k+"} &= "+m+" \\\\ t &= "+(m*k)+" \\end{aligned} \\] The third step is the logarithm step: with equal bases, the exponents must be equal.",
+      {r:r,m:m,k:k});
+  }
+  var m2=pick([3,4,5,6]),A2=pick([64,128,192,256,320,384,448,512,640,768,896,960]),T2=A2/Math.pow(2,m2),k2=pick([3,4,5,6,8,10]);
+  var ctx2=pick([
+    {q:"A sample of a radioactive isotope starts with "+A2+" g and has a half-life of "+k2+" days. After how many days will only "+T2+" g remain?"},
+    {q:"A patient is given "+A2+" mg of a medication. The amount in the bloodstream halves every "+k2+" hours. After how many hours will only "+T2+" mg remain?"},
+    {q:"A rock sample contains "+A2+" g of a radioactive element with a half-life of "+k2+" years. After how many years will only "+T2+" g remain?"}
+  ]);
+  return numq(ctx2.q,
+    m2*k2,0.01,
+    "Model the amount as \\(P(t) = "+A2+" \\times \\left(\\frac{1}{2}\\right)^{t/"+k2+"}\\) and set it equal to "+T2+": \\[ \\begin{aligned} "+A2+" \\times \\left(\\frac{1}{2}\\right)^{t/"+k2+"} &= "+T2+" \\\\ \\left(\\frac{1}{2}\\right)^{t/"+k2+"} &= "+FR("1",""+Math.pow(2,m2))+" \\\\ \\frac{t}{"+k2+"} &= "+m2+" \\\\ t &= "+(m2*k2)+" \\end{aligned} \\] The amount must halve "+m2+" times, and each halving takes one half-life.",
+    {m:m2,k:k2});
+});
+E("u5-catch-up",5,["4.9"],3,"gen",function(){
+  var f=pick([2,3]),k=pick([2,3,4]),s=pick([30,40,50,60,100,120,200,250,300,500]),B0=s*Math.pow(f,k);
+  var ctx=pick([
+    {pre:"Two bacteria colonies grow in identical tanks. Colony A starts with ",o:"Colony B",thing:" cells",us:"hour",up:"hours"},
+    {pre:"Two chain messages spread through a school. Message A starts with ",o:"Message B",thing:" students",us:"day",up:"days"},
+    {pre:"Two algae mats grow in a pond. Mat A starts with ",o:"Mat B",thing:" square centimetres",us:"day",up:"days"}
+  ]);
+  var other=ctx.o;
+  return numq(ctx.pre+s+ctx.thing+" and multiplies by "+(f*f)+" every "+ctx.us+". "+other+" starts with "+B0+ctx.thing+" and multiplies by "+f+" every "+ctx.us+". After how many "+ctx.up+" are the two amounts equal?",
+    k,0.001,
+    "Set the two models equal, then rewrite both with the common base \\("+f+"\\) (taking \\(\\log_{"+f+"}\\) of both sides does the same job): \\[ \\begin{aligned} "+s+" \\times "+(f*f)+"^{t} &= "+B0+" \\times "+f+"^{t} \\\\ "+f+"^{2t} &= "+f+"^{"+k+" + t} \\\\ 2t &= "+k+" + t \\\\ t &= "+k+" \\end{aligned} \\] The faster grower starts behind by a factor of \\("+f+"^{"+k+"}\\) and gains one extra factor of \\("+f+"\\) per "+ctx.us+", so it needs exactly "+k+" "+ctx.up+" to draw level. Neither model alone shows this; the catch-up time appears only when the two are set equal.",
+    {f:f,k:k,s:s});
+});
+/* --- logarithmic scales (4.10) --- */
+E("u5-ph-scale",5,["4.10"],2,"gen",function(){
+  var CTX={2:["lemon juice","vinegar"],3:["orange juice","apple juice"],4:["tomato juice","a carbonated soft drink"],5:["black coffee","rainwater"],6:["milk","human saliva"],7:["pure water","distilled water"],8:["seawater","a baking soda solution"],9:["a soap solution","a laundry detergent solution"]};
+  var shape=pick(["findpH","findpH","findConc","compare","vsWater"]);
+  if(shape==="findpH"){
+    var p=pick([2,3,4,5,6,7,8,9]),ctx=pick(CTX[p]);
+    return numq("A sample of "+ctx+" has a hydrogen ion concentration of \\(10^{-"+p+"}\\) mol/L. What is its pH?",
+      p,0.001,
+      "The pH is defined by \\(\\text{pH} = -\\log_{10}[H^{+}]\\). With \\([H^{+}] = 10^{-"+p+"}\\), the logarithm is \\(-"+p+"\\) and the negative sign in the definition gives \\(\\text{pH} = "+p+"\\). Each unit on the pH scale is a factor of 10 in the concentration.",
+      {shape:shape,p:p});
+  }
+  if(shape==="findConc"){
+    var p2=pick([2,3,4,5,6,7,8,9]),ctx2=pick(CTX[p2]);
+    return mcq("A sample of "+ctx2+" has a pH of "+p2+". What is its hydrogen ion concentration, in mol/L?",
+      MV("10^{-"+p2+"}"),
+      [MV("10^{"+p2+"}"),MV("-10^{"+p2+"}"),MV(FR("1",""+p2))],
+      "Invert the definition: \\([H^{+}] = 10^{-\\text{pH}} = 10^{-"+p2+"}\\) mol/L. The exponent carries the negative sign from the pH definition; dropping it is the first distractor's error.",
+      {shape:shape,p:p2});
+  }
+  if(shape==="compare"){
+    var p1=pick([2,3,4,5,6,7]),d=pick([1,2,3]),pB=p1+d;
+    return numq("Solution A has a pH of "+p1+" and solution B has a pH of "+pB+". How many times as acidic is solution A as solution B?",
+      Math.pow(10,d),0.001,
+      "Acidity is the hydrogen ion concentration, and each pH unit is a factor of 10 in concentration. The pH values differ by \\("+d+"\\), so the concentrations differ by a factor of \\(10^{"+d+"} = "+Math.pow(10,d)+"\\). A lower pH means a higher concentration.",
+      {shape:shape,p1:p1,d:d});
+  }
+  var p3=pick([2,3,4,5,6]),ctx3=pick(CTX[p3]);
+  return numq("How many times as acidic is "+ctx3+" (pH "+p3+") as pure water (pH 7)?",
+    Math.pow(10,7-p3),0.001,
+    "Compare concentrations through the pH gap: \\(7 - "+p3+" = "+(7-p3)+"\\) pH units, and each unit is a factor of 10, so the concentration is \\(10^{"+(7-p3)+"} = "+Math.pow(10,7-p3)+"\\) times as large.",
+    {shape:shape,p:p3});
+});
+E("u5-richter-decibel",5,["4.10"],2,"gen",function(){
+  var shape=pick(["db","db","richter","concept"]);
+  if(shape==="db"){
+    var L=[40,50,60,70,80,90,100,110,120],prs=[];
+    L.forEach(function(x){L.forEach(function(y){if(y>x&&y-x<=60)prs.push([x,y]);});});
+    var pr=pick(prs),L1=pr[0],L2=pr[1],dd=(L2-L1)/10;
+    return numq("One sound measures "+L1+" dB and another measures "+L2+" dB. How many times as intense is the louder sound?",
+      Math.pow(10,dd),0.001,
+      "On the decibel scale, every increase of 10 dB multiplies the intensity by 10. The sounds differ by \\("+(L2-L1)+"\\) dB, which is \\("+dd+"\\) steps of 10 dB, so the intensity ratio is \\(10^{"+dd+"} = "+Math.pow(10,dd)+"\\).",
+      {shape:shape,L1:L1,L2:L2});
+  }
+  if(shape==="richter"){
+    var M1=pick([3.5,4,4.5,5,5.5,6,6.5,7,7.5]),d=pick([1,2,3]),M2=M1+d;
+    return numq("An earthquake of magnitude "+fmt(M2,1)+" has how many times the amplitude of an earthquake of magnitude "+fmt(M1,1)+"?",
+      Math.pow(10,d),0.001,
+      "On the Richter scale, one full magnitude unit multiplies the amplitude by 10. The magnitudes differ by \\("+d+"\\), so the amplitudes differ by a factor of \\(10^{"+d+"} = "+Math.pow(10,d)+"\\). A magnitude "+fmt(M2,1)+" quake is far more than a little stronger than a magnitude "+fmt(M1,1)+" one.",
+      {shape:shape,M1:M1,d:d});
+  }
+  if(Math.random()<0.5){
+    var J=pick([10,20,30,40]),fac=Math.pow(10,J/10);
+    return mcq("A sound's level increases by "+J+" dB. By what factor does its intensity increase?",
+      ""+fac,dis3(fac,[J,J/10,fac*10]),
+      "Every 10 dB is one factor of 10 in intensity. An increase of "+J+" dB is "+(J/10)+" such steps, so the intensity is multiplied by \\(10^{"+(J/10)+"} = "+fac+"\\), not by "+J+".",
+      {shape:shape,J:J});
+  }
+  var d2=pick([1,2,3]),fac2=Math.pow(10,d2);
+  return mcq("One earthquake has a magnitude "+d2+" units higher than another. By what factor is its amplitude greater?",
+    ""+fac2,dis3(fac2,[10*d2,d2,fac2*10]),
+    "Each Richter magnitude unit multiplies the amplitude by 10, so "+d2+" units multiply it by \\(10^{"+d2+"} = "+fac2+"\\). The scale is logarithmic: the factor grows by powers of 10, not by "+(10*d2)+".",
+    {shape:shape,d:d2});
+});
+/* --- matching and characteristics (4.11, 4.14, 4.15) --- */
+function pvStr(b,e){var v=powVal(b,1,e);return valStr(v[0],v[1]);}
+E("u5-match-graph",5,["4.11"],2,"gen",function(){
+  var BS=[{b:2,d:"2",rec:"\\frac{1}{2}"},{b:3,d:"3",rec:"\\frac{1}{3}"},{b:4,d:"4",rec:"\\frac{1}{4}"},{b:10,d:"10",rec:"\\frac{1}{10}"},{b:0.5,d:"\\frac{1}{2}",rec:"2"},{b:1/3,d:"\\frac{1}{3}",rec:"3"},{b:0.25,d:"\\frac{1}{4}",rec:"4"}];
+  var B=pick(BS),b=B.b,form=Math.random()<0.55?"k":"h";
+  var expBase=b<1?"\\left("+B.d+"\\right)":B.d;
+  if(form==="k"){
+    var k=pick([-2,-1,0,1,2]),sh=function(v){return v>0?" + "+v:v<0?" - "+(-v):"";};
+    var fn=function(x){return Math.log(x)/Math.log(b)+k;};
+    var corr="y = "+lgS(B.d,"x")+sh(k);
+    var q=mcq("Which equation matches the graphed function?",
+      MV(corr),
+      [MV("y = "+expBase+"^x"+sh(k)),MV("y = "+lgS(B.rec,"x")+sh(k)),MV("y = "+lgS(B.d,"x")+sh(k+1))],
+      "The curve is "+(b>1?"increasing":"decreasing")+", has a vertical asymptote at \\(x = 0\\), and passes through \\((1, "+k+")\\): that fixes a logarithm with base \\("+B.d+"\\) and a vertical shift of \\("+k+"\\), namely \\("+corr+"\\). The exponential option has a horizontal asymptote instead, the reciprocal-base option runs the opposite way, and the last option shifts the graph one unit too far.",
+      {form:form,b:B.d,k:k});
+    q.figure=plotSVG(fn,0.02,b===10?60:12,-5,5,{gx:b===10?10:(b===3||b===1/3?3:2),gy:1,labelX:true,labelY:true});
+    return q;
+  }
+  var h=pick([-2,-1,1,2]),argS=linS(1,-h);
+  var fn2=function(x){return Math.log(x-h)/Math.log(b);};
+  var corr2="y = "+lgS(B.d,"\\left("+argS+"\\right)");
+  var q2=mcq("Which equation matches the graphed function?",
+    MV(corr2),
+    [MV("y = "+lgS(B.d,"x")),MV("y = "+lgS(B.rec,"\\left("+argS+"\\right)")),MV("y = "+lgS(B.d,"\\left("+linS(1,-(h+1))+"\\right)"))],
+    "The curve is "+(b>1?"increasing":"decreasing")+" with its vertical asymptote at \\(x = "+h+"\\), and it passes through \\(("+(h+1)+", 0)\\): the argument must be \\("+argS+"\\) with base \\("+B.d+"\\), namely \\("+corr2+"\\). The unshifted option puts the asymptote at 0, the reciprocal-base option runs the opposite way, and the last option shifts one unit too far.",
+    {form:form,b:B.d,h:h});
+  q2.figure=plotSVG(fn2,h+0.02,(b===10?60:12)+Math.max(h,0),-5,5,{gx:b===10?10:(b===3||b===1/3?3:2),gy:1,labelX:true,labelY:true});
+  return q2;
+});
+E("u5-graph-char",5,["4.14"],2,"gen",function(){
+  var form=Math.random()<0.5?"A":"B",b=pick([2,3]),q;
+  if(form==="A"){
+    var h=pick([-3,-2,-1,1,2,3]);
+    var fn=function(x){return Math.log(x-h)/Math.log(b);};
+    var feat=pick(["asymp","domain","xint"]);
+    var figA=plotSVG(fn,h+0.02,h+(b===2?10:12),-4,4,{gx:b===2?2:3,gy:1,labelX:true,labelY:true});
+    if(feat==="asymp"){
+      q=mcq("The graph shows a logarithmic function. What is the equation of its <b>vertical asymptote</b>?",
+        MV("x = "+h),[MV("x = "+(-h)),MV("y = "+h),MV("x = "+(h+1))],
+        "The curve climbs without bound as \\(x\\) approaches \\("+h+"\\) from the right, and it does not exist to the left: the argument of the logarithm reaches 0 at \\(x = "+h+"\\), so the vertical asymptote is \\(x = "+h+"\\).",
+        {form:form,feat:feat,b:b,h:h});
+    } else if(feat==="domain"){
+      q=mcq("The graph shows a logarithmic function. What is its <b>domain</b>?",
+        MV("x > "+h),[MV("x > "+(-h)),MV("x < "+h),"All real numbers"],
+        "The graph exists only for \\(x\\) greater than \\("+h+"\\), because the argument of a logarithm must be positive and the asymptote at \\(x = "+h+"\\) bounds the curve. The domain is \\(x > "+h+"\\); the range, not the domain, is all real numbers.",
+        {form:form,feat:feat,b:b,h:h});
+    } else {
+      q=mcq("The graph shows a logarithmic function. What is its <b>x-intercept</b>?",
+        ""+(h+1),dis3(h+1,[h-1,1-h,h+3]),
+        "The graph crosses the x-axis one unit to the right of its asymptote: a logarithm equals 0 when its argument is 1, and here the argument reaches 1 at \\(x = "+(h+1)+"\\).",
+        {form:form,feat:feat,b:b,h:h});
+    }
+    q.figure=figA;
+    return q;
+  }
+  var k=pick([-2,-1,1,2]);
+  var fn2=function(x){return Math.log(x)/Math.log(b)+k;};
+  var feat2=pick(["xint","valueAt","range"]);
+  var figB=plotSVG(fn2,0.02,b===2?12:15,-4,4,{gx:b===2?2:3,gy:1,labelX:true,labelY:true});
+  if(feat2==="xint"){
+    var corr=pvStr(b,-k);
+    q=mcq("The graph shows a logarithmic function. What is its <b>x-intercept</b>?",
+      MV(corr),dis3s(corr,[pvStr(b,k),"1",pvStr(b,-k+(k>0?-1:1))],["0",""+(b+1),"2"]).map(function(s){return MV(s);}),
+      "The crossing has \\(y = 0\\), and the graph is a logarithm of base \\("+b+"\\) shifted by \\("+k+"\\), so the logarithm part must equal \\("+(0-k)+"\\): the intercept is \\(x = "+b+"^{"+(0-k)+"} = "+corr+"\\). Reading where the curve crosses the axis confirms it.",
+      {form:form,feat:feat2,b:b,k:k});
+  } else if(feat2==="valueAt"){
+    q=mcq("The graph shows a logarithmic function. What is the value of \\(y\\) when \\(x = "+b+"\\)?",
+      ""+(1+k),dis3(1+k,[k,1,1-k]),
+      "At \\(x = "+b+"\\) the logarithm of its own base contributes exactly 1, and the vertical shift adds \\("+k+"\\), so \\(y = 1 + "+(k<0?"("+k+")":k)+" = "+(1+k)+"\\), which matches the height of the curve over \\(x = "+b+"\\) on the graph.",
+      {form:form,feat:feat2,b:b,k:k});
+  } else {
+    q=mcq("The graph shows a logarithmic function. What is its <b>range</b>?",
+      "All real numbers",
+      [MV("y > "+k),MV("y > 0"),MV("x > 0")],
+      "The curve rises through every height: as \\(x\\) grows the values climb without bound, and near the asymptote at \\(x = 0\\) they fall without bound. So the range is all real numbers; it is the domain that is restricted, to \\(x > 0\\).",
+      {form:form,feat:feat2,b:b,k:k});
+  }
+  q.figure=figB;
+  return q;
+});
+E("u5-eq-char",5,["4.15"],2,"gen",function(){
+  var form=pick(["a","k","h"]),b=pick([2,3,5,10]),eq,feat;
+  if(form==="a"){
+    var av=pick([2,3,-1,-2,-3]);
+    eq="y = "+(av===-1?"-":av)+"\\log_{"+b+"} x";
+    feat=pick(["xint","domain","valueAt","direction"]);
+    if(feat==="xint")return mcq("Consider the function \\("+eq+"\\). What is its <b>x-intercept</b>?",
+      "1",dis3s("1",["0",""+b,"-1"],["2"]),
+      "The intercept has \\(y = 0\\), and the coefficient \\("+av+"\\) is not zero, so the logarithm itself must be 0: \\(\\log_{"+b+"} x = 0\\) at \\(x = 1\\), whatever the base and coefficient. The intercept is 1.",
+      {form:form,feat:feat,b:b,av:av});
+    if(feat==="domain")return mcq("Consider the function \\("+eq+"\\). What is its <b>domain</b>?",
+      MV("x > 0"),[MV("x \\ge 0"),MV("x < 0"),"All real numbers"],
+      "A logarithm is defined only for positive arguments, and multiplying by the coefficient \\("+av+"\\) does not change that: the domain is \\(x > 0\\). It is the range that covers all real numbers.",
+      {form:form,feat:feat,b:b,av:av});
+    if(feat==="valueAt")return mcq("Consider the function \\("+eq+"\\). What is the value of \\(y\\) when \\(x = "+(b*b)+"\\)?",
+      ""+(2*av),dis3(2*av,[av,2,-2*av]),
+      "At \\(x = "+(b*b)+" = "+b+"^2\\), the logarithm is 2, and the coefficient multiplies it: \\(y = "+av+" \\times 2 = "+(2*av)+"\\). The distractors forget the coefficient or forget the power in the argument.",
+      {form:form,feat:feat,b:b,av:av});
+    return mcq("Consider the function \\("+eq+"\\). Which statement describes the function?",
+      av>0?"It is increasing":"It is decreasing",
+      [av>0?"It is decreasing":"It is increasing","It is constant","It has a maximum value"],
+      "The base \\("+b+"\\) is greater than 1, so the logarithm itself increases; the coefficient \\("+av+"\\) is "+(av>0?"positive, which preserves the increase":"negative, which flips the graph and makes it decrease")+". So the function is "+(av>0?"increasing":"decreasing")+", with no maximum.",
+      {form:form,feat:feat,b:b,av:av});
+  }
+  if(form==="k"){
+    var k=pick([-2,-1,1,2]);
+    eq="y = \\log_{"+b+"} x"+(k>0?" + "+k:" - "+(-k));
+    feat=pick(["xint","valueAt1","asymp"]);
+    if(feat==="xint"){
+      var corr=pvStr(b,-k);
+      return mcq("Consider the function \\("+eq+"\\). What is its <b>x-intercept</b>?",
+        MV(corr),dis3s(corr,[pvStr(b,k),"1",pvStr(b,-k+(k>0?-1:1))],["0","2"]).map(function(s){return MV(s);}),
+        "Set \\(y = 0\\): the logarithm must equal \\("+(0-k)+"\\), so \\(x = "+b+"^{"+(0-k)+"} = "+corr+"\\). The vertical shift moves the intercept away from the unshifted value of 1.",
+        {form:form,feat:feat,b:b,k:k});
+    }
+    if(feat==="valueAt1")return mcq("Consider the function \\("+eq+"\\). What is the value of \\(y\\) when \\(x = 1\\)?",
+      ""+k,dis3(k,[0,1,-k]),
+      "Every logarithm is 0 at \\(x = 1\\), so only the shift survives: \\(y = 0 + "+(k<0?"("+k+")":k)+" = "+k+"\\).",
+      {form:form,feat:feat,b:b,k:k});
+    return mcq("Consider the function \\("+eq+"\\). What is the equation of its <b>vertical asymptote</b>?",
+      MV("x = 0"),[MV("y = "+k),MV("x = "+k),MV("y = 0")],
+      "The shift is vertical, so it moves the graph up or down but not sideways: the argument still reaches 0 at \\(x = 0\\), and the vertical asymptote stays at \\(x = 0\\).",
+      {form:form,feat:feat,b:b,k:k});
+  }
+  var h=pick([-3,-2,-1,1,2,3]);
+  eq="y = \\log_{"+b+"} \\left("+linS(1,-h)+"\\right)";
+  feat=pick(["asymp","domain","xint"]);
+  if(feat==="asymp")return mcq("Consider the function \\("+eq+"\\). What is the equation of its <b>vertical asymptote</b>?",
+    MV("x = "+h),[MV("x = "+(-h)),MV("y = "+h),MV("x = "+(h+1))],
+    "The asymptote sits where the argument is 0: \\("+linS(1,-h)+" = 0\\) gives \\(x = "+h+"\\). The shift inside the argument moves the asymptote sideways with it.",
+    {form:form,feat:feat,b:b,h:h});
+  if(feat==="domain")return mcq("Consider the function \\("+eq+"\\). What is its <b>domain</b>?",
+    MV("x > "+h),[MV("x > "+(-h)),MV("x < "+h),"All real numbers"],
+    "The argument must be positive: \\("+linS(1,-h)+" > 0\\) means \\(x > "+h+"\\). The domain is \\(x > "+h+"\\); the range is all real numbers.",
+    {form:form,feat:feat,b:b,h:h});
+  return mcq("Consider the function \\("+eq+"\\). What is its <b>x-intercept</b>?",
+    ""+(h+1),dis3(h+1,[h-1,1-h,h+3]),
+    "A logarithm is 0 when its argument is 1: \\("+linS(1,-h)+" = 1\\) gives \\(x = "+(h+1)+"\\), one unit to the right of the asymptote.",
+    {form:form,feat:feat,b:b,h:h});
+});
 /* BANK-SRC-END */
 </script>
 
