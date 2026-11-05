@@ -2373,6 +2373,294 @@ E("u5-eq-char",5,["4.15"],2,"gen",function(){
     "A logarithm is 0 when its argument is 1: \\("+linS(1,-h)+" = 1\\) gives \\(x = "+(h+1)+"\\), one unit to the right of the asymptote.",
     {form:form,feat:feat,b:b,h:h});
 });
+
+/* ================= Unit 6: Financial Mathematics ================= */
+/* All instances are hand-solvable with the formulas: rates, terms and
+   compounding frequencies are chosen so every power closes by hand. */
+function mon(x){var s=fmtF(x,2),neg=s.charAt(0)==="-";if(neg)s=s.slice(1);var parts=s.split(".");parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");return (neg?"-$":"$")+parts.join(".");}
+var FINC=[];
+[5,10,20,25].forEach(function(r){[2,3].forEach(function(y){FINC.push({r:r,fw:"annually",m:1,n:y,term:y+" years"});});});
+FINC.push({r:5,fw:"annually",m:1,n:4,term:"4 years"});
+[8,10,12].forEach(function(r){[1,2].forEach(function(y){FINC.push({r:r,fw:"semi-annually",m:2,n:2*y,term:y+(y===1?" year":" years")});});});
+[8,12,16,20].forEach(function(r){FINC.push({r:r,fw:"quarterly",m:4,n:4,term:"1 year"});});
+[2,3].forEach(function(mo){FINC.push({r:12,fw:"monthly",m:12,n:mo,term:mo+" months"});});
+function finPick(){var s=pick(FINC);return {r:s.r,fw:s.fw,m:s.m,n:s.n,term:s.term,i:s.r/100/s.m};}
+
+/* --- interest concepts (1.6, 1.7) --- */
+E("u6-identify-compound",6,["1.7"],1,"var",varset([
+  function(){return mcq("Which situation involves <b>compound interest</b>?",
+    "A savings account where the interest is added to the balance each year, so the next year's interest is calculated on the larger balance",
+    ["A loan where the interest each year is calculated only on the original amount borrowed","A one-time administration fee charged when a loan is opened","Rent that stays the same every month for the length of a lease"],
+    "Compound interest means interest is earned on interest: once the interest is added to the balance, it becomes part of the amount that grows. Interest calculated only on the original principal is simple interest, however long it runs.",{});},
+  function(){return mcq("Which formula calculates the amount owing under <b>compound interest</b>?",
+    MV("A = P(1 + i)^n"),
+    [MV("A = P(1 + rt)"),MV("I = Prt"),MV("A = P(1 + i)")],
+    "Compound growth applies the periodic rate repeatedly, which is why the number of periods appears as an exponent: \\(A = P(1 + i)^n\\). The first two distractors are simple interest formulas (no exponent), and the last applies the rate only once.",{});},
+  function(){return mcq("A credit card balance grows faster each month even though no new purchases are made. What causes this?",
+    "Interest is charged on the unpaid balance, including on interest that was added in earlier months",
+    ["The interest rate increases every month","A monthly fee is added to the balance","The bank rounds every balance up to the nearest dollar"],
+    "The unpaid interest becomes part of the balance, and the next month's interest is charged on that larger balance: interest on interest, the defining feature of compound interest.",{});}
+]));
+E("u6-simple-vs-compound",6,["1.6"],1,"var",varset([
+  function(){return mcq("At the same stated rate and term, why does an <b>investor</b> usually prefer compound interest over simple interest?",
+    "The interest itself earns interest, so the investment grows faster and faster over time",
+    ["Compound interest is paid out in cash every month","Simple interest rates are always lower in practice","Compound interest is guaranteed never to lose value"],
+    "Under compound interest the interest is added to the principal, so each period's interest is calculated on a larger amount. That snowball effect is the investor's advantage, and it grows stronger the longer the money stays invested.",{});},
+  function(){return mcq("At the same stated rate and term, what is the <b>borrower's</b> advantage with simple interest?",
+    "Interest is charged only on the original principal, so the total cost is lower and easy to predict",
+    ["The borrower can skip payments without penalty","The interest rate drops every year of the loan","The loan never has to be repaid in full"],
+    "Simple interest never charges interest on interest: the cost is just \\(I = Prt\\), fixed by the amount borrowed, the rate, and the time. A compound loan at the same rate and term costs more, because the interest itself starts accruing interest.",{});},
+  function(){return mcq("Two accounts start with the same deposit at the same rate, one paying simple interest and one compound interest. After many years, which statement is true?",
+    "The compound account is worth more, and the gap between the two accounts keeps widening",
+    ["The two accounts are worth exactly the same","The simple account is worth more, because its interest is steady","The compound account is worth more at first, but the simple account catches up"],
+    "Simple interest adds the same amount every year, while compound interest adds a growing amount. The compound account pulls ahead in the second period and the lead grows every period after that.",{});}
+]));
+/* --- reading formulas and basic calculations (1.8, 1.10) --- */
+E("u6-read-formula",6,["1.8"],1,"gen",function(){
+  var s=finPick(),P=pick([400,500,800,1000,1200,1500,2000,2500,3000,4000,5000]),feat=pick(["principal","perrate","periods","freq"]);
+  var formula="A = "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"}";
+  if(feat==="principal")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>principal</b>?",
+    mon(P),[mon(Math.round(P*(1+s.i))),mon(P*2),mon(Math.round(P/2))],
+    "In \\(A = P(1 + i)^n\\) the principal is the starting amount the growth factor is applied to: here \\(P = "+mon(P)+"\\). The first distractor is the amount after one period, not the amount invested.",
+    {feat:feat,P:P});
+  if(feat==="perrate")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>interest rate per compounding period</b>?",
+    fmt(s.r/s.m,2)+"%",s.m===1?[fmt(s.r/2,2)+"%",fmt(s.r*2,2)+"%",fmt(s.r+1,2)+"%"]:[s.r+"%",fmt(s.r/s.m/2,2)+"%",fmt(s.r/s.m+1,2)+"%"],
+    "The number added to 1 in the growth factor is the periodic rate: \\(i = "+fmt(s.i,4)+"\\), which is \\("+fmt(s.r/s.m,2)+"%\\). That is the annual rate of "+s.r+"% divided by the "+s.m+" compounding period(s) per year; using the full annual rate is the first distractor's error.",
+    {feat:feat,P:P});
+  if(feat==="periods")return mcq("A financial calculation uses the formula \\("+formula+"\\). How many <b>compounding periods</b> are there in total?",
+    ""+s.n,dis3(s.n,[s.n/s.m,s.n*s.m,s.m]),
+    "The exponent in \\(A = P(1 + i)^n\\) counts the periods directly: \\(n = "+s.n+"\\). It already combines the term ("+s.term+") with the "+s.m+" period(s) per year; dividing by the frequency again is the first distractor's error.",
+    {feat:feat,P:P});
+  return mcq("A financial calculation uses the formula \\("+formula+"\\) for an annual rate of "+s.r+"%. How often is the interest <b>compounded</b>?",
+    s.fw,["annually","semi-annually","quarterly","monthly"].filter(function(w){return w!==s.fw;}),
+    "The periodic rate inside the formula is \\("+fmt(s.i,4)+"\\), and \\("+s.r+"% \\div "+fmt(s.i*100,2)+"% = "+s.m+"\\), so the annual rate is split into "+s.m+" period(s) per year: the interest is compounded "+s.fw+".",
+    {feat:feat,P:P});
+});
+E("u6-simple-interest",6,["1.8"],1,"gen",function(){
+  var P=pick([300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000,6000]),r=pick([3,3.5,4,4.5,5,6,7,8]),t=pick([2,3,4,5,6]);
+  var I=P*r/100*t,askAmt=Math.random()<0.5;
+  return numq((askAmt?"A loan of ":"An investment of ")+mon(P)+" is taken at "+fmt(r,1)+"% simple interest for "+t+" years. What is the "+(askAmt?"total amount to be repaid":"total interest earned")+", in dollars?",
+    askAmt?P+I:I,0.01,
+    "Simple interest is \\(I = Prt = "+P+" \\times "+fmt(r/100,3)+" \\times "+t+" = "+fmtF(I,2)+"\\), calculated on the original principal only."+(askAmt?" Adding the principal gives a total of "+mon(P+I)+" to repay.":""),
+    {P:P,r:r,t:t});
+});
+E("u6-compound-amount",6,["1.8"],2,"gen",function(){
+  var s=finPick(),P=pick([400,500,800,1000,1200,1500,2000,2500,3000,5000]);
+  var A=P*Math.pow(1+s.i,s.n),loan=Math.random()<0.4;
+  return numq((loan?"A loan of ":"An investment of ")+mon(P)+" is made at "+s.r+"% compounded "+s.fw+". "+(loan?"If no payments are made, how much is owed":"What is the value")+" after "+s.term+", in dollars?",
+    Math.round(A*100)/100,0.05,
+    "Use \\(A = P(1 + i)^n\\) with the periodic rate \\(i = "+s.r+"\\% \\div "+s.m+" = "+fmt(s.i*100,2)+"%\) and \\(n = "+s.n+"\\) periods: \\[ \\begin{aligned} A &= P(1 + i)^n \\\\ &= "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"} \\\\ &= "+fmtF(A,2)+" \\end{aligned} \\] So the amount is "+mon(A)+". The rate must be divided by the compounding frequency before it goes into the formula.",
+    {P:P,r:s.r,fw:s.fw});
+});
+E("u6-interest-earned",6,["1.10"],2,"gen",function(){
+  var s=finPick(),P=pick([400,500,800,1000,1200,1500,2000,2500,3000,5000]);
+  var A=P*Math.pow(1+s.i,s.n),I=A-P,loan=Math.random()<0.5;
+  return numq("A "+(loan?"loan":"deposit")+" of "+mon(P)+" grows at "+s.r+"% compounded "+s.fw+" and is settled in one payment after "+s.term+". How much <b>interest</b> is "+(loan?"charged":"earned")+", in dollars?",
+    Math.round(I*100)/100,0.05,
+    "First find the final amount, then subtract the principal: \\[ \\begin{aligned} A &= "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"} \\\\ &= "+fmtF(A,2)+" \\\\ I &= "+fmtF(A,2)+" - "+fmtF(P,2)+" \\\\ &= "+fmtF(I,2)+" \\end{aligned} \\] The interest is "+mon(I)+": only the growth counts, not the original "+mon(P)+".",
+    {P:P,r:s.r,fw:s.fw});
+});
+/* --- solving for an unknown (1.12) --- */
+E("u6-present-value",6,["1.12"],2,"gen",function(){
+  var s=finPick(),P=pick([400,500,800,1000,1200,1500,2000,2500,3000,5000]);
+  var Aex=P*Math.pow(1+s.i,s.n),Ad=Math.round(Aex*100)/100,ans=Ad/Math.pow(1+s.i,s.n);
+  return numq("A loan is to be repaid with a single payment of "+mon(Ad)+" after "+s.term+". The interest rate is "+s.r+"% compounded "+s.fw+". How much was borrowed, in dollars?",
+    ans,0.05,
+    "Work the compound formula backwards, dividing instead of multiplying: \\[ \\begin{aligned} P &= \\frac{A}{(1 + i)^n} \\\\ &= \\frac{"+fmtF(Ad,2)+"}{("+fmt(1+s.i,4)+")^{"+s.n+"}} \\\\ &= "+fmtF(ans,2)+" \\end{aligned} \\] About "+mon(P)+" was borrowed; the rest of the payment is interest.",
+    {P:P,r:s.r,fw:s.fw});
+});
+E("u6-find-term",6,["1.12"],2,"gen",function(){
+  var base=pick([[1.05,5],[1.1,10],[1.2,20],[1.25,25]]),fac=base[0],r=base[1],n=pick([2,3,4]);
+  var P=pick([400,500,800,1000,1200,1500,2000,2500,3000,5000]),A=P*Math.pow(fac,n);
+  return numq("An investment of "+mon(P)+" grows at "+r+"% compounded annually. How many years does it take to reach "+mon(A)+"?",
+    n,0.001,
+    "Take the ratio of the amounts and recognize it as a power of the growth factor: \\[ \\begin{aligned} ("+fmt(fac,2)+")^{n} &= \\frac{"+fmtF(A,2)+"}{"+fmtF(P,2)+"} \\\\ &= "+fmt(Math.pow(fac,n),4)+" \\end{aligned} \\] Repeated multiplication gives \\("+fmt(fac,2)+"^{"+n+"} = "+fmt(Math.pow(fac,n),4)+"\\), so \\(n = "+n+"\\) years. No solver is needed when the ratio is built to be an exact power.",
+    {r:r,n:n,P:P});
+});
+/* --- comparing compounding and offers (1.9) --- */
+E("u6-compare-frequency",6,["1.9"],2,"gen",function(){
+  var r=pick([8,10,12]),P=pick([500,750,1000,1250,1500,1750,2000,2500,3000,4000]);
+  var Aa=P*(1+r/100),As=P*Math.pow(1+r/200,2),Aq=P*Math.pow(1+r/400,4),askDiff=Math.random()<0.5;
+  var block="\\[ \\begin{aligned} A_{\\text{annual}} &= "+P+"("+fmt(1+r/100,2)+") = "+fmtF(Aa,2)+" \\\\ A_{\\text{semi}} &= "+P+"("+fmt(1+r/200,3)+")^2 = "+fmtF(As,2)+" \\\\ A_{\\text{quarterly}} &= "+P+"("+fmt(1+r/400,3)+")^4 = "+fmtF(Aq,2)+" \\end{aligned} \\]";
+  if(askDiff)return numq("An investment of "+mon(P)+" is offered at "+r+"% for one year. How much <b>more</b> interest is earned if the interest is compounded quarterly rather than annually, in dollars?",
+    Math.round((Aq-Aa)*100)/100,0.05,
+    "Cost out both options for the year: "+block+" More frequent compounding earns more because the interest starts earning interest sooner. The extra interest is "+mon(Aq-Aa)+".",
+    {r:r,P:P});
+  return mcq("An investment of "+mon(P)+" is offered at "+r+"% for one year, with a choice of compounding period. Which choice earns the <b>most</b> interest?",
+    "Compounded quarterly",
+    ["Compounded annually","Compounded semi-annually","All three earn exactly the same"],
+    "Cost out all three for the year: "+block+" With the rate and term fixed, the most frequent compounding wins, because each interest credit starts earning interest of its own sooner.",
+    {r:r,P:P});
+});
+var U6CC=[
+  {at:"simple interest at 10% for 3 years",af:1+0.10*3,bt:"compound interest at 9% compounded annually for 3 years",bf:Math.pow(1.09,3)},
+  {at:"compound interest at 12% compounded annually for 2 years",af:Math.pow(1.12,2),bt:"compound interest at 11% compounded semi-annually for 2 years",bf:Math.pow(1.055,4)},
+  {at:"simple interest at 5% for 4 years",af:1+0.05*4,bt:"compound interest at 4.5% compounded annually for 4 years",bf:Math.pow(1.045,4)},
+  {at:"compound interest at 6% compounded annually for 2 years",af:Math.pow(1.06,2),bt:"simple interest at 6% for 2 years",bf:1+0.06*2},
+  {at:"compound interest at 8% compounded semi-annually for 1 year",af:Math.pow(1.04,2),bt:"simple interest at 8.25% for 1 year",bf:1+0.0825},
+  {at:"simple interest at 7% for 3 years",af:1+0.07*3,bt:"compound interest at 6.5% compounded annually for 3 years",bf:Math.pow(1.065,3)},
+  {at:"compound interest at 15% compounded annually for 2 years",af:Math.pow(1.15,2),bt:"simple interest at 16% for 2 years",bf:1+0.16*2},
+  {at:"compound interest at 4% compounded semi-annually for 3 years",af:Math.pow(1.02,6),bt:"simple interest at 4.25% for 3 years",bf:1+0.0425*3}
+];
+E("u6-compare-costs",6,["1.9"],3,"gen",function(){
+  var sc=pick(U6CC),P=pick([1000,1500,2000,2500,3000,4000,5000]);
+  var IA=P*(sc.af-1),IB=P*(sc.bf-1),winner=IA<IB?"Loan A":"Loan B",save=Math.abs(IA-IB);
+  return mcq("A borrower needs "+mon(P)+". Loan A charges "+sc.at+". Loan B charges "+sc.bt+". Which loan costs <b>less</b> in total interest?",
+    winner,
+    [winner==="Loan A"?"Loan B":"Loan A","The two loans cost exactly the same","It cannot be determined without a financial calculator"],
+    "Cost each loan over its full term: \\[ \\begin{aligned} I_{\\text{A}} &= "+fmtF(IA,2)+" \\\\ I_{\\text{B}} &= "+fmtF(IB,2)+" \\end{aligned} \\] "+winner+" charges less interest, saving "+mon(save)+". The two offers differ in rate, in type, or in compounding, so neither can be judged from its headline rate alone: both have to be costed to the end of the term. Justification for Level 3: the comparison is impossible until two different interest calculations are both carried through.",
+    {P:P,winner:winner});
+});
+
+/* --- loan costs and amortization (1.11) --- */
+E("u6-total-cost-loan",6,["1.11"],2,"gen",function(){
+  var pay=pick([74.50,86.25,95.75,109.99,124.60,138.45,152.30,175.80,210.25,249.99]),n=pick([12,18,24,36,48,60]);
+  var total=Math.round(pay*n*100)/100,P=0,tries=0;
+  while(tries++<40){P=pick([500,600,800,1000,1200,1500,2000,2500,3000]);if(P<total*0.95&&P>total*0.4)break;P=0;}
+  if(!P)P=Math.round(total*0.7);
+  var interest=Math.round((total-P)*100)/100,askInt=Math.random()<0.5;
+  return numq("A loan of "+mon(P)+" is repaid with "+n+" monthly payments of "+mon(pay)+". What is the total "+(askInt?"interest paid":"amount repaid")+", in dollars?",
+    askInt?interest:total,0.01,
+    "Multiply the payment by the number of payments: \\[ \\begin{aligned} \\text{Total repaid} &= "+fmtF(pay,2)+" \\times "+n+" \\\\ &= "+fmtF(total,2)+(askInt?" \\\\ \\text{Interest} &= "+fmtF(total,2)+" - "+fmtF(P,2)+" \\\\ &= "+fmtF(interest,2):"")+" \\end{aligned} \\] "+(askInt?"The borrower pays "+mon(interest)+" for the use of the money; the rest repays the principal.":"The borrower repays "+mon(total)+" altogether, of which "+mon(interest)+" is interest."),
+    {pay:pay,n:n,P:P});
+});
+E("u6-payments-term",6,["1.11"],1,"gen",function(){
+  var f=pick([{w:"weekly",per:52},{w:"bi-weekly",per:26},{w:"semi-monthly",per:24},{w:"monthly",per:12},{w:"quarterly",per:4},{w:"semi-annually",per:2}]);
+  var y=ri(1,6),count=f.per*y,toYears=Math.random()<0.5;
+  if(toYears)return numq("A loan is repaid with "+count+" "+f.w+" payments. How many years does the repayment take?",
+    y,0.001,"There are "+f.per+" "+f.w+" payments in one year, and \\("+count+" \\div "+f.per+" = "+y+"\\), so the repayment takes "+y+" year"+(y===1?"":"s")+".",{f:f.w});
+  return numq("A loan is repaid with "+f.w+" payments over "+y+" years. How many payments are made in total?",
+    count,0.001,"There are "+f.per+" "+f.w+" payments in each year, and \\("+f.per+" \\times "+y+" = "+count+"\\), so "+count+" payments are made in total.",{f:f.w,y:y});
+});
+E("u6-amortization-read",6,["1.11"],2,"gen",function(){
+  var rows=null,P=0,rate=0,tries=0;
+  while(tries++<80){
+    var Pc=pick([600,800,1000,1200,1500,2000]),ic=pick([0.05,0.10]),payc=pick([200,250,300,400,500]);
+    if(payc<=Pc*ic)continue;
+    var bal=Pc,rr=[],yr=0;
+    while(bal>0&&yr<12){yr++;var it=Math.round(bal*ic*100)/100,paym,pr;
+      if(bal+it<=payc){paym=Math.round((bal+it)*100)/100;pr=bal;bal=0;}
+      else{paym=payc;pr=Math.round((payc-it)*100)/100;bal=Math.round((bal-pr)*100)/100;}
+      rr.push({y:yr,pay:paym,it:it,pr:pr,bal:bal});}
+    if(bal===0&&rr.length>=3&&rr.length<=8){rows=rr;P=Pc;rate=ic;break;}
+  }
+  if(!rows){P=1000;rate=0.10;rows=[{y:1,pay:300,it:100,pr:200,bal:800},{y:2,pay:300,it:80,pr:220,bal:580},{y:3,pay:300,it:58,pr:242,bal:338},{y:4,pay:300,it:33.80,pr:266.20,bal:71.80},{y:5,pay:78.98,it:7.18,pr:71.80,bal:0}];}
+  var table=rows.map(function(r){return "Year "+r.y+": payment "+mon(r.pay)+", interest "+mon(r.it)+", balance owing "+mon(r.bal);}).join("<br>");
+  var shape=pick(["interest","balance","principal","final","totint"]);
+  var head="A loan of "+mon(P)+" at "+fmt(rate*100,0)+"% interest is repaid with annual payments. The repayment schedule is:<br>"+table+"<br>";
+  if(shape==="totint"){
+    var tot=rows.reduce(function(a,r){return a+r.it;},0);tot=Math.round(tot*100)/100;
+    var sumStr=rows.map(function(r){return fmtF(r.it,2);}).join(" + ");
+    return numq(head+"What is the <b>total interest</b> paid over the life of the loan, in dollars?",
+      tot,0.01,"Add the interest column of the schedule: \\[ \\begin{aligned} \\text{Total interest} &= "+sumStr+" \\\\ &= "+fmtF(tot,2)+" \\end{aligned} \\] The interest portion shrinks each year because it is charged on a smaller and smaller balance.",{shape:shape});
+  }
+  var k=ri(1,Math.min(3,rows.length)),row=rows[k-1];
+  if(shape==="interest")return numq(head+"How much of the <b>year "+k+" payment</b> goes toward interest, in dollars?",
+    row.it,0.01,"Read the year "+k+" row of the schedule: of the "+mon(row.pay)+" payment, "+mon(row.it)+" is interest. Interest is charged on the balance owing at the start of the year, which is why the interest portion falls as the balance falls.",{shape:shape});
+  if(shape==="balance")return numq(head+"What is the <b>balance owing</b> right after the year "+k+" payment, in dollars?",
+    row.bal,0.01,"Read the year "+k+" row of the schedule: after that payment the balance owing is "+mon(row.bal)+". Only the principal portion of each payment ("+mon(row.pr)+" in year "+k+") reduces the balance.",{shape:shape});
+  if(shape==="principal")return numq(head+"How much of the <b>year "+k+" payment</b> goes toward the principal, in dollars?",
+    row.pr,0.01,"In year "+k+" the payment is "+mon(row.pay)+" and the interest portion is "+mon(row.it)+", so the principal portion is \\("+fmtF(row.pay,2)+" - "+fmtF(row.it,2)+" = "+fmtF(row.pr,2)+"\\). The principal portion grows each year because a shrinking balance is charged less interest.",{shape:shape});
+  var last=rows[rows.length-1];
+  return numq(head+"What is the amount of the <b>final payment</b>, in dollars?",
+    last.pay,0.01,"By the last year only "+mon(rows[rows.length-2].bal)+" is owing, and with one year of interest ("+mon(last.it)+") the final payment is just "+mon(last.pay)+", smaller than the regular payments because the loan is almost gone.",{shape:shape});
+});
+/* --- credit options (1.13) --- */
+E("u6-credit-fees",6,["1.13"],2,"gen",function(){
+  var B0=pick([800,1000,1200,1500,2000,2500]),ra=pick([14,16,18,20]),drop=pick([3,4,5]),rb=ra-drop;
+  var diff0=B0*drop/100,delta=pick([-20,-12,-6,6,12,20]),fee=Math.max(5,Math.round((diff0+delta)/5)*5);
+  var cA=B0*ra/100,cB=B0*rb/100+fee,winner=cA<cB?"Card A":"Card B",nm=pick(["Sam","Priya","Noah","Emma","Liam"]);
+  return mcq(nm+" carries a balance of "+mon(B0)+" for a full year without making a payment. Card A charges "+ra+"% compounded annually with no annual fee. Card B charges "+rb+"% compounded annually plus a "+mon(fee)+" annual fee. Which card costs <b>less</b> over the year?",
+    winner,
+    [winner==="Card A"?"Card B":"Card A","Both cards cost exactly the same","The card with the lower rate always costs less, so no calculation is needed"],
+    "A rate is only part of a card's cost. Add each card's charges for the year: \\[ \\begin{aligned} \\text{Card A} &= "+fmtF(cA,2)+" \\\\ \\text{Card B} &= "+fmtF(B0*rb/100,2)+" + "+fmtF(fee,2)+" = "+fmtF(cB,2)+" \\end{aligned} \\] "+winner+" costs less, by "+mon(Math.abs(cA-cB))+". The annual fee can wipe out a lower rate's advantage, which is why the last option is a trap.",
+    {B0:B0,ra:ra,rb:rb});
+});
+E("u6-deferred-offer",6,["1.13"],3,"gen",function(){
+  var P=pick([600,750,800,900,1100,1200,1500,1800,2000,2400]),r=pick([15,18,20,21,24,28]);
+  var item=pick(["sofa","dining set","television","mattress","appliance package"]),nm=pick(["Taylor","Jordan","Casey","Riley","Alex"]);
+  var I=P*r/100,offer="A store sells a "+item+" for "+mon(P)+" with a \"pay nothing for 12 months\" offer. The fine print says that if the full price is not paid by the end of month 12, simple interest at "+r+"% per year is charged on the <b>full original price</b>, back to the purchase date. ";
+  if(Math.random()<0.5)return numq(offer+nm+" pays nothing by the deadline. How much is owed in total at that point, in dollars?",
+    P+I,0.01,
+    "Missing the deadline triggers interest on the whole price for the whole year, even though no payments were due: \\[ \\begin{aligned} I &= Prt \\\\ &= "+P+" \\times "+fmt(r/100,2)+" \\times 1 \\\\ &= "+fmtF(I,2)+" \\\\ \\text{Total owed} &= "+fmtF(P,2)+" + "+fmtF(I,2)+" \\\\ &= "+fmtF(P+I,2)+" \\end{aligned} \\] The deferral is free only if the full price is paid in time. Justification for Level 3: the key condition sits in the fine print and reverses the natural assumption that interest would count only from the deadline.",
+    {P:P,r:r});
+  var paidOpts=[100,200,250,300,400,500].filter(function(v){return v<P&&2*v!==P;});
+  var paid=pick(paidOpts);
+  return mcq(offer+nm+" pays "+mon(paid)+" before the deadline but does not pay in full. How much <b>interest</b> is charged?",
+    mon(I),
+    [mon((P-paid)*r/100),"No interest, because a payment was made before the deadline",mon(paid*r/100)],
+    "The condition in the fine print is payment <b>in full</b>. Because "+mon(paid)+" is only part of the price, interest is charged on the full original price for the full year: \\(I = Prt = "+P+" \\times "+fmt(r/100,2)+" \\times 1 = "+fmtF(I,2)+"\\), not on the remaining balance. Justification for Level 3: the partial payment feels like it should help, and spotting that it does not is the whole question.",
+    {P:P,r:r,paid:paid});
+});
+/* --- assets: appreciate and depreciate (1.14) --- */
+E("u6-appreciate-depreciate",6,["1.14"],2,"var",varset([
+  function(){return mcq("A classic car bought for $18,000 is now worth $24,000. By what percent did the car <b>appreciate</b>?",
+    "33.3%",["25%","66.7%","6%"],
+    "The value rose by \\(24000 - 18000 = 6000\\) dollars. Percent change is measured against the original value: \\(6000 \\div 18000 = 0.333\\), an appreciation of about 33.3%. Dividing by the new value instead gives the 25% distractor.",{});},
+  function(){return mcq("A snowmobile bought for $9,600 is now worth $7,200. By what percent did it <b>depreciate</b>?",
+    "25%",["33.3%","75%","2.5%"],
+    "The value fell by \\(9600 - 7200 = 2400\\) dollars. Against the original value: \\(2400 \\div 9600 = 0.25\\), a depreciation of 25%. The 75% option is the percent of value remaining, not the percent lost.",{});},
+  function(){return mcq("Which asset is <b>most likely to appreciate</b> in value over the next five years?",
+    "A house in a growing town",
+    ["A new smartphone","A new car that is driven daily","A laptop computer"],
+    "Real estate in a growing area commonly gains value as demand rises, so the house is the appreciating asset. Phones, cars and laptops are depreciating assets: they lose value with age, wear and newer models replacing them.",{});}
+]));
+E("u6-depreciation-value",6,["1.14"],2,"gen",function(){
+  var asset=pick([
+    {n:"car",mode:"dep",pool:[12000,15000,18000,20000,24000,28000,32000]},
+    {n:"ATV",mode:"dep",pool:[7000,8500,9000,11000]},
+    {n:"boat",mode:"dep",pool:[15000,22000,26000]},
+    {n:"house",mode:"app",pool:[280000,320000,350000,400000,450000]}]);
+  var dep=asset.mode==="dep",r=dep?pick([10,15,20,25]):pick([3,4,5,6]),t=pick([2,3]);
+  var P=pick(asset.pool),fac=dep?1-r/100:1+r/100,V=P*Math.pow(fac,t);
+  return numq("A "+asset.n+" bought for "+mon(P)+" "+(dep?"loses "+r+"% of its value each year (declining balance)":"gains "+r+"% in value each year")+". What is it worth after "+t+" years, in dollars?",
+    Math.round(V*100)/100,0.05,
+    "Each year the value is multiplied by \\("+fmt(fac,2)+"\\): \\[ \\begin{aligned} V &= P(1 "+(dep?"-":"+")+" r)^t \\\\ &= "+P+"("+fmt(fac,2)+")^{"+t+"} \\\\ &= "+fmtF(V,2)+" \\end{aligned} \\] The value is applied to the shrinking (declining) balance each year, so this is a compound change, not "+t+" separate deductions of "+r+"% of the original price.",
+    {asset:asset.n,r:r,t:t});
+});
+/* --- renting, buying, leasing (1.15, 1.16) --- */
+E("u6-rent-buy-lease",6,["1.15"],2,"var",varset([
+  function(){return mcq("Renting a home costs $950 per month. Buying a similar home would cost $1,275 per month in mortgage payments, property taxes and upkeep. Ignoring equity, how much <b>more</b> cash goes out over 2 years if the family buys?",
+    "$7,800",["$325","$3,900","$15,600"],
+    "The monthly difference is \\(1275 - 950 = 325\\) dollars, and 2 years is 24 months: \\(325 \\times 24 = 7800\\) dollars more in cash out. The $325 option forgets the time span; $3,900 is only one year. (Buying also builds equity, which this question sets aside on purpose.)",{});},
+  function(){return mcq("A car lease costs $415 per month for 36 months, with $1,500 due at signing. What is the <b>total cost</b> of the lease, excluding fuel and insurance?",
+    "$16,440",["$14,940","$17,940","$13,440"],
+    "Add the signing payment to all 36 monthly payments: \\(1500 + 415 \\times 36 = 1500 + 14940 = 16440\\) dollars. The $14,940 option forgets the amount due at signing.",{});},
+  function(){return mcq("Buying a car costs $26,000, and after 4 years it can be sold for $11,000. Leasing a similar car costs $340 per month for 4 years, with nothing owned at the end. Ignoring interest and running costs, which option costs <b>less</b> over the 4 years, and by how much?",
+    "Buying, by $1,320",
+    ["Leasing, by $1,320","Buying, by $2,680","They cost exactly the same"],
+    "Buying really costs \\(26000 - 11000 = 15000\\) dollars once the resale value is counted. Leasing costs \\(340 \\times 48 = 16320\\) dollars. Buying costs less by \\(16320 - 15000 = 1320\\) dollars, and the buyer owns the car at the end as well.",{});}
+]));
+E("u6-justify-decision",6,["1.16"],3,"var",varset([
+  function(){return mcq("Maya, a nurse, takes a 9-month work contract in a town where she knows no one, and expects to move back home afterwards. She needs a place to live. Which choice is <b>most advantageous</b> for her?",
+    "Rent an apartment, because the costs of buying and selling a home are hard to recover in such a short stay",
+    ["Buy a house, because mortgage payments are always lower than rent","Take a 5-year lease on a house, because a longer commitment is always cheaper","Buy a house, because house prices never fall"],
+    "Buying carries large one-time costs (legal fees, inspections, moving, and selling costs later) that are normally recovered through years of living there and building equity. Over just 9 months those costs swamp any equity gained, so renting is the financially sound choice for a short, temporary stay. Justification for Level 3: the answer comes from matching her circumstances to the advantages and disadvantages of each option, not from a calculation.",{});},
+  function(){return mcq("A family has stable jobs, a down payment saved, and plans to stay in their town for at least 15 years. Which housing choice is <b>most advantageous</b> for them?",
+    "Buy a home, because over a long stay the payments build equity instead of going to a landlord",
+    ["Rent forever, because owning a home is always the riskier choice","Lease a home, because leasing builds equity in the property","Buy a home and sell it every two years, because frequent moving builds wealth"],
+    "Over 15 years the one-time costs of buying are spread thin, and each mortgage payment adds to an asset the family owns. Renting for that long builds no equity at all, and leasing does not either: only owners gain equity. Justification for Level 3: the time horizon in the circumstances is what flips the decision compared with a short stay.",{});},
+  function(){return mcq("Devon runs a small business, drives clients in his vehicle, and wants a new, reliable vehicle every three years with no repair bills. Which vehicle option is <b>most advantageous</b> for him?",
+    "Lease, because it gives predictable payments, a new vehicle each term, and warranty coverage throughout",
+    ["Buy a 15-year-old vehicle for cash, because the purchase price is lowest","Buy a new vehicle and keep it for 15 years, because one option suits every driver equally","Rent a car month by month indefinitely, because short rentals are always cheapest"],
+    "Leasing trades ownership for exactly what Devon's circumstances call for: a current-model vehicle for his clients, fixed monthly costs for his business budget, and a vehicle that is always under warranty. Buying and keeping a vehicle long term is cheaper per year but leaves him with an aging vehicle and repair bills. Justification for Level 3: the best option depends on the stated priorities, not on the lowest headline cost.",{});}
+]));
+/* --- cost and benefits (1.17) --- */
+E("u6-cost-benefit",6,["1.17"],3,"gen",function(){
+  var ctx=pick([
+    {item:"a high-efficiency furnace",saves:"on heating bills"},
+    {item:"a heat pump",saves:"on energy bills"},
+    {item:"extra attic insulation",saves:"on heating bills"},
+    {item:"LED lighting for a community rink",saves:"on electricity bills"},
+    {item:"a high-efficiency washing machine",saves:"on water and energy bills"}]);
+  var C=pick([400,600,800,1000,1200,1500,2000,2500]),S=pick([60,75,90,120,150,180,200,240,300]),L=pick([5,8,10,12,15]),tries=0;
+  while(S*L===C&&tries++<10){S=pick([60,75,90,120,150,180,200,240,300]);}
+  var tot=S*L,net=tot-C;
+  return numq("Installing "+ctx.item+" costs "+mon(C)+" more than the standard option, but it saves "+mon(S)+" per year "+ctx.saves+". It is expected to last "+L+" years. What is the <b>net benefit</b> over its lifetime, in dollars? (A negative answer means it costs more than it saves.)",
+    net,0.01,
+    "Build both sides of the ledger: \\[ \\begin{aligned} \\text{Total saved} &= "+fmtF(S,2)+" \\times "+L+" \\\\ &= "+fmtF(tot,2)+" \\\\ \\text{Net benefit} &= "+fmtF(tot,2)+" - "+fmtF(C,2)+" \\\\ &= "+fmtF(net,2)+" \\end{aligned} \\] "+(net>0?"The upgrade pays for itself and comes out "+mon(net)+" ahead over its lifetime.":"The savings never repay the extra cost: over its lifetime the upgrade comes out "+mon(-net)+" behind, so on cost alone the standard option is better.")+" Justification for Level 3: neither the saving nor the verdict is stated in the question; both sides have to be built and compared.",
+    {C:C,S:S,L:L});
+});
 /* BANK-SRC-END */
 </script>
 
