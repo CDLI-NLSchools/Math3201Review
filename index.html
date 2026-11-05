@@ -3027,6 +3027,538 @@ E("u7-search-logic",7,["2.7"],2,"gen",function(){
   return numq(head+"How many listings match <b>neither</b> tag?",
     r.none,0.001,"Listings with at least one tag number \\("+nA+" + "+nB+" - "+r.both+" = "+union+"\\), so the listings with neither tag are \\("+total+" - "+union+" = "+r.none+"\\).",{board:board,target:target});
 });
+
+/* ================= Unit 8: Counting Methods ================= */
+function fact(n){var f=1;for(var i=2;i<=n;i++)f*=i;return f;}
+function nPr(n,r){return fact(n)/fact(n-r);}
+function nCr(n,r){return fact(n)/(fact(r)*fact(n-r));}
+
+/* --- graphic organizers and the counting principle (9.16, 9.17, 9.18, 9.19) --- */
+E("u8-tree-diagram",8,["9.16"],2,"gen",function(){
+  var use3=Math.random()<0.6;
+  var ctx=pick([
+    {parts:use3?[[ri(2,5),"shirts"],[ri(2,5),"pairs of pants"],[ri(2,4),"hats"]]:[[ri(2,5),"shirts"],[ri(2,5),"pairs of pants"]],lead:"An outfit is built from"},
+    {parts:use3?[[ri(2,5),"mains"],[ri(2,5),"sides"],[ri(2,4),"drinks"]]:[[ri(2,5),"mains"],[ri(2,5),"sides"]],lead:"A meal is built from"},
+    {parts:use3?[[ri(2,4),"bus routes"],[ri(2,4),"ferry crossings"],[ri(2,3),"taxi companies"]]:[[ri(2,4),"bus routes"],[ri(2,4),"ferry crossings"]],lead:"A trip is built from"},
+    {parts:use3?[[ri(2,6),"symbols in the first position"],[ri(2,6),"symbols in the second position"],[ri(2,5),"symbols in the third position"]]:[[ri(2,6),"symbols in the first position"],[ri(2,6),"symbols in the second position"]],lead:"A code wheel uses"}
+  ]);
+  var desc=ctx.parts.map(function(p){return p[0]+" "+p[1];});
+  var descText=desc.length===2?desc.join(" and "):desc[0]+", "+desc[1]+" and "+desc[2];
+  var counts=ctx.parts.map(function(p){return p[0];});
+  var total=counts.reduce(function(x,y){return x*y;},1);
+  return numq(ctx.lead+" "+descText+". A tree diagram is used to organize the choices. How many different outcomes does the tree have?",
+    total,0.001,
+    "Each stage of the tree multiplies the number of branches: "+counts.join(" × ")+" = "+total+" outcomes. The tree makes the multiplication visible: every choice at one stage is paired with every choice at the next.",
+    {lead:ctx.lead,stages:counts.length});
+});
+E("u8-tree-outcomes",8,["9.16"],2,"gen",function(){
+  function coinDie(){
+    var conds=[],side,d,v,k;
+    ["H","T"].forEach(function(s){var sn=s==="H"?"head":"tail";
+      conds.push({d:"a "+sn+" and an even number",f:function(o){return o[0]===s&&+o[1]%2===0;}});
+      conds.push({d:"a "+sn+" and an odd number",f:function(o){return o[0]===s&&+o[1]%2===1;}});
+      for(v=1;v<=6;v++){(function(vv){conds.push({d:"a "+sn+" and a "+vv,f:function(o){return o[0]===s&&+o[1]===vv;}});})(v);}
+    });
+    for(k=2;k<=5;k++){(function(kk){conds.push({d:"a head and a number greater than "+kk,f:function(o){return o[0]==="H"&&+o[1]>kk;}});})(k);}
+    for(k=3;k<=6;k++){(function(kk){conds.push({d:"a tail and a number less than "+kk,f:function(o){return o[0]==="T"&&+o[1]<kk;}});})(k);}
+    conds.push({d:"a prime number on the die (either coin result)",f:function(o){return [2,3,5].indexOf(+o[1])>=0;}});
+    return {desc:"A coin is tossed and then a standard die is rolled",stages:[["H","T"],["1","2","3","4","5","6"]],conds:conds};
+  }
+  function diceDice(){
+    var conds=[],s,k;
+    for(s=5;s<=9;s++){(function(ss){conds.push({d:"a total of "+ss,f:function(o){return +o[0]+ +o[1]===ss;}});})(s);}
+    for(k=8;k<=10;k++){(function(kk){conds.push({d:"a total greater than "+kk,f:function(o){return +o[0]+ +o[1]>kk;}});})(k);}
+    conds.push({d:"doubles (the same number on both dice)",f:function(o){return o[0]===o[1];}});
+    conds.push({d:"two even numbers",f:function(o){return +o[0]%2===0&&+o[1]%2===0;}});
+    conds.push({d:"two odd numbers",f:function(o){return +o[0]%2===1&&+o[1]%2===1;}});
+    conds.push({d:"one even and one odd number",f:function(o){return (+o[0]%2)!==(+o[1]%2);}});
+    conds.push({d:"a larger number on the first die than on the second",f:function(o){return +o[0]>+o[1];}});
+    return {desc:"Two standard dice are rolled",stages:[["1","2","3","4","5","6"],["1","2","3","4","5","6"]],conds:conds};
+  }
+  function spinnerCoin(){
+    var conds=[],v;
+    ["H","T"].forEach(function(s){var sn=s==="H"?"head":"tail";
+      conds.push({d:"a "+sn+" and an odd number",f:function(o){return o[1]===s&&+o[0]%2===1;}});
+      conds.push({d:"a "+sn+" and an even number",f:function(o){return o[1]===s&&+o[0]%2===0;}});
+      conds.push({d:"a "+sn+" and a number greater than 2",f:function(o){return o[1]===s&&+o[0]>2;}});
+      for(v=1;v<=4;v++){(function(vv){conds.push({d:"a "+sn+" and a "+vv,f:function(o){return o[1]===s&&+o[0]===vv;}});})(v);}
+    });
+    return {desc:"A spinner numbered 1 to 4 is spun and then a coin is tossed",stages:[["1","2","3","4"],["H","T"]],conds:conds};
+  }
+  var T=pick([coinDie(),diceDice(),spinnerCoin()]);
+  var cond=pick(T.conds),count=0,totalOut=0;
+  T.stages[0].forEach(function(x){T.stages[1].forEach(function(y){totalOut++;if(cond.f([x,y]))count++;});});
+  return numq(T.desc+". Using a tree diagram (or an organized list), how many outcomes show "+cond.d+"?",
+    count,0.001,
+    "The tree has "+T.stages[0].length+" × "+T.stages[1].length+" = "+totalOut+" outcomes in total. Following only the branches that match the condition gives "+count+" of them. An organized count beats guessing: list the matching first-stage results and count the second-stage results that complete each one.",
+    {t:T.desc.slice(0,14),cond:cond.d});
+});
+E("u8-fcp-pattern",8,["9.17"],1,"gen",function(){
+  if(Math.random()<0.5){
+    var k=pick([2,3,4,5,6]),m=pick([5,6,7,8].filter(function(x){return x!==k;}));
+    return mcq("A spinner with "+k+" sections is spun repeatedly. Spinning once gives "+k+" outcomes, spinning twice gives "+Math.pow(k,2)+", and spinning three times gives "+Math.pow(k,3)+". Following this pattern, how many outcomes are there for "+m+" spins?",
+      MV(Math.pow(k,m)),[MV(k*m),MV(k+m),MV(Math.pow(m,k))],
+      "Each extra spin multiplies the count by "+k+" again: the counts are powers of "+k+", so "+m+" spins give \\("+k+"^{"+m+"} = "+Math.pow(k,m)+"\\) outcomes. This repeated multiplication is the Fundamental Counting Principle in action.",{k:k,m:m});
+  }
+  var a=ri(2,5),b=ri(2,6),s=pick([2,3,4,5]);
+  return mcq("A sandwich counter offers "+a+" kinds of bread and "+b+" fillings. A tree diagram shows "+a+" × "+b+" = "+(a*b)+" sandwiches. The counter then adds "+s+" kinds of sauce. What is the correct way to count the new total?",
+    "Multiply the previous total by "+s+": "+(a*b)+" × "+s+" = "+(a*b*s),
+    ["Add the choices: "+a+" + "+b+" + "+s+" = "+(a+b+s),"Multiply only the new choices: "+s+" × "+s+" = "+(s*s),"Add "+s+" to the previous total: "+(a*b)+" + "+s+" = "+(a*b+s)],
+    "Adding a stage to a counting problem multiplies the total by the number of choices at that stage; it never adds them. Generalizing this pattern from small cases is exactly how the Fundamental Counting Principle is built.",{a:a,b:b,s:s});
+});
+E("u8-assumptions",8,["9.18"],2,"var",varset([
+  function(){return mcq("A student counts the possible three-letter codes from the alphabet as 26 × 26 × 26. What <b>assumption</b> is built into this count?",
+    "Letters are allowed to repeat in the code",
+    ["The code cannot contain any vowels","Each position must use a different letter","The order of the letters in the code does not matter"],
+    "Using 26 choices at every position, including positions after a letter has already been used, only works if repetition is allowed. If letters could not repeat, the count would be 26 × 25 × 24. Naming the assumption matters because the count collapses if the assumption is false.",{});},
+  function(){return mcq("A student counts outfits as 4 shirts × 3 pants × 2 hats = 24 outfits. What <b>assumption</b> does this count make?",
+    "Every shirt can be worn with every pair of pants and every hat; there are no clashes or restrictions",
+    ["The student already owns exactly 24 outfits","Each item can be worn only once per week","A hat must always be worn"],
+    "The multiplication pairs every choice at each stage with every choice at the others. If some shirt could not be worn with some pants, those branches would have to be removed and the product would overcount. The count is only as good as this no-restrictions assumption.",{});},
+  function(){return mcq("A student counts the arrangements of 5 people in a line as 5! = 120. One <b>assumption</b> behind this count is that",
+    "the 5 people are all different from one another, so swapping any two of them makes a new arrangement",
+    ["the line must contain exactly 5 chairs","no two of the people are friends","the people are standing in alphabetical order"],
+    "Factorial counting treats every swap as a new arrangement, which requires the people to be distinguishable. If two of the five were identical (like identical twins in matching outfits being treated as interchangeable), arrangements would have to be divided to correct the overcount.",{});}
+]));
+E("u8-fcp-context",8,["9.19"],2,"gen",function(){
+  var T=pick(["pin","code","outfit","routes","menu","password"]);
+  if(T==="pin"){var d=pick([4,5,6]);return numq("A bank PIN is "+d+" digits long, and digits may be repeated. How many different PINs are possible?",
+    Math.pow(10,d),0.001,"Each of the "+d+" positions has 10 choices, and digits may repeat, so the Fundamental Counting Principle gives \\(10^{"+d+"} = "+Math.pow(10,d)+"\\) PINs.",{T:T});}
+  if(T==="code"){var L=pick([2,3]),D=pick([2,3]);return numq("A product code consists of "+L+" letter(s) followed by "+D+" digit(s). Letters and digits may both be repeated. How many different codes are possible?",
+    Math.pow(26,L)*Math.pow(10,D),0.001,"Multiply the choices at each position: 26 choices for each of the "+L+" letter positions and 10 for each of the "+D+" digit positions: \\(26^{"+L+"} \\times 10^{"+D+"} = "+(Math.pow(26,L)*Math.pow(10,D))+"\\) codes.",{T:T});}
+  if(T==="outfit"){var a=ri(3,6),b=ri(3,6),c=ri(2,4);return numq("A traveller packs "+a+" shirts, "+b+" pairs of pants and "+c+" jackets. Any shirt can be worn with any pants and any jacket. How many different outfits are possible?",
+    a*b*c,0.001,"Multiply the independent choices: \\("+a+" \\times "+b+" \\times "+c+" = "+(a*b*c)+"\\) outfits.",{T:T});}
+  if(T==="routes"){var a=ri(2,6),b=ri(2,6);return numq("To travel from town A to town C, a driver must pass through town B. There are "+a+" roads from A to B and "+b+" roads from B to C. How many different routes from A to C are there?",
+    a*b,0.001,"Each first-leg road can be paired with each second-leg road: \\("+a+" \\times "+b+" = "+(a*b)+"\\) routes.",{T:T});}
+  if(T==="menu"){var a=ri(2,5),b=ri(3,7),c=ri(2,5);return numq("A diner offers "+a+" appetizers, "+b+" main courses and "+c+" desserts. A meal consists of one of each. How many different meals are possible?",
+    a*b*c,0.001,"Multiply the choices for the three independent courses: \\("+a+" \\times "+b+" \\times "+c+" = "+(a*b*c)+"\\) meals.",{T:T});}
+  var len=pick([3,4]);return numq("A password is "+len+" characters long. Each character can be any digit or any lowercase letter (36 choices), and characters may repeat. How many different passwords are possible?",
+    Math.pow(36,len),0.001,"Each of the "+len+" positions has 36 choices with repetition allowed: \\(36^{"+len+"} = "+Math.pow(36,len)+"\\) passwords.",{T:T});
+});
+function enumNums(D,L,pred,unitFixed){
+  var count=0;
+  function rec(pos,used,val,units){
+    if(pos===L){if(pred(val)&&(unitFixed===null||units===unitFixed))count++;return;}
+    for(var i=0;i<D.length;i++){var d=D[i];
+      if(used.indexOf(d)>=0)continue;
+      if(pos===0&&d===0&&L>1)continue;
+      rec(pos+1,used.concat([d]),val*10+d,pos===L-1?d:units);
+    }
+  }
+  rec(0,[],0,null);return count;
+}
+function rangeDigits(a,b){var D=[];for(var i=a;i<=b;i++)D.push(i);return D;}
+E("u8-fcp-restricted",8,["9.19"],3,"gen",function(){
+  var T=pick(["digitsNoZero","digitsZero","mult5","plate","pin","code","people"]);
+  var J=" Justification for Level 3: the restriction changes the stage counts or forces a case split, so the counting has to be restructured before any multiplication.";
+  if(T==="digitsNoZero"){
+    var set=pick([[1,9],[1,8],[1,7],[1,6],[2,9]]),D=rangeDigits(set[0],set[1]),m=D.length;
+    var L=m>=7?pick([3,4]):3,even=Math.random()<0.5;
+    var pc=D.filter(function(d){return even?d%2===0:d%2===1;}).length;
+    var factors=[pc];for(var i=1;i<L;i++)factors.push(m-i);
+    var ans=factors.reduce(function(x,y){return x*y;},1);
+    return numq(L+"-digit numbers are formed from the digits "+set[0]+" to "+set[1]+", with no digit repeated. How many of these numbers are <b>"+(even?"even":"odd")+"</b>?",
+      ans,0.001,"Fill the most restricted position first: the units digit must be "+(even?"even":"odd")+", giving "+pc+" choices from this set. Each remaining position then loses one choice as digits are used: "+factors.join(" × ")+" = "+ans+". Filling left to right without planning runs into trouble at the units position."+J,{T:T,set:set.join("-"),L:L,even:even});
+  }
+  if(T==="digitsZero"){
+    var setZ=pick([[0,9],[0,8],[0,7]]),DZ=rangeDigits(setZ[0],setZ[1]),mz=DZ.length,evenZ=Math.random()<0.5;
+    var pred=evenZ?function(v){return v%2===0;}:function(v){return v%2===1;};
+    var totZ=enumNums(DZ,3,pred,null);
+    if(evenZ){
+      var case0=enumNums(DZ,3,pred,0),caseR=totZ-case0;
+      var ec=DZ.filter(function(d){return d%2===0&&d!==0;}).length;
+      return numq("Three-digit numbers are formed from the digits 0 to "+setZ[1]+", with no digit repeated. How many of these numbers are <b>even</b>?",
+        totZ,0.001,"Split into cases, because 0 behaves differently in the units and hundreds positions. Ends in 0: the hundreds digit has "+(mz-1)+" choices and the tens digit "+(mz-2)+", giving "+case0+" numbers. Ends in an even digit other than 0 ("+ec+" choices): the hundreds digit cannot be 0 or the units digit ("+(mz-2)+" choices) and the tens digit has "+(mz-2)+", giving "+caseR+" numbers. Total: "+case0+" + "+caseR+" = "+totZ+"."+J,{T:T,set:setZ.join("-")});
+    }
+    var oc=DZ.filter(function(d){return d%2===1;}).length;
+    return numq("Three-digit numbers are formed from the digits 0 to "+setZ[1]+", with no digit repeated. How many of these numbers are <b>odd</b>?",
+      totZ,0.001,"Fill the units position first: "+oc+" odd digits are available. The hundreds digit cannot be 0 or the units digit ("+(mz-2)+" choices), and the tens digit has "+(mz-2)+" choices. Total: "+oc+" × "+(mz-2)+" × "+(mz-2)+" = "+totZ+"."+J,{T:T,set:setZ.join("-")});
+  }
+  if(T==="mult5"){
+    var mset=pick([[[1,9],4],[[1,8],3],[[0,9],3]]);
+    var DM=rangeDigits(mset[0][0],mset[0][1]),LM=mset[1];
+    var predM=function(v){return v%5===0;};
+    var u5=enumNums(DM,LM,predM,5),u0=DM.indexOf(0)>=0?enumNums(DM,LM,predM,0):0,totM=u5+u0;
+    return numq(LM+"-digit numbers are formed from the digits "+mset[0][0]+" to "+mset[0][1]+", with no digit repeated. How many of these numbers are <b>multiples of 5</b>?",
+      totM,0.001,"A multiple of 5 must end in 0 or 5, so split by the units digit. Ending in 5: fixing the units digit leaves the other positions to be filled from the remaining digits (with the leading digit never 0): "+u5+" numbers."+(u0>0?" Ending in 0: "+u0+" numbers.":" The set has no 0, so this is the only case.")+" Total: "+totM+"."+J,{T:T});
+  }
+  if(T==="plate"){
+    var Lp=pick([2,3]),Dp=pick([2,3]),rule=pick(["lettersNR","bothNR","digitsNR"]);
+    var lf=rule==="digitsNR"?Math.pow(26,Lp):nPr(26,Lp),df=rule==="lettersNR"?Math.pow(10,Dp):nPr(10,Dp);
+    var ruleText=rule==="lettersNR"?"The letters cannot repeat, but the digits may repeat":rule==="bothNR"?"Neither the letters nor the digits can repeat":"The letters may repeat, but the digits cannot repeat";
+    return numq("A licence plate has "+Lp+" letters followed by "+Dp+" digits. "+ruleText+". How many different plates are possible?",
+      lf*df,0.001,"Count the two halves with their own rules: the letters give "+lf+" possibilities and the digits give "+df+", and the halves are independent, so multiply: "+(lf*df)+". Positions where repetition is banned shrink (26, 25, ...) while positions allowing it stay constant."+J,{T:T,Lp:Lp,Dp:Dp,rule:rule});
+  }
+  if(T==="pin"){
+    var lenp=pick([4,5,6]),valp=nPr(10,lenp),facp=[];for(var i=0;i<lenp;i++)facp.push(10-i);
+    return numq("A PIN is "+lenp+" digits long and no digit may be repeated. How many different PINs are possible?",
+      valp,0.001,"Each position loses a choice as digits are used up: "+facp.join(" × ")+" = "+valp+". (A PIN may start with 0, so the first position keeps all 10 choices.)"+J,{T:T,len:lenp});
+  }
+  if(T==="code"){
+    var ac=pick([2,3]),bc=pick([1,2]),dNR=Math.random()<0.5;
+    var lv=nPr(26,ac),dv=dNR?nPr(10,bc):Math.pow(10,bc);
+    return numq("A code consists of "+ac+" letters (no letter repeated) followed by "+bc+" digit(s)"+(dNR?" (no digit repeated)":" (digits may repeat)")+". How many different codes are possible?",
+      lv*dv,0.001,"The letters contribute "+lv+" possibilities ("+ac+" shrinking choices from 26) and the digits contribute "+dv+", so the total is "+(lv*dv)+". The two parts follow different repetition rules and must be counted separately."+J,{T:T,ac:ac,bc:bc,dNR:dNR});
+  }
+  var np=pick([5,6,7]),valpp=(np-2)*fact(np-1);
+  return numq(np+" people are arranging themselves in a line. In how many arrangements is one particular person <b>not</b> at either end?",
+    valpp,0.001,"Place the restricted person first: they have "+(np-2)+" allowed positions (any except the two ends). The other "+(np-1)+" people then arrange freely in \\("+(np-1)+"! = "+fact(np-1)+"\\) ways. Total: \\("+(np-2)+" \\times "+fact(np-1)+" = "+valpp+"\\)."+J,{T:T,n:np});
+});
+E("u8-fcp-cases",8,["9.19"],3,"gen",function(){
+  var T=pick(["either","startletter","mixed"]);
+  var J=" Justification for Level 3: choosing between multiplying (choices in sequence) and adding (either/or cases) at each step is a structural decision, not a formula recall.";
+  if(T==="either"){
+    var thing=pick(["locker code","bike lock code","gym pass code","storage unit code"]);
+    var a=pick([2,3,4]),b=pick([2,3,4,5]),v1=Math.pow(26,a),v2=Math.pow(10,b);
+    return numq("A "+thing+" is in one of two formats: either "+a+" letters (repeats allowed) or "+b+" digits (repeats allowed). How many different codes are possible in total?",
+      v1+v2,0.001,"The two formats are alternatives, so count each and add: \\(26^{"+a+"} = "+v1+"\\) letter codes and \\(10^{"+b+"} = "+v2+"\\) digit codes, for a total of "+(v1+v2)+"."+J,{T:T,thing:thing});
+  }
+  if(T==="startletter"){
+    var X=pick(["Z","B","M","S"]),d=pick([2,3]);
+    return numq("A code consists of one letter followed by "+d+" digits (repeats allowed). How many codes begin with a vowel or with the letter "+X+"?",
+      6*Math.pow(10,d),0.001,"The first letter can be any of the 5 vowels or the letter "+X+": 6 choices, and no letter is both, so the cases do not overlap. Each digit position then has 10 choices: \\(6 \\times 10^{"+d+"} = "+(6*Math.pow(10,d))+"\\)."+J,{T:T,X:X});
+  }
+  var a1=pick([1,2]),b1=pick([2,3]),b2=pick([2,3]),a2=pick([1,2]);
+  var w1=Math.pow(26,a1)*Math.pow(10,b1),w2=Math.pow(10,b2)*Math.pow(26,a2);
+  return numq("A code is in one of two formats: either "+a1+" letter(s) followed by "+b1+" digits, or "+b2+" digits followed by "+a2+" letter(s). Repeats are allowed throughout. How many different codes are possible in total?",
+    w1+w2,0.001,"Count each format with the counting principle and add the alternatives: format one gives \\(26^{"+a1+"} \\times 10^{"+b1+"} = "+w1+"\\) and format two gives \\(10^{"+b2+"} \\times 26^{"+a2+"} = "+w2+"\\), for a total of "+(w1+w2)+"."+J,{T:T});
+});
+/* --- factorials (9.20, 9.21, 9.22) --- */
+E("u8-factorial-value",8,["9.20"],1,"gen",function(){
+  var verb=pick(["Determine the value of","Evaluate"]);
+  var shape=pick(["plain","times","plusone","minusprev","plusprev"]);
+  if(shape==="plain"){
+    var n=pick([0,1,2,3,4,5,6,7,8,9]);
+    return numq(verb+" \\("+n+"!\\).",
+      fact(n),0.001,(n<=1?"By definition, \\("+n+"! = 1\\): the empty product and the single factor both give 1, a convention that keeps the permutation and combination formulas working.":"\\("+n+"! = "+Array.from({length:n},function(_,i){return n-i;}).join(" \\times ")+" = "+fact(n)+"\\). A factorial multiplies the whole numbers from "+n+" down to 1."),{shape:shape,n:n});
+  }
+  if(shape==="times"){
+    var k=pick([2,3,4]),n2=pick([3,4,5,6]);
+    return numq(verb+" \\("+k+" \\times "+n2+"!\\).",
+      k*fact(n2),0.001,"Work out the factorial first: \\("+n2+"! = "+fact(n2)+"\\), then multiply by "+k+": \\("+k+" \\times "+fact(n2)+" = "+(k*fact(n2))+"\\).",{shape:shape,n:n2,k:k});
+  }
+  if(shape==="plusone"){
+    var n3=pick([1,2,3,4,5,6,7]);
+    return numq(verb+" \\(("+n3+" + 1)!\\).",
+      fact(n3+1),0.001,"Simplify inside first: \\(("+n3+" + 1)! = "+(n3+1)+"! = "+fact(n3+1)+"\\).",{shape:shape,n:n3});
+  }
+  if(shape==="minusprev"){
+    var n4=pick([3,4,5,6,7]);
+    return numq(verb+" \\("+n4+"! - "+(n4-1)+"!\\).",
+      fact(n4)-fact(n4-1),0.001,"Evaluate each factorial: \\("+n4+"! = "+fact(n4)+"\\) and \\("+(n4-1)+"! = "+fact(n4-1)+"\\), so the difference is \\("+fact(n4)+" - "+fact(n4-1)+" = "+(fact(n4)-fact(n4-1))+"\\).",{shape:shape,n:n4});
+  }
+  var n5=pick([3,4,5,6,7]);
+  return numq(verb+" \\("+n5+"! + "+(n5-1)+"!\\).",
+    fact(n5)+fact(n5-1),0.001,"Evaluate each factorial: \\("+n5+"! = "+fact(n5)+"\\) and \\("+(n5-1)+"! = "+fact(n5-1)+"\\), so the sum is \\("+fact(n5)+" + "+fact(n5-1)+" = "+(fact(n5)+fact(n5-1))+"\\).",{shape:shape,n:n5});
+});
+E("u8-factorial-fraction",8,["9.21"],2,"gen",function(){
+  if(Math.random()<0.5){
+    var m=pick([2,3,4,5,6,7]),k=pick([1,2,3]),n=m+k,val=1,i;
+    for(i=m+1;i<=n;i++)val*=i;
+    var prod=[];for(i=n;i>m;i--)prod.push(i);
+    var askV=pick([["Simplify"," and give its value."],["Evaluate","."],["Calculate","."]]);
+    return numq(askV[0]+" \\(\\frac{"+n+"!}{"+m+"!}\\)"+askV[1],
+      val,0.001,"Expand and cancel the shared factors: \\(\\frac{"+n+"!}{"+m+"!} = "+prod.join(" \\times ")+" = "+val+"\\). Everything from "+m+" down cancels between the numerator and the denominator.",{n:n,m:m});
+  }
+  var shape=pick(["p1","p2","p3","n1","p2b","n1b","n2","p4","two","pmix","p3b","n2b","three","p5","n3"]);
+  if(shape==="p1")return mcq("Simplify \\(\\frac{(n + 1)!}{n!}\\).",
+    MV("n + 1"),[MV("n"),MV("1"),MV("(n + 1) \\times n")],
+    "Expand the numerator one step: \\((n + 1)! = (n + 1) \\times n!\\), so the \\(n!\\) cancels and only \\(n + 1\\) remains.",{shape:shape});
+  if(shape==="p2")return mcq("Simplify \\(\\frac{(n + 2)!}{n!}\\).",
+    MV("(n + 2)(n + 1)"),[MV("n + 2"),MV("(n + 2)^2"),MV("2n + 3")],
+    "Expand the numerator two steps: \\((n + 2)! = (n + 2)(n + 1) \\times n!\\), so the \\(n!\\) cancels and \\((n + 2)(n + 1)\\) remains.",{shape:shape});
+  if(shape==="p3")return mcq("Simplify \\(\\frac{(n + 3)!}{(n + 1)!}\\).",
+    MV("(n + 3)(n + 2)"),[MV("n + 3"),MV("(n + 3)(n + 2)(n + 1)"),MV("2n + 5")],
+    "Expand the numerator down to the denominator: \\((n + 3)! = (n + 3)(n + 2) \\times (n + 1)!\\), so \\((n + 1)!\\) cancels and \\((n + 3)(n + 2)\\) remains.",{shape:shape});
+  if(shape==="p2b")return mcq("Simplify \\(\\frac{(n + 2)!}{(n + 1)!}\\).",
+    MV("n + 2"),[MV("n + 1"),MV("1"),MV("(n + 2)(n + 1)")],
+    "Expand the numerator one step: \\((n + 2)! = (n + 2) \\times (n + 1)!\\), so the \\((n + 1)!\\) cancels and only \\(n + 2\\) remains.",{shape:shape});
+  if(shape==="n1b")return mcq("Simplify \\(\\frac{(n - 1)!}{(n - 2)!}\\).",
+    MV("n - 1"),[MV("n - 2"),MV("1"),MV("(n - 1)(n - 2)")],
+    "Expand the numerator one step: \\((n - 1)! = (n - 1) \\times (n - 2)!\\), so the \\((n - 2)!\\) cancels and only \\(n - 1\\) remains.",{shape:shape});
+  if(shape==="n2")return mcq("Simplify \\(\\frac{n!}{(n - 2)!}\\).",
+    MV("n(n - 1)"),[MV("n - 1"),MV("n^2"),MV("n(n - 1)(n - 2)")],
+    "Expand the numerator two steps: \\(n! = n(n - 1) \\times (n - 2)!\\), so the \\((n - 2)!\\) cancels and \\(n(n - 1)\\) remains.",{shape:shape});
+  if(shape==="p4")return mcq("Simplify \\(\\frac{(n + 4)!}{(n + 2)!}\\).",
+    MV("(n + 4)(n + 3)"),[MV("n + 4"),MV("(n + 4)(n + 3)(n + 2)"),MV("2n + 7")],
+    "Expand the numerator down to the denominator: \\((n + 4)! = (n + 4)(n + 3) \\times (n + 2)!\\), so \\((n + 2)!\\) cancels and \\((n + 4)(n + 3)\\) remains.",{shape:shape});
+  if(shape==="two")return mcq("Simplify \\(\\frac{(2n)!}{(2n - 1)!}\\).",
+    MV("2n"),[MV("n"),MV("2n - 1"),MV("(2n)(2n - 1)")],
+    "Expand the numerator one step: \\((2n)! = 2n \\times (2n - 1)!\\), so the \\((2n - 1)!\\) cancels and only \\(2n\\) remains.",{shape:shape});
+  if(shape==="pmix")return mcq("Simplify \\(\\frac{(n + 1)!}{(n - 1)!}\\).",
+    MV("(n + 1)n"),[MV("n + 1"),MV("n^2"),MV("(n + 1)n(n - 1)")],
+    "Expand the numerator down to the denominator: \\((n + 1)! = (n + 1)n \\times (n - 1)!\\), so the \\((n - 1)!\\) cancels and \\((n + 1)n\\) remains.",{shape:shape});
+  if(shape==="p3b")return mcq("Simplify \\(\\frac{(n + 3)!}{n!}\\).",
+    MV("(n + 3)(n + 2)(n + 1)"),[MV("(n + 3)(n + 2)"),MV("n + 3"),MV("3n + 6")],
+    "Expand the numerator three steps: \\((n + 3)! = (n + 3)(n + 2)(n + 1) \\times n!\\), so the \\(n!\\) cancels and \\((n + 3)(n + 2)(n + 1)\\) remains.",{shape:shape});
+  if(shape==="n2b")return mcq("Simplify \\(\\frac{(n - 2)!}{(n - 3)!}\\).",
+    MV("n - 2"),[MV("n - 3"),MV("1"),MV("(n - 2)(n - 3)")],
+    "Expand the numerator one step: \\((n - 2)! = (n - 2) \\times (n - 3)!\\), so the \\((n - 3)!\\) cancels and only \\(n - 2\\) remains.",{shape:shape});
+  if(shape==="three")return mcq("Simplify \\(\\frac{(3n)!}{(3n - 1)!}\\).",
+    MV("3n"),[MV("n"),MV("3n - 1"),MV("(3n)(3n - 1)")],
+    "Expand the numerator one step: \\((3n)! = 3n \\times (3n - 1)!\\), so the \\((3n - 1)!\\) cancels and only \\(3n\\) remains.",{shape:shape});
+  if(shape==="p5")return mcq("Simplify \\(\\frac{(n + 5)!}{(n + 4)!}\\).",
+    MV("n + 5"),[MV("n + 4"),MV("1"),MV("(n + 5)(n + 4)")],
+    "Expand the numerator one step: \\((n + 5)! = (n + 5) \\times (n + 4)!\\), so the \\((n + 4)!\\) cancels and only \\(n + 5\\) remains.",{shape:shape});
+  if(shape==="n3")return mcq("Simplify \\(\\frac{n!}{(n - 3)!}\\).",
+    MV("n(n - 1)(n - 2)"),[MV("n(n - 1)"),MV("n^3"),MV("n - 2")],
+    "Expand the numerator three steps: \\(n! = n(n - 1)(n - 2) \\times (n - 3)!\\), so the \\((n - 3)!\\) cancels and \\(n(n - 1)(n - 2)\\) remains.",{shape:shape});
+  return mcq("Simplify \\(\\frac{n!}{(n - 1)!}\\).",
+    MV("n"),[MV("n - 1"),MV("1"),MV("n(n - 1)")],
+    "Expand the numerator one step: \\(n! = n \\times (n - 1)!\\), so the \\((n - 1)!\\) cancels and only \\(n\\) remains.",{shape:shape});
+});
+E("u8-factorial-equation",8,["9.22"],2,"gen",function(){
+  var shapes=[
+    function(){var n=pick([3,4,5,6,7,8,9]);return {eq:"n! = "+fact(n),ans:n,sol:"Read the value against the factorial sequence (3! = 6, 4! = 24, 5! = 120, 6! = 720, and so on): \\("+fact(n)+"\\) is \\("+n+"!\\), so \\(n = "+n+"\\)."};},
+    function(){var n=pick([3,4,5,6,7,8,9]);return {eq:"\\frac{(n + 1)!}{n!} = "+(n+1),ans:n,sol:"Simplify first: \\(\\frac{(n + 1)!}{n!} = n + 1\\), so \\(n + 1 = "+(n+1)+"\\) and \\(n = "+n+"\\)."};},
+    function(){var n=pick([4,5,6,7,8]);return {eq:"\\frac{n!}{(n - 2)!} = "+(n*(n-1)),ans:n,sol:"Expand: \\(\\frac{n!}{(n - 2)!} = n(n - 1)\\). Solve \\(n(n - 1) = "+(n*(n-1))+"\\): trying whole numbers, \\("+n+" \\times "+(n-1)+" = "+(n*(n-1))+"\\), so \\(n = "+n+"\\)."};},
+    function(){var n=pick([3,4,5,6]);return {eq:"\\frac{(n + 2)!}{n!} = "+((n+2)*(n+1)),ans:n,sol:"Expand: \\(\\frac{(n + 2)!}{n!} = (n + 2)(n + 1)\\). Solve \\((n + 2)(n + 1) = "+((n+2)*(n+1))+"\\): \\("+(n+2)+" \\times "+(n+1)+" = "+((n+2)*(n+1))+"\\), so \\(n = "+n+"\\) (the negative root is rejected because factorials need whole numbers)."};},
+    function(){var n=pick([3,4,5,6,7]);return {eq:"\\frac{(n + 1)!}{(n - 1)!} = "+((n+1)*n),ans:n,sol:"Expand: \\(\\frac{(n + 1)!}{(n - 1)!} = (n + 1)n\\). Solve \\((n + 1)n = "+((n+1)*n)+"\\): \\("+(n+1)+" \\times "+n+" = "+((n+1)*n)+"\\), so \\(n = "+n+"\\)."};},
+    function(){var n=pick([4,5,6,7]);return {eq:"(n - 1)! = "+fact(n-1),ans:n,sol:"Match against the factorial sequence: \\("+fact(n-1)+" = "+(n-1)+"!\\), so \\(n - 1 = "+(n-1)+"\\) and \\(n = "+n+"\\)."};},
+    function(){var n=pick([3,4,5,6]);return {eq:"\\frac{(n + 3)!}{(n + 1)!} = "+((n+3)*(n+2)),ans:n,sol:"Expand: \\(\\frac{(n + 3)!}{(n + 1)!} = (n + 3)(n + 2)\\). Solve \\((n + 3)(n + 2) = "+((n+3)*(n+2))+"\\): \\("+(n+3)+" \\times "+(n+2)+" = "+((n+3)*(n+2))+"\\), so \\(n = "+n+"\\)."};},
+    function(){var n=pick([4,5,6,7]);return {eq:"\\frac{n!}{(n - 3)!} = "+(n*(n-1)*(n-2)),ans:n,sol:"Expand: \\(\\frac{n!}{(n - 3)!} = n(n - 1)(n - 2)\\). Testing whole numbers gives \\("+n+" \\times "+(n-1)+" \\times "+(n-2)+" = "+(n*(n-1)*(n-2))+"\\), so \\(n = "+n+"\\)."};},
+    function(){var n=pick([3,4,5,6,7,8]);return {eq:"\\frac{(2n)!}{(2n - 1)!} = "+(2*n),ans:n,sol:"Simplify: \\(\\frac{(2n)!}{(2n - 1)!} = 2n\\), so \\(2n = "+(2*n)+"\\) and \\(n = "+n+"\\)."};},
+    function(){var n=pick([3,4,5,6,7,8,9]);return {eq:"\\frac{(n + 2)!}{(n + 1)!} = "+(n+2),ans:n,sol:"Simplify: \\(\\frac{(n + 2)!}{(n + 1)!} = n + 2\\), so \\(n + 2 = "+(n+2)+"\\) and \\(n = "+n+"\\)." };}
+  ];
+  var s=pick(shapes)();
+  return numq("Solve for the whole number \\(n\\): \\("+s.eq+"\\).",
+    s.ans,0.001,s.sol,{eq:s.eq});
+});
+/* --- permutations (9.23, 9.24, 9.25) --- */
+E("u8-arrange-all",8,["9.23"],2,"gen",function(){
+  var ctx=pick([
+    {n:pick([4,5,6,7,8,9]),what:"books are arranged in a row on a shelf",item:"books"},
+    {n:pick([4,5,6,7,8]),what:"people stand in a line for a photo",item:"people"},
+    {n:pick([5,6,7,8,9]),what:"different letters are arranged to form a string (all letters are different)",item:"letters"},
+    {n:pick([4,5,6,7]),what:"cars are parked in a row of spots",item:"cars"},
+    {n:pick([4,5,6,7,8]),what:"DVDs are arranged in a row on a shelf",item:"DVDs"},
+    {n:pick([4,5,6,7]),what:"photos are hung in a row on a wall",item:"photos"},
+    {n:pick([4,5,6]),what:"bikes are placed in a row in a rack",item:"bikes"},
+    {n:pick([4,5,6,7]),what:"flags are raised on a row of poles",item:"flags"}
+  ]);
+  var ask=pick(["In how many different orders can","How many different arrangements are there of"]);
+  return numq(ask+" "+ctx.n+" "+ctx.what+"?",
+    fact(ctx.n),0.001,"All "+ctx.n+" "+ctx.item+" are used and every order is different, so the count is \\("+ctx.n+"! = "+fact(ctx.n)+"\\) (factorial notation: "+ctx.n+" choices for the first spot, "+(ctx.n-1)+" for the next, and so on).",{n:ctx.n,item:ctx.item});
+});
+E("u8-fixed-position",8,["9.23"],2,"gen",function(){
+  var n=pick([4,5,6,7,8,9]),pos=pick(["end","first","last","second","centre"]);
+  if(pos==="centre"&&n%2===0)pos="end";
+  var ctx=pick([
+    {w:"books on a shelf",noun:"book"},
+    {w:"people in a line for a photo",noun:"person"},
+    {w:"runners in the lanes of a final",noun:"runner"},
+    {w:"students in a row of chairs",noun:"student"},
+    {w:"flags on a row of poles",noun:"flag"}
+  ]);
+  var mult=pos==="end"?2:1,val=mult*fact(n-1);
+  var posText=pos==="end"?"must be at one of the two ends":pos==="first"?"must be placed first (at the left end)":pos==="last"?"must be placed last (at the right end)":pos==="second"?"must be second from the left":"must be in the centre position";
+  return numq(n+" "+ctx.w+" are being arranged. One particular "+ctx.noun+" "+posText+". How many arrangements are possible?",
+    val,0.001,"Fix the restricted position first: there "+(pos==="end"?"are 2 choices for which end":"is 1 choice for the fixed position")+", and the remaining "+(n-1)+" arrange freely in \\("+(n-1)+"! = "+fact(n-1)+"\\) ways. Total: "+(pos==="end"?"\\(2 \\times "+fact(n-1)+" = "+val+"\\)":"\\("+val+"\\)")+".",{n:n,pos:pos});
+});
+E("u8-perm-r",8,["9.24"],2,"gen",function(){
+  var ctx=pick([
+    {n:pick([8,9,10,11,12,13]),r:pick([2,3,4]),what:"runners in a race, how many ways can the first {r} finishing positions be filled"},
+    {n:pick([6,7,8,9,10,11]),r:pick([2,3,4]),what:"club members, how many ways can an executive of {r} distinct roles be filled"},
+    {n:pick([6,7,8,9,10,11]),r:pick([2,3,4]),what:"students, how many ways can {r} distinct awards be presented"},
+    {n:pick([8,9,10,11,12,13]),r:pick([2,3,4,5]),what:"songs on a playlist, how many ways can the first {r} positions be ordered"}
+  ]);
+  var prod=[];for(var i=0;i<ctx.r;i++)prod.push(ctx.n-i);
+  return numq("From "+ctx.n+" "+ctx.what.replace("{r}",ctx.r)+"?",
+    nPr(ctx.n,ctx.r),0.001,"Order matters and no one can hold two positions, so this is a permutation: \\[ \\begin{aligned} _{"+ctx.n+"}P_{"+ctx.r+"} &= "+prod.join(" \\times ")+" \\\\ &= "+nPr(ctx.n,ctx.r)+" \\end{aligned} \\] The multiplication stops after "+ctx.r+" factors, one for each position filled.",{n:ctx.n,r:ctx.r});
+});
+
+E("u8-together-apart",8,["9.24"],3,"gen",function(){
+  var n=pick([5,6,7]),together=Math.random()<0.5;
+  var names=shuffle(["Alex","Blair","Casey","Devon","Emery","Finley","Harper"].slice()).slice(0,2);
+  var blockVal=fact(n-1)*2,total=fact(n);
+  var ctx=pick(["people stand in a line for a photo","students line up for lunch","runners take their places in a row of lanes"]);
+  if(together)return numq(n+" "+ctx+". In how many arrangements are "+names[0]+" and "+names[1]+" standing <b>next to each other</b>?",
+    blockVal,0.001,"Glue the two people together as one block: the block plus the other "+(n-2)+" people make "+(n-1)+" objects, arranged in \\("+(n-1)+"! = "+fact(n-1)+"\\) ways, and the two people can swap inside the block (×2). Total: \\(2 \\times "+fact(n-1)+" = "+blockVal+"\\). Justification for Level 3: the condition is handled by restructuring the objects being counted, not by a direct formula.",{n:n});
+  return numq(n+" "+ctx+". In how many arrangements are "+names[0]+" and "+names[1]+" <b>not</b> next to each other?",
+    total-blockVal,0.001,"Count the complement: there are \\("+n+"! = "+total+"\\) arrangements in total, and the arrangements where the two stand together number \\(2 \\times "+(n-1)+"! = "+blockVal+"\\) (treat the pair as one block). Subtracting: \\("+total+" - "+blockVal+" = "+(total-blockVal)+"\\). Justification for Level 3: the direct count is awkward, so the problem is solved by counting the opposite case.",{n:n});
+});
+E("u8-perm-strategy",8,["9.25"],1,"var",varset([
+  function(){return mcq("To count the ways to award 1st, 2nd and 3rd place among 8 runners, the efficient strategy is to multiply 8 × 7 × 6. Why does this work?",
+    "Each place filled removes one runner from the choices for the next place: 8 choices, then 7, then 6",
+    ["There are 3 places, so 8 is multiplied by itself 3 times","Factorials always begin at 8 in a race","The places are independent, so the choices should be added"],
+    "A permutation is built position by position: once a runner takes 1st place they cannot also take 2nd, so the pool shrinks by one each time. Generalizing this shrinking-pool pattern gives the permutation formula.",{});},
+  function(){return mcq("Why does the calculation of P(10, 3) stop after three factors (10 × 9 × 8) instead of using all of 10!?",
+    "Only three positions are being filled; the remaining factors of 10! would arrange the people who were not chosen",
+    ["Because 10! is too large to calculate","Because the last seven factors are all equal to 1","Because permutations never use more than three factors"],
+    "P(n, r) fills r positions from n candidates. Here r = 3, so exactly three factors appear; in the formula \\(P(10, 3) = \\frac{10!}{7!}\\) the other factors cancel. The strategy generalizes: the number of factors equals the number of positions.",{});},
+  function(){return mcq("Six finalists are to be arranged in finishing order, and one particular finalist must finish first. Which strategy counts the arrangements correctly?",
+    "Fix that finalist in first place, then arrange the remaining 5 finalists freely: 1 × 5!",
+    ["Arrange all 6 finalists (6!), then divide by 2","Choose any of the 6 finalists for first place, then arrange the other 5","Arrange all 6 finalists and subtract the arrangements where she finishes last"],
+    "A restriction is handled by dealing with the restricted position first: first place is forced (1 choice), and the other five positions are a free arrangement of 5. Choosing 'any of the 6' for first place ignores the restriction and counts all 6! orders.",{});}
+]));
+E("u8-identical-perm",8,["9.26"],2,"gen",function(){
+  function fromCounts(total,counts){var d=1;counts.forEach(function(c){d*=fact(c);});return fact(total)/d;}
+  var word=pick([null,null,"BANANA","BALLOON","OTTAWA"]);
+  if(word){
+    var countsMap={"BANANA":[[3,"A"],[2,"N"],[1,"B"]],"BALLOON":[[2,"L"],[2,"O"],[1,"B"],[1,"A"],[1,"N"]],"OTTAWA":[[2,"T"],[2,"A"],[1,"O"],[1,"W"]]};
+    var cm=countsMap[word],total=cm.reduce(function(s,c){return s+c[0];},0),counts=cm.map(function(c){return c[0];});
+    var denom=counts.map(function(c){return c+"!";}).join(" \\times ");
+    return numq("How many different arrangements are there of the letters of the word "+word+"?",
+      fromCounts(total,counts),0.001,"The word has "+total+" letters, but some repeat ("+cm.map(function(c){return c[0]+" "+c[1]+"'s";}).join(", ")+"). Divide the full factorial by the factorials of the repeats: \\[ \\begin{aligned} \\frac{"+total+"!}{"+denom+"} &= "+fromCounts(total,counts)+" \\end{aligned} \\] Swapping two identical letters does not create a new arrangement, which is why the division is needed.",{word:word});
+  }
+  var ctx=pick([
+    {thing:"tiles in a row",groups:["red","blue","green"]},
+    {thing:"beads on a string",groups:["red","white","black"]},
+    {thing:"flags on a pole",groups:["blue","white","red"]},
+    {thing:"books on a shelf",groups:["identical math texts","identical novels","identical atlases"]}
+  ]);
+  var g=pick([2,3]),counts=[],total=0,tries=0;
+  while(tries++<40){counts=[];total=0;for(var i=0;i<g;i++){var c=ri(1,4);counts.push(c);total+=c;}
+    if(total>=5&&total<=9&&counts.some(function(c){return c>=2;}))break;}
+  if(total<5||total>9){counts=[2,3];total=5;g=2;}
+  var descParts=counts.map(function(c,i){return c+" "+ctx.groups[i];});
+  var descText=descParts.length===2?descParts.join(" and "):descParts[0]+", "+descParts[1]+" and "+descParts[2];
+  var denom=counts.map(function(c){return c+"!";}).join(" \\times ");
+  return numq("How many different arrangements are there of "+total+" "+ctx.thing+", made up of "+descText+"?",
+    fromCounts(total,counts),0.001,"Start with \\("+total+"!\\) arrangements of "+total+" distinct items, then divide by the factorials of each identical group, since swapping identical items changes nothing: \\[ \\begin{aligned} \\frac{"+total+"!}{"+denom+"} &= "+fromCounts(total,counts)+" \\end{aligned} \\]",{g:g,total:total});
+});
+E("u8-identical-effect",8,["9.27"],1,"var",varset([
+  function(){return mcq("Four different letters can be arranged in 24 ways. Two of the letters are now replaced by copies of a third letter, so the multiset has a pair of identical letters, and the count drops to 12. Why?",
+    "Each arrangement was being counted twice, once for each order of the two identical letters, and those orders are no longer different",
+    ["Identical letters cannot be arranged, so half the arrangements are impossible","Two letters were removed from the set","The count is halved because the word is shorter"],
+    "With distinct letters, swapping the two positions of the pair produced a different arrangement. Once the letters are identical, those swaps produce the same arrangement, so every arrangement has been double-counted and the total is divided by 2! = 2. This is the general effect of identical elements: the count is divided by the factorial of each repeat count.",{});},
+  function(){return mcq("Which collection has <b>more</b> arrangements in a row?",
+    "5 completely different books (120 arrangements)",
+    ["5 books with one identical pair (60 arrangements)","5 books with two identical pairs (30 arrangements)","5 identical books (1 arrangement)"],
+    "Distinct items maximize the count at 5! = 120. Every set of identical items divides that total by the factorial of its size: one pair divides by 2, two pairs divide by 2 × 2, and five identical books leave just one arrangement. Identical elements can only shrink the count, never grow it.",{});},
+  function(){return mcq("A student claims that making two elements of a set identical could <b>increase</b> the number of permutations. The claim is wrong because",
+    "identical elements merge arrangements that were previously different, so the count can only stay the same or decrease",
+    ["permutations are only defined for numbers, not objects","factorials always get bigger when elements repeat","arrangements are counted with combinations instead"],
+    "When two elements become indistinguishable, every arrangement pairs up with the one that swaps them, and the pair collapses into one. Nothing new is created, so the total falls (here, it is divided by 2!). The student's claim reverses the effect.",{});}
+]));
+/* --- does order matter? (9.29) --- */
+E("u8-order-matters",8,["9.29"],2,"var",varset([
+  function(){return mcq("A club with 10 members elects a president and a vice-president. Does <b>order matter</b> in this counting problem?",
+    "Yes: the two roles are different, so electing Alex as president and Blair as vice-president is a different outcome from the reverse (a permutation)",
+    ["No: the same two people are chosen either way, so it is a combination","No: order never matters when only two people are chosen","Yes: order always matters in every counting problem"],
+    "Order matters whenever swapping two selected items produces a genuinely different result. Here a swap exchanges the roles, which is a different executive, so the count is a permutation: 10 × 9 = 90, not C(10, 2) = 45.",{});},
+  function(){return mcq("A teacher chooses 3 of the 10 students in a class for a cleanup crew. Does <b>order matter</b> in this counting problem?",
+    "No: the crew is the same set of 3 students regardless of the order they were picked in (a combination)",
+    ["Yes: the first student picked becomes the crew leader","Yes: order always matters when people are chosen","No: order never matters when more than two are chosen"],
+    "All three chosen students do the same job, so picking Alex, then Blair, then Casey gives the same crew as any other order of the same three. That makes it a combination: C(10, 3) = 120, not 10 × 9 × 8 = 720.",{});},
+  function(){return mcq("Gold, silver and bronze medals are awarded in a race with 12 runners. Does <b>order matter</b> in this counting problem?",
+    "Yes: finishing order decides which medal each runner gets, so different orders are different results (a permutation)",
+    ["No: the same three runners stand on the podium either way, so it is a combination","No: medals are objects, and order only matters for people","Yes: because 12 is greater than 10"],
+    "A swap between gold and silver changes who gets what, so order matters and the count is a permutation: 12 × 11 × 10 = 1320. The identity of the medallists alone (a combination) would only be the right model if the medals were identical.",{});},
+  function(){return mcq("A camper chooses 4 books from 9 to pack in a bag. Does <b>order matter</b> in this counting problem?",
+    "No: the bag holds the same 4 books no matter which order they were picked in (a combination)",
+    ["Yes: the book picked first sits at the bottom of the bag","Yes: choosing is always a permutation","No: order never matters for objects, only for people"],
+    "The outcome is just the set of 4 books in the bag; reordering the picks changes nothing about the result. So the count is a combination, C(9, 4) = 126. What the items are (books or people) is irrelevant; what matters is whether a swap changes the outcome.",{});}
+]));
+E("u8-perm-or-comb",8,["9.29"],2,"gen",function(){
+  var T=pick(["perm","comb","fact","power"]);
+  var n=pick([6,7,8,9,10,11]),r=pick([2,3,4]);
+  var roleSets={2:"a captain and a vice-captain",3:"a chairperson, a secretary and a treasurer",4:"a president, a vice-president, a secretary and a treasurer"};
+  var stories={
+    perm:"From "+n+" candidates, "+roleSets[r]+" must be chosen (each person takes one role). Which expression counts the possibilities?",
+    comb:"From "+n+" candidates, a committee of "+r+" people with equal roles must be chosen. Which expression counts the possibilities?",
+    fact:"All "+n+" books in a set are arranged in a row on a shelf. Which expression counts the arrangements?",
+    power:"A code has "+r+" positions, and each position can be any of "+n+" symbols, with symbols allowed to repeat. Which expression counts the codes?"
+  };
+  var exprs={
+    perm:MV("_{"+n+"}P_{"+r+"}"),
+    comb:MV("\\binom{"+n+"}{"+r+"}"),
+    fact:MV(n+"!"),
+    power:MV(n+"^{"+r+"}")
+  };
+  var keys=["perm","comb","fact","power"].filter(function(k){return k!==T;});
+  return mcq(stories[T],
+    exprs[T],
+    [exprs[keys[0]],exprs[keys[1]],exprs[keys[2]]],
+    (T==="perm"?"The roles are all different, so order matters and nobody can hold two roles: a permutation, \\(_{"+n+"}P_{"+r+"}\\).":T==="comb"?"The committee members have equal roles, so order is irrelevant: a combination, \\(\\binom{"+n+"}{"+r+"}\\).":T==="fact"?"Every book is used exactly once and order is the whole point: \\("+n+"!\\).":"Repetition is allowed and each position is an independent choice: \\("+n+"^{"+r+"}\\). Each distractor is the right expression for a different kind of counting problem, so decide first whether order matters and whether repetition is allowed."),
+    {T:T,n:n,r:r});
+});
+/* --- combinations (9.30, 9.31) --- */
+E("u8-comb-r",8,["9.30"],2,"gen",function(){
+  var ctx=pick([
+    {n:pick([7,8,9,10,11,12,13]),r:pick([2,3,4]),what:"students, how many different committees of {r} can be formed"},
+    {n:pick([8,9,10,11,12,13]),r:pick([3,4,5]),what:"books on a shelf, how many ways can {r} of them be chosen to pack"},
+    {n:pick([8,9,10,11,12]),r:pick([2,3,4]),what:"toppings on a menu, how many different sets of {r} toppings can be chosen"},
+    {n:pick([9,10,11,12,13,14]),r:pick([3,4,5]),what:"players, how many different starting groups of {r} can be chosen"}
+  ]);
+  return numq("From "+ctx.n+" "+ctx.what.replace("{r}",ctx.r)+"?",
+    nCr(ctx.n,ctx.r),0.001,"The order of the chosen items does not matter, so this is a combination: \\[ \\begin{aligned} \\binom{"+ctx.n+"}{"+ctx.r+"} &= \\frac{"+ctx.n+"!}{"+ctx.r+"! \\times "+(ctx.n-ctx.r)+"!} \\\\ &= "+nCr(ctx.n,ctx.r)+" \\end{aligned} \\] Dividing by \\("+ctx.r+"!\\) removes the orderings of each chosen group.",{n:ctx.n,r:ctx.r});
+});
+E("u8-comb-two-group",8,["9.30"],2,"gen",function(){
+  var g1=pick([5,6,7,8,9]),a=pick([2,3]),g2=pick([5,6,7,8,9]),b=pick([2,3]);
+  var ctx=pick([
+    {w:"A display team needs "+a+" juniors from a group of "+g1+" and "+b+" seniors from a group of "+g2+". How many different teams are possible?"},
+    {w:"A reading list needs "+a+" fiction books from "+g1+" available and "+b+" nonfiction books from "+g2+" available. How many different lists are possible?"},
+    {w:"A coach picks "+a+" forwards from "+g1+" available and "+b+" defenders from "+g2+" available. How many different selections are possible?"}
+  ]);
+  return numq(ctx.w,
+    nCr(g1,a)*nCr(g2,b),0.001,"The two choices are independent, so multiply the combinations: \\[ \\begin{aligned} \\binom{"+g1+"}{"+a+"} \\times \\binom{"+g2+"}{"+b+"} &= "+nCr(g1,a)+" \\times "+nCr(g2,b)+" \\\\ &= "+(nCr(g1,a)*nCr(g2,b))+" \\end{aligned} \\] Order within each chosen group does not matter, which is why both factors are combinations.",{g1:g1,a:a,g2:g2,b:b});
+});
+E("u8-committee-atleast",8,["9.30"],3,"gen",function(){
+  var shape=pick(["atleast","include"]);
+  var n=pick([8,9,10,11,12,13]),r=pick([3,4,5]),s=pick([2,3,4]);
+  while(n-s<r){s--;}
+  if(shape==="atleast"){
+    var val=nCr(n,r)-nCr(n-s,r);
+    return numq("A committee of "+r+" is to be chosen from "+n+" people, of whom "+s+" are seniors. How many committees include <b>at least one</b> senior?",
+      val,0.001,"Count all committees and subtract the ones the condition forbids (committees with no seniors, chosen entirely from the "+(n-s)+" non-seniors): \\[ \\begin{aligned} \\binom{"+n+"}{"+r+"} - \\binom{"+(n-s)+"}{"+r+"} &= "+nCr(n,r)+" - "+nCr(n-s,r)+" \\\\ &= "+val+" \\end{aligned} \\] Counting 'at least one' directly would need three separate cases; the complement needs one. Justification for Level 3: the productive move is recognizing the complement structure.",{n:n,r:r,s:s});
+  }
+  var val2=nCr(n-1,r-1);
+  return numq("A committee of "+r+" is to be chosen from "+n+" people, and one particular person, the club president, <b>must</b> be on it. How many different committees are possible?",
+    val2,0.001,"Reserve one seat for the president, then choose the remaining "+(r-1)+" members from the other "+(n-1)+" people: \\[ \\begin{aligned} \\binom{"+(n-1)+"}{"+(r-1)+"} &= "+val2+" \\end{aligned} \\] Fixing the required member first turns a conditional problem into a plain combination. Justification for Level 3: the seat-reservation restructure has to be seen before any formula applies.",{n:n,r:r});
+});
+E("u8-comb-strategy",8,["9.31"],1,"var",varset([
+  function(){return mcq("Why is C(8, 3) equal to P(8, 3) divided by 3!?",
+    "Every group of 3 people was counted 3! times in the permutation count, once for each order, and combinations ignore order",
+    ["Because 3! happens to be the number of people not chosen","Because permutations always overcount by exactly 6","Because dividing makes the answer a whole number"],
+    "P(8, 3) counts ordered triples. Each unordered group of 3 can be ordered in 3! = 6 ways, so each group appears 6 times in the permutation count. Dividing by 3! collapses those 6 copies into 1, which is the general strategy behind the combination formula.",{});},
+  function(){return mcq("C(10, 7) and C(10, 3) are equal. Why?",
+    "Choosing the 7 people to include is the same action as choosing the 3 people to leave out",
+    ["Because 7 and 3 add to 10, and combinations always pair up this way by coincidence","Because 10! is divisible by both","Because order matters for one and not the other"],
+    "Every selection of 7 leaves behind a unique selection of 3, and vice versa, so the two counts must match. This symmetry, C(n, r) = C(n, n − r), is a useful check and a shortcut when r is large.",{});},
+  function(){return mcq("A student counts committees of 3 from 8 people by first counting ordered triples (336) and then dividing by 6. What is the 6?",
+    "3!, the number of different orders in which any one committee of 3 can be arranged",
+    ["The number of people not chosen","The number of committees","The number of positions on the committee, doubled"],
+    "The ordered count lists each committee once for every arrangement of its 3 members, and 3 members can be arranged in 3! = 6 ways. Dividing by 6 removes the ordering: 336 ÷ 6 = 56 committees. Recognizing what the divisor means is the strategy, not just the arithmetic.",{});}
+]));
+/* --- probability with combinations (9.32) --- */
+E("u8-prob-comb",8,["9.32"],2,"gen",function(){
+  var ctx=pick([
+    {lead:"A bag contains",tail:"marbles",g1:"red",g2:"blue"},
+    {lead:"A drawer contains",tail:"socks",g1:"black",g2:"white"},
+    {lead:"A small deck contains",tail:"cards",g1:"hearts",g2:"spades"}
+  ]);
+  var a=pick([3,4,5,6,7]),b=pick([3,4,5,6,7]);if(a===b)b=b===7?6:b+1;
+  var t=a+b;
+  return mcq(ctx.lead+" "+a+" "+ctx.g1+" and "+b+" "+ctx.g2+" "+ctx.tail+" ("+t+" in total). Two are drawn at random without replacement. What is the probability that <b>both</b> are "+ctx.g1+"?",
+    MV(frN(nCr(a,2),nCr(t,2))),
+    [MV(frN(a*(a-1),t*t)),MV(frN(a*a,t*t)),MV(frN(nCr(b,2),nCr(t,2)))],
+    "Count combinations: there are \\(\\binom{"+a+"}{2} = "+nCr(a,2)+"\\) ways to draw two "+ctx.g1+" and \\(\\binom{"+t+"}{2} = "+nCr(t,2)+"\\) ways to draw any two, so the probability is \\("+frN(nCr(a,2),nCr(t,2))+"\\). The first two distractors come from mishandling the second draw (keeping the full pool of "+t+" for it, or treating the draws as independent with replacement); the last counts the wrong colour.",
+    {a:a,b:b});
+});
+E("u8-prob-comb-hard",8,["9.32"],3,"gen",function(){
+  var n=pick([8,9,10,11,12]),r=pick([3,4]);while(n-2<r)n++;
+  var tot=nCr(n,r),favour=nCr(n-2,r);
+  var setting=pick([{g:"committee",p:"club members"},{g:"team",p:"players trying out"},{g:"project group",p:"students"}]);
+  var names=pick([["Morgan","Riley"],["Sam","Priya"],["Alex","Jordan"],["Emma","Liam"],["Noah","Ava"]]);
+  return mcq("A "+setting.g+" of "+r+" is chosen at random from "+n+" "+setting.p+". Two of the "+setting.p+" are "+names[0]+" and "+names[1]+". What is the probability that <b>neither</b> "+names[0]+" nor "+names[1]+" is on the "+setting.g+"?",
+    MV(frN(favour,tot)),
+    [MV(frN(tot-favour,tot)),MV(frN(nCr(n-1,r),tot)),MV(frN(2,n))],
+    "If neither of them is chosen, all "+r+" members come from the other "+(n-2)+" "+setting.p+": \\(\\binom{"+(n-2)+"}{"+r+"} = "+favour+"\\) favourable groups out of \\(\\binom{"+n+"}{"+r+"} = "+tot+"\\) equally likely groups, giving \\("+frN(favour,tot)+"\\). The first distractor is the opposite event (at least one of them is chosen). Justification for Level 3: the favourable set has to be rebuilt around the exclusion before the probability ratio can be formed.",
+    {n:n,r:r});
+});
+E("u8-mixed-roles",8,["9.24"],2,"gen",function(){
+  var n=pick([6,7,8,9,10,11,12]),r=pick([2,3,4]);
+  var jobList={2:"captain and vice-captain",3:"captain, equipment manager, and treasurer",4:"captain, vice-captain, equipment manager, and treasurer"};
+  var shiftList={2:"first and second",3:"first, second, and third",4:"first, second, third, and fourth"};
+  var ctx=pick([
+    {w:"A sports club with "+n+" members selects "+r+" of them and assigns each a different job ("+jobList[r]+"). How many outcomes are possible?"},
+    {w:"A play has "+n+" students auditioning. The director casts "+r+" different named roles. How many outcomes are possible?"},
+    {w:"From "+n+" volunteers, "+r+" are chosen and given distinct shifts ("+shiftList[r]+"). How many outcomes are possible?"}
+  ]);
+  return numq(ctx.w,
+    nPr(n,r),0.001,"Work in two steps: choose the group, then assign the roles: \\[ \\begin{aligned} \\binom{"+n+"}{"+r+"} \\times "+r+"! &= "+nCr(n,r)+" \\times "+fact(r)+" \\\\ &= "+nPr(n,r)+" \\end{aligned} \\] The two steps combine into the permutation \\(_{"+n+"}P_{"+r+"}\\), because choosing and then ordering is the same as choosing in order.",{n:n,r:r});
+});
 /* BANK-SRC-END */
 </script>
 
