@@ -4427,16 +4427,21 @@ function composeExam(units,inds){
     var guard=0;
     while(count>0&&guard++<500&&cands.length){
       var q=genFrom(pick(cands));var c=canonQ(q);
-      if(seen[c])continue;seen[c]=1;srItems.push({q:q,marks:1});count--;
+      if(q.type!=="mc"||seen[c])continue;seen[c]=1;srItems.push({q:q,marks:1});count--;
     }
     return count;
   }
   var miss=0;for(var L=1;L<=3;L++){miss+=takeSR(L,srT[L-1]);}
+  var srOff=miss>0;
+  if(miss>0){ // backfill SR slots from multiple choice entries at any level in scope
+    var allC=pool.filter(function(e){return probeType(e)==="mc";});var guard2=0;
+    while(miss>0&&guard2++<800&&allC.length){var qb=genFrom(pick(allC));var cb=canonQ(qb);if(qb.type!=="mc"||seen[cb])continue;seen[cb]=1;srItems.push({q:qb,marks:1});miss--;}
+  }
   var crPool=pool.filter(function(e){return typeof CR_MARKS!=="undefined"&&CR_MARKS[e.id]!==undefined&&CR_MARKS[e.id]>=2&&e.level>=2;}).map(function(e){return{e:e,marks:CR_MARKS[e.id]};});
   var l3=crPool.filter(function(x){return x.e.level===3;}),l2=crPool.filter(function(x){return x.e.level===2;});
   var l3pick=null,l3sum=0;var t3=single?[5,4,6]:[7,8,9];
   for(var t=0;t<t3.length&&!l3pick;t++){l3pick=subsetSumMarks(l3,t3[t]);if(l3pick)l3sum=t3[t];}
-  var crItems=[],crMarks=0,short=miss>0;
+  var crItems=[],crMarks=0,short=miss>0||srOff;
   if(l3pick){
     var l2pick=subsetSumMarks(l2,crTotal-l3sum);
     if(l2pick){
