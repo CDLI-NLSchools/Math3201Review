@@ -2926,12 +2926,14 @@ E("u7-two-set-problem",7,["2.5"],2,"gen",function(){
   var nA=r.aO+r.both,nB=r.bO+r.both,union=r.aO+r.both+r.bO,total=union+r.none;
   var target=pick(["none","aonly","bonly"]);
   var head="In a survey of "+total+" students, "+nA+" "+c.aP+", "+nB+" "+c.bP+", and "+r.both+" do both. ";
+  var fig=venn2(r.aO,r.both,r.bO,r.none,"A","B");
+  var fill="Fill the Venn diagram from the overlap out. The overlap is \\("+r.both+"\\). Taking it out of each set total leaves \\("+nA+" - "+r.both+" = "+r.aO+"\\) in A only and \\("+nB+" - "+r.both+" = "+r.bO+"\\) in B only, with \\("+r.none+"\\) outside both circles:<br><div style='text-align:center'>"+fig+"</div>";
   if(target==="none")return numq(head+"How many students do <b>neither</b> activity?",
-    r.none,0.001,"Record the solution in set notation: \\[ \\begin{aligned} n(A \\cup B) &= n(A) + n(B) - n(A \\cap B) \\\\ &= "+nA+" + "+nB+" - "+r.both+" \\\\ &= "+union+" \\\\ n((A \\cup B)') &= "+total+" - "+union+" \\\\ &= "+r.none+" \\end{aligned} \\] The overlap is subtracted once in the union formula because those students were counted in both n(A) and n(B).",{ctx:c.lA,target:target});
+    r.none,0.001,fill+"Record the solution in set notation: \\[ \\begin{aligned} n(A \\cup B) &= n(A) + n(B) - n(A \\cap B) \\\\ &= "+nA+" + "+nB+" - "+r.both+" \\\\ &= "+union+" \\\\ n((A \\cup B)') &= "+total+" - "+union+" \\\\ &= "+r.none+" \\end{aligned} \\] The overlap is subtracted once in the union formula because those students were counted in both n(A) and n(B).",{ctx:c.lA,target:target});
   if(target==="aonly")return numq(head+"How many students "+c.aP+" <b>only</b>?",
-    r.aO,0.001,"In set notation the question asks for \\(n(A \\cap B')\\): \\[ \\begin{aligned} n(A \\cap B') &= n(A) - n(A \\cap B) \\\\ &= "+nA+" - "+r.both+" \\\\ &= "+r.aO+" \\end{aligned} \\] The students who do both must be removed from the A total.",{ctx:c.lA,target:target});
+    r.aO,0.001,fill+"In set notation the question asks for \\(n(A \\cap B')\\): \\[ \\begin{aligned} n(A \\cap B') &= n(A) - n(A \\cap B) \\\\ &= "+nA+" - "+r.both+" \\\\ &= "+r.aO+" \\end{aligned} \\] The students who do both must be removed from the A total.",{ctx:c.lA,target:target});
   return numq(head+"How many students "+c.bP+" <b>only</b>?",
-    r.bO,0.001,"In set notation the question asks for \\(n(A' \\cap B)\\): \\[ \\begin{aligned} n(A' \\cap B) &= n(B) - n(A \\cap B) \\\\ &= "+nB+" - "+r.both+" \\\\ &= "+r.bO+" \\end{aligned} \\] The students who do both must be removed from the B total.",{ctx:c.lA,target:target});
+    r.bO,0.001,fill+"In set notation the question asks for \\(n(A' \\cap B)\\): \\[ \\begin{aligned} n(A' \\cap B) &= n(B) - n(A \\cap B) \\\\ &= "+nB+" - "+r.both+" \\\\ &= "+r.bO+" \\end{aligned} \\] The students who do both must be removed from the B total.",{ctx:c.lA,target:target});
 });
 E("u7-two-set-notation",7,["2.5"],2,"gen",function(){
   var c=pick(U7SURVEY),r=u7regions();
