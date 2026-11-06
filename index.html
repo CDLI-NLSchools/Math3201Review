@@ -2954,15 +2954,17 @@ E("u7-three-set-problem",7,["2.5"],2,"gen",function(){
   var pAB=r.ab+r.abc,pAC=r.ac+r.abc,pBC=r.bc+r.abc;
   var union=r.a+r.b+r.c+r.ab+r.ac+r.bc+r.abc,total=union+r.none;
   var head="A school surveyed "+total+" students about three activities: A (skiing), B (skating) and C (hockey). The counts are \\(n(A) = "+nA+"\\), \\(n(B) = "+nB+"\\), \\(n(C) = "+nC+"\\), \\(n(A \\cap B) = "+pAB+"\\), \\(n(A \\cap C) = "+pAC+"\\), \\(n(B \\cap C) = "+pBC+"\\) and \\(n(A \\cap B \\cap C) = "+r.abc+"\\). ";
+  var fig=venn3(r.a,r.b,r.c,r.ab,r.ac,r.bc,r.abc,r.none,"A","B","C");
+  var fill="Fill the Venn diagram from the centre out. The centre is \\("+r.abc+"\\). Each pair count includes the centre, so the pair-only regions are \\("+pAB+" - "+r.abc+" = "+r.ab+"\\), \\("+pAC+" - "+r.abc+" = "+r.ac+"\\) and \\("+pBC+" - "+r.abc+" = "+r.bc+"\\). Each single-only region is its set total minus the regions overlapping it, for example A only \\(= "+nA+" - "+r.ab+" - "+r.ac+" - "+r.abc+" = "+r.a+"\\). The completed diagram:<br><div style='text-align:center'>"+fig+"</div>";
   var target=pick(["exactlyone","exactlytwo","none","union"]);
   if(target==="exactlytwo"){var v=r.ab+r.ac+r.bc;return numq(head+"How many students do <b>exactly two</b> of the activities?",
-    v,0.001,"Each pairwise count includes the centre, so remove it from each pair first: \\[ \\begin{aligned} \\text{exactly two} &= ("+pAB+" - "+r.abc+") + ("+pAC+" - "+r.abc+") + ("+pBC+" - "+r.abc+") \\\\ &= "+r.ab+" + "+r.ac+" + "+r.bc+" \\\\ &= "+v+" \\end{aligned} \\]",{target:target});}
+    v,0.001,fill+"Exactly two of the activities means the three pair-only regions: \\[ \\begin{aligned} \\text{exactly two} &= "+r.ab+" + "+r.ac+" + "+r.bc+" \\\\ &= "+v+" \\end{aligned} \\]",{target:target});}
   if(target==="exactlyone"){var v1=r.a+r.b+r.c;return numq(head+"How many students do <b>exactly one</b> of the activities?",
-    v1,0.001,"Strip the overlaps out of each single-set count: \\[ \\begin{aligned} \\text{A only} &= "+nA+" - "+r.ab+" - "+r.ac+" - "+r.abc+" = "+r.a+" \\\\ \\text{B only} &= "+nB+" - "+r.ab+" - "+r.bc+" - "+r.abc+" = "+r.b+" \\\\ \\text{C only} &= "+nC+" - "+r.ac+" - "+r.bc+" - "+r.abc+" = "+r.c+" \\end{aligned} \\] Adding the three gives "+v1+" students.",{target:target});}
+    v1,0.001,fill+"Exactly one activity means the three single-only regions: \\[ \\begin{aligned} \\text{exactly one} &= "+r.a+" + "+r.b+" + "+r.c+" \\\\ &= "+v1+" \\end{aligned} \\]",{target:target});}
   if(target==="union")return numq(head+"How many students do <b>at least one</b> of the activities?",
-    union,0.001,"Use the three-set union formula: \\[ \\begin{aligned} n(A \\cup B \\cup C) &= "+nA+" + "+nB+" + "+nC+" - "+pAB+" - "+pAC+" - "+pBC+" + "+r.abc+" \\\\ &= "+union+" \\end{aligned} \\] The centre is added back at the end because it was subtracted once too often.",{target:target});
+    union,0.001,fill+"At least one activity means every region inside the circles: \\[ \\begin{aligned} n(A \\cup B \\cup C) &= "+r.a+" + "+r.b+" + "+r.c+" + "+r.ab+" + "+r.ac+" + "+r.bc+" + "+r.abc+" \\\\ &= "+union+" \\end{aligned} \\]",{target:target});
   return numq(head+"How many students do <b>none</b> of the activities?",
-    r.none,0.001,"The union formula gives \\(n(A \\cup B \\cup C) = "+union+"\\) students doing at least one activity, so the rest of the "+total+" surveyed students, \\("+total+" - "+union+" = "+r.none+"\\), do none.",{target:target});
+    r.none,0.001,fill+"The regions inside the circles add to \\("+union+"\\), so the students outside all three circles are: \\[ \\begin{aligned} n((A \\cup B \\cup C)') &= "+total+" - "+union+" \\\\ &= "+r.none+" \\end{aligned} \\]",{target:target});
 });
 /* --- errors in set solutions (2.6) --- */
 E("u7-error-identify",7,["2.6"],2,"var",varset([
