@@ -1738,7 +1738,7 @@ E("u4-compound-model",4,["4.9"],2,"gen",function(){
     return mcq("An investment of $"+P+" earns "+r+"% per year, compounded "+nName+". Which function models the amount after \\(t\\) years?",
       "\\("+model(istr,n+"t")+"\\)",
       ["\\("+model(fmt(r/100,2),n+"t")+"\\)","\\("+model(istr,"t")+"\\)","\\("+model(fmt(r/100/n/n,4),n+"t")+"\\)"],
-      "Compound interest uses \\(A = P\\left(1 + \\frac{r}{n}\\right)^{nt}\\): the rate per period is \\(\\frac{"+r+"\\%}{"+n+"} = "+fmt(r/n,2)+"% = "+istr+"\\), and there are \\("+n+"t\\) periods in \\(t\\) years. Forgetting to divide the rate, or forgetting to multiply the exponent by "+n+", gives the traps.",
+      "Compound interest uses \\(A = P\\left(1 + \\frac{r}{n}\\right)^{nt}\\): the rate per period is \\(\\frac{"+r+"\\%}{"+n+"} = "+fmt(r/n,2)+"\\% = "+istr+"\\), and there are \\("+n+"t\\) periods in \\(t\\) years. Forgetting to divide the rate, or forgetting to multiply the exponent by "+n+", gives the traps.",
       {fam:fam,P:P,r:r,n:n});
   }
   var P2=pick([1200,1800,2400,3000,3600]);
@@ -2477,11 +2477,11 @@ E("u6-read-formula",6,["1.8"],1,"gen",function(){
   var formula="A = "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"}";
   if(feat==="principal")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>principal</b>?",
     mon(P),[mon(Math.round(P*(1+s.i))),mon(P*2),mon(Math.round(P/2))],
-    "In \\(A = P(1 + i)^n\\) the principal is the starting amount the growth factor is applied to: here \\(P = "+mon(P)+"\\). The first distractor is the amount after one period, not the amount invested.",
+    "In \\(A = P(1 + i)^n\\) the principal is the starting amount the growth factor is applied to: here \\(P\\) is "+mon(P)+". The first distractor is the amount after one period, not the amount invested.",
     {feat:feat,P:P});
   if(feat==="perrate")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>interest rate per compounding period</b>?",
     fmt(s.r/s.m,2)+"%",s.m===1?[fmt(s.r/2,2)+"%",fmt(s.r*2,2)+"%",fmt(s.r+1,2)+"%"]:[s.r+"%",fmt(s.r/s.m/2,2)+"%",fmt(s.r/s.m+1,2)+"%"],
-    "The number added to 1 in the growth factor is the periodic rate: \\(i = "+fmt(s.i,4)+"\\), which is \\("+fmt(s.r/s.m,2)+"%\\). That is the annual rate of "+s.r+"% divided by the "+s.m+" compounding period(s) per year; using the full annual rate is the first distractor's error.",
+    "The number added to 1 in the growth factor is the periodic rate: \\(i = "+fmt(s.i,4)+"\\), which is \\("+fmt(s.r/s.m,2)+"\\%\\). That is the annual rate of "+s.r+"% divided by the "+s.m+" compounding period(s) per year; using the full annual rate is the first distractor's error.",
     {feat:feat,P:P});
   if(feat==="periods")return mcq("A financial calculation uses the formula \\("+formula+"\\). How many <b>compounding periods</b> are there in total?",
     ""+s.n,dis3(s.n,[s.n/s.m,s.n*s.m,s.m]),
@@ -2489,7 +2489,7 @@ E("u6-read-formula",6,["1.8"],1,"gen",function(){
     {feat:feat,P:P});
   return mcq("A financial calculation uses the formula \\("+formula+"\\) for an annual rate of "+s.r+"%. How often is the interest <b>compounded</b>?",
     s.fw,["annually","semi-annually","quarterly","monthly"].filter(function(w){return w!==s.fw;}),
-    "The periodic rate inside the formula is \\("+fmt(s.i,4)+"\\), and \\("+s.r+"% \\div "+fmt(s.i*100,2)+"% = "+s.m+"\\), so the annual rate is split into "+s.m+" period(s) per year: the interest is compounded "+s.fw+".",
+    "The periodic rate inside the formula is \\("+fmt(s.i,4)+"\\), and \\("+s.r+"\\% \\div "+fmt(s.i*100,2)+"\\% = "+s.m+"\\), so the annual rate is split into "+s.m+" period(s) per year: the interest is compounded "+s.fw+".",
     {feat:feat,P:P});
 });
 E("u6-simple-interest",6,["1.8"],1,"gen",function(){
@@ -2505,7 +2505,7 @@ E("u6-compound-amount",6,["1.8"],2,"gen",function(){
   var A=P*Math.pow(1+s.i,s.n),loan=Math.random()<0.4;
   return numq((loan?"A loan of ":"An investment of ")+mon(P)+" is made at "+s.r+"% compounded "+s.fw+". "+(loan?"If no payments are made, how much is owed":"What is the value")+" after "+s.term+", in dollars?",
     Math.round(A*100)/100,0.05,
-    "Use \\(A = P(1 + i)^n\\) with the periodic rate \\(i = "+s.r+"\\% \\div "+s.m+" = "+fmt(s.i*100,2)+"%\) and \\(n = "+s.n+"\\) periods: \\[ \\begin{aligned} A &= P(1 + i)^n \\\\ &= "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"} \\\\ &= "+fmtF(A,2)+" \\end{aligned} \\] So the amount is "+mon(A)+". The rate must be divided by the compounding frequency before it goes into the formula.",
+    "Use \\(A = P(1 + i)^n\\) with the periodic rate \\(i = "+s.r+"\\% \\div "+s.m+" = "+fmt(s.i*100,2)+"\\%\\) and \\(n = "+s.n+"\\) periods: \\[ \\begin{aligned} A &= P(1 + i)^n \\\\ &= "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"} \\\\ &= "+fmtF(A,2)+" \\end{aligned} \\] So the amount is "+mon(A)+". The rate must be divided by the compounding frequency before it goes into the formula.",
     {P:P,r:s.r,fw:s.fw});
 });
 E("u6-interest-earned",6,["1.10"],2,"gen",function(){
@@ -2933,8 +2933,8 @@ E("u7-venn-read",7,["2.2"],2,"gen",function(){
     both:["How many students both "+c.aP+" and "+c.bP+"?",r.both,"That is the overlap region, which shows "+r.both+"."],
     bonly:["How many students "+c.bP+" but do not "+c.aP+"?",r.bO,"That is the region inside circle B only, which shows "+r.bO+"."],
     none:["How many students do neither activity?",r.none,"That is the region outside both circles, which shows "+r.none+"."],
-    inA:["How many students "+c.aP+" (including those who do both)?",r.aO+r.both,"Everyone in circle A: the A-only region plus the overlap, \\("+r.aO+" + "+r.both+" = "+(r.aO+r.both)+"\")."],
-    inB:["How many students "+c.bP+" (including those who do both)?",r.bO+r.both,"Everyone in circle B: the B-only region plus the overlap, \\("+r.bO+" + "+r.both+" = "+(r.bO+r.both)+"\")."],
+    inA:["How many students "+c.aP+" (including those who do both)?",r.aO+r.both,"Everyone in circle A: the A-only region plus the overlap, \\("+r.aO+" + "+r.both+" = "+(r.aO+r.both)+"\\)."],
+    inB:["How many students "+c.bP+" (including those who do both)?",r.bO+r.both,"Everyone in circle B: the B-only region plus the overlap, \\("+r.bO+" + "+r.both+" = "+(r.bO+r.both)+"\\)."],
     union:["How many students do at least one of the two activities?",union,"Add the three regions inside the circles: \\("+r.aO+" + "+r.both+" + "+r.bO+" = "+union+"\\). The outside region is excluded."],
     total:["How many students were surveyed in total?",total,"Add all four regions, including the students outside both circles: \\("+r.aO+" + "+r.both+" + "+r.bO+" + "+r.none+" = "+total+"\\)."]
   }[target];
