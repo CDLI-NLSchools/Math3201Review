@@ -639,15 +639,15 @@ E("u1-npv-linear",1,["3.2"],1,"gen",function(){
 E("u1-npv-why",1,["3.1"],1,"var",varset([
   function(){return mcq("Why is \\(x = 3\\) a non-permissible value for the expression \\("+FR("5","x - 3")+"\\)?",
     "Substituting \\(x = 3\\) makes the denominator equal to 0, and division by zero is undefined",
-    ["Substituting \\(x = 3\\) makes the numerator equal to 0","Substituting \\(x = 3\\) makes the value of the expression negative","The expression has no numerator when \\(x = 3\\)"],
+    ["Substituting \\(x = 3\\) makes the numerator equal to 0, and a numerator of 0 is not allowed","Substituting \\(x = 3\\) makes the expression negative, and negative values are not allowed","The expression has no numerator when \\(x = 3\\), so there is nothing to divide by the denominator"],
     "A value is non-permissible when it makes a denominator zero: \\(3 - 3 = 0\\). The numerator being zero would be fine; it is the denominator that cannot be 0.",{});},
   function(){return mcq("Why is \\(x = -4\\) a non-permissible value for the expression \\("+FR("2x + 1","x + 4")+"\\)?",
     "Substituting \\(x = -4\\) makes the denominator equal to 0, and division by zero is undefined",
-    ["Substituting \\(x = -4\\) makes the numerator equal to 0","Substituting \\(x = -4\\) makes the expression equal to 1","The variable cannot be negative in a rational expression"],
+    ["Substituting \\(x = -4\\) makes the numerator equal to 0, and a numerator of 0 is not allowed","Substituting \\(x = -4\\) makes the expression equal to 1, and an expression cannot equal 1 there","The variable cannot be negative in a rational expression, so a negative value is never permitted"],
     "Check the denominator: \\(-4 + 4 = 0\\). Any value that makes a denominator 0 is non-permissible, whether it is positive or negative.",{});},
   function(){return mcq("Why is \\(x = 2\\) a non-permissible value for the expression \\("+FR("x^2","3x - 6")+"\\)?",
     "Substituting \\(x = 2\\) makes the denominator equal to 0, and division by zero is undefined",
-    ["Substituting \\(x = 2\\) makes the numerator equal to 0","Substituting \\(x = 2\\) makes the expression equal to 0","The denominator is a multiple of the numerator when \\(x = 2\\)"],
+    ["Substituting \\(x = 2\\) makes the numerator equal to 0, and a numerator of 0 is not allowed","Substituting \\(x = 2\\) makes the expression equal to 0, and the expression cannot equal 0 there","The denominator is a multiple of the numerator when \\(x = 2\\), and that relationship is not allowed"],
     "In the denominator, \\(3(2) - 6 = 0\\). Non-permissible values always come from the denominator being zero, never from the numerator.",{});}
 ]));
 E("u1-npv-quadratic",1,["3.2"],2,"gen",function(){
@@ -658,7 +658,7 @@ E("u1-npv-quadratic",1,["3.2"],2,"gen",function(){
   var pair=function(a,b){return "\\(x = "+a+"\\) and \\(x = "+b+"\\)";};
   return mcq("What are the <b>non-permissible values</b> of the rational expression \\("+FR(num,quadR(r1,r2))+"\\)?",
     pair(lo,hi),
-    [pair(-hi,-lo),"\\(x = "+hi+"\\) only",pair(lo+hi,lo*hi)],
+    [pair(-hi,-lo),"\\(x = "+hi+"\\) is the only one",pair(lo+hi,lo*hi)],
     "Set the denominator equal to zero and factor: \\("+quadR(r1,r2)+" = "+linF(r1)+linF(r2)+" = 0\\). So \\(x = "+lo+"\\) or \\(x = "+hi+"\\). The non-permissible values are <b>\\(x = "+lo+"\\) and \\(x = "+hi+"\\)</b>. Watch the signs: the roots of the factors are the values themselves, not their opposites.",
     {r1:r1,r2:r2});
 });
@@ -685,15 +685,15 @@ E("u1-create-equivalent",1,["3.4"],2,"gen",function(){
 E("u1-npv-simplified",1,["3.6"],2,"var",varset([
   function(){return mcq("The expression \\("+FR(quadR(2,5),quadR(2,-3))+"\\) simplifies to \\("+FR("x - 5","x + 3")+"\\). A student says the simplified expression is non-permissible only when \\(x = -3\\). Which statement is correct?",
     "The student is wrong: \\(x = 2\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
-    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = 2\\)","Once an expression is simplified, it has no non-permissible values"],
+    ["The student is right: cancelling the common factor removes its restriction, so only the values left in the denominator are still non-permissible","The only non-permissible value is \\(x = 2\\), because cancelling a common factor keeps its own restriction while the restriction from the other factor is dropped","Once an expression is simplified, it has no non-permissible values, because the simplified form can be evaluated for every value of the variable"],
     "The original denominator is \\((x - 2)(x + 3)\\), which is zero when \\(x = 2\\) and when \\(x = -3\\). Cancelling \\((x - 2)\\) changes how the expression is written, not where it is defined, so both restrictions carry over.",{});},
   function(){return mcq("The expression \\("+FR(quadR(-4,1),quadR(-4,6))+"\\) simplifies to \\("+FR("x - 1","x - 6")+"\\). A student says the simplified expression is non-permissible only when \\(x = 6\\). Which statement is correct?",
     "The student is wrong: \\(x = -4\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
-    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = -4\\)","Once an expression is simplified, it has no non-permissible values"],
+    ["The student is right: cancelling the common factor removes its restriction, so only the values left in the denominator are still non-permissible","The only non-permissible value is \\(x = -4\\), because cancelling a common factor keeps its own restriction while the restriction from the other factor is dropped","Once an expression is simplified, it has no non-permissible values, because the simplified form can be evaluated for every value of the variable"],
     "The original denominator is \\((x + 4)(x - 6)\\), zero when \\(x = -4\\) and when \\(x = 6\\). The cancelled factor still contributes its restriction to the simplified form.",{});},
   function(){return mcq("The expression \\("+FR(quadR(3,-2),quadR(3,-5))+"\\) simplifies to \\("+FR("x + 2","x + 5")+"\\). A student says the simplified expression is non-permissible only when \\(x = -5\\). Which statement is correct?",
     "The student is wrong: \\(x = 3\\) is still non-permissible, because simplifying does not change the values for which the original expression is undefined",
-    ["The student is right: cancelling the common factor removes its restriction","The only non-permissible value is \\(x = 3\\)","Once an expression is simplified, it has no non-permissible values"],
+    ["The student is right: cancelling the common factor removes its restriction, so only the values left in the denominator are still non-permissible","The only non-permissible value is \\(x = 3\\), because cancelling a common factor keeps its own restriction while the restriction from the other factor is dropped","Once an expression is simplified, it has no non-permissible values, because the simplified form can be evaluated for every value of the variable"],
     "The original denominator is \\((x - 3)(x + 5)\\), zero when \\(x = 3\\) and when \\(x = -5\\). Restrictions are a property of the original expression and survive simplification.",{});}
 ]));
 E("u1-reverse-restrictions",1,["3.6"],3,"gen",function(){
@@ -727,9 +727,11 @@ E("u1-simplify-monomial",1,["3.5"],1,"gen",function(){
     var a=ri(2,12),b=ri(2,12),t=0;
     while((gcd2(a,b)<2||a===b)&&t<80){a=ri(2,12);b=ri(2,12);t++;}
     var m=ri(2,4),n=ri(1,m-1),pw=m-n,pws=(pw===1?"x":"x^"+pw),coef=frN(a,b);
+    var ds1=[MV(frN(b,a)+pws),MV(coef+"x^"+(m+n)),MV(FR(a,b)+pws)];
+    if(coef.indexOf("/")<0&&coef.indexOf("frac")<0&&pw===1){ds1[2]=MV(""+a+pws);}
     return mcq("Simplify: \\("+FR(a+"x^"+m,b+"x^"+n)+"\\)",
       MV(coef+pws),
-      [MV(frN(b,a)+pws),MV(coef+"x^"+(m+n)),MV(FR(a,b)+pws)],
+      ds1,
       "Divide the coefficients and subtract the exponents: \\(\\frac{"+a+"}{"+b+"} = "+coef+"\\) and \\(x^"+m+" \\div x^"+n+" = x^"+pw+"\\)"+(pw===1?"":"")+". The simplified form is <b>\\("+coef+pws+"\\)</b>. The coefficient must be reduced, and dividing powers subtracts exponents rather than adding them.",
       {a:a,b:b,m:m,n:n});
   }
@@ -738,7 +740,7 @@ E("u1-simplify-monomial",1,["3.5"],1,"gen",function(){
   var corr=(c2/g===1)?MV(linS(a2/g,b2/g)):MV(FR(linS(a2/g,b2/g),""+(c2/g)));
   return mcq("Simplify: \\("+FR(quadS(a2,b2,0),c2+"x")+"\\)",
     corr,
-    [MV(FR(linS(a2,b2),""+c2)),MV(FR(linS(a2/g,b2/g),""+c2)),MV(FR(linS(a2,b2/g),""+(c2/g)))],
+    [MV(FR(linS(a2,b2),""+c2)),(c2/g===1)?MV(linS(a2/g,b2)):MV(FR(linS(a2/g,b2/g),""+c2)),MV(FR(linS(a2,b2/g),""+(c2/g)))],
     "Factor the numerator and divide every term by the common factor \\("+g+"x\\), then cancel \\(x\\) and reduce by \\("+g+"\\): \\[ \\begin{aligned} \\frac{"+quadS(a2,b2,0)+"}{"+c2+"x} &= \\frac{x("+linS(a2,b2)+")}{"+c2+"x} \\\\ &= "+corr.slice(2,-2)+" \\end{aligned} \\]",
     {a:a2,b:b2,c:c2,g:g});
 });
@@ -850,17 +852,21 @@ E("u1-npv-operations",1,["3.9"],2,"gen",function(){
 E("u1-strategy-compare",1,["3.8"],2,"var",varset([
   function(){return mcq("Which statement correctly compares adding rational expressions with adding rational numbers (fractions)?",
     "Both must first be rewritten with a common denominator; the denominators themselves are never added",
-    ["In both cases, the numerators and the denominators are added straight across","Rational expressions can be added straight across because the denominators contain variables","The common denominator for rational expressions is always the sum of the two denominators"],
+    ["In both cases, the numerators and the denominators are added straight across to give the sum in one step","Rational expressions can be added straight across because the denominators contain variables too","The common denominator for rational expressions is always the sum of the two denominators being added"],
     "Adding \\(\\frac{1}{4} + \\frac{1}{6}\\) needs a common denominator of 12, and adding rational expressions works the same way, with the LCD built from the factors of the denominators. Straight-across addition is wrong in both worlds.",{});},
   function(){return mcq("Multiplying rational expressions uses the same strategy as multiplying fractions. Which statement explains why the strategies match?",
     "In both cases the numerators are multiplied, the denominators are multiplied, and common factors may be cancelled before or after multiplying",
-    ["In both cases a common denominator must be found before multiplying","In both cases the numerators are added and the denominators are multiplied","Fractions cannot be simplified before multiplying, but rational expressions can"],
+    ["In both cases a common denominator must first be found before multiplying, and the two products are then written over that same common denominator","In both cases the numerators are added and the denominators are multiplied, and that combined result is then simplified by cancelling","Fractions cannot be simplified before multiplying, but rational expressions can, and that difference is why the two strategies do not match"],
     "Multiplication never needs a common denominator, for fractions or for rational expressions. Cancelling common factors first, as in \\(\\frac{2}{3} \\times \\frac{9}{4}\\), is the shared strategy.",{});},
   function(){return mcq("Which statement gives a key difference between simplifying a rational number and simplifying a rational expression?",
     "A rational expression can be undefined for some values of its variable, so its non-permissible values must be recorded; a rational number is one fixed value",
-    ["A rational expression cannot be written in lowest terms","Factors can be cancelled in a rational number but never in a rational expression","A rational number also has non-permissible values that must be recorded"],
+    ["A rational expression cannot be written in lowest terms, because its numerator and denominator are polynomials rather than ordinary whole number values","Factors can be cancelled in a rational number but never in a rational expression, because cancelling a factor would change the value of the expression itself","A rational number also has non-permissible values that must be recorded, in the same way, whenever it is written as one number over another single number"],
     "The number \\(\\frac{6}{9}\\) is just \\(\\frac{2}{3}\\). The expression \\(\\frac{6}{x + 9}\\) simplifies nothing and is undefined at \\(x = -9\\); that restriction has no counterpart for a plain number.",{});}
 ]));
+
+/* --- equations (3.13, 3.14, 3.15, 3.16) --- */
+
+/* --- equations (3.13, 3.14, 3.15, 3.16) --- */
 
 /* --- equations (3.13, 3.14, 3.15, 3.16) --- */
 E("u1-npv-equation",1,["3.13"],1,"gen",function(){
@@ -922,15 +928,15 @@ E("u1-solve-quad-eq",1,["3.14"],2,"gen",function(){
 E("u1-extraneous",1,["3.15"],2,"var",varset([
   function(){return mcq("A student solves \\("+FR("5","x - 2")+" = "+FR("x + 3","x - 2")+"\\) by multiplying both sides by \\((x - 2)\\), gets \\(5 = x + 3\\), and concludes the solution is \\(x = 2\\). Why is \\(x = 2\\) <b>not</b> a solution?",
     "At \\(x = 2\\) both denominators in the original equation are 0, so the equation is undefined there",
-    ["The student made an arithmetic error in the step \\(5 = x + 3\\): solved correctly, the equation gives \\(x = 8\\)","\\(x = 2\\) makes the two numerators equal, which is not allowed","A rational equation can never have a positive solution"],
+    ["The student made an arithmetic error in the step \\(5 = x + 3\\): solved correctly, the equation gives \\(x = 8\\)","\\(x = 2\\) makes the two numerators equal, and equal numerators on two sides are not allowed","A rational equation can never have a positive solution, so a positive result must be rejected at once"],
     "Multiplying both sides by an expression that can be zero can introduce values that were never solutions. Here the only candidate, \\(x = 2\\), makes the original denominators zero, so it is extraneous and the equation has no solution.",{});},
   function(){return mcq("A student solves \\("+FR("2x","x + 5")+" = "+FR("x - 5","x + 5")+"\\) by multiplying both sides by \\((x + 5)\\), gets \\(2x = x - 5\\), and concludes the solution is \\(x = -5\\). Why is \\(x = -5\\) <b>not</b> a solution?",
     "At \\(x = -5\\) both denominators in the original equation are 0, so the equation is undefined there",
-    ["The student made an arithmetic error in the step \\(2x = x - 5\\): solved correctly, the equation gives \\(x = 5\\)","\\(x = -5\\) is negative, and lengths in equations must be positive","The value makes the numerator of the left side equal to 0"],
+    ["The student made an arithmetic error in the step \\(2x = x - 5\\): solved correctly, the equation gives \\(x = 5\\)","\\(x = -5\\) is negative, and a solution involving lengths must always be a positive value in the end","The value makes the numerator of the left side equal to 0, and a numerator of 0 is never allowed"],
     "The candidate value is exactly the non-permissible value of the equation. Any value produced by solving must be checked against the original denominators; this one fails the check, so there is no solution.",{});},
   function(){return mcq("A student solves \\("+FR("x^2","x - 1")+" = "+FR("x","x - 1")+"\\) and reports two solutions, \\(x = 0\\) and \\(x = 1\\). Which statement is correct?",
     "Only \\(x = 0\\) is a solution: at \\(x = 1\\) the denominators are 0, so \\(x = 1\\) is extraneous even though it satisfies the multiplied-out equation \\(x^2 = x\\)",
-    ["Both are solutions, because both satisfy the multiplied-out equation \\(x^2 = x\\), and multiplying both sides by \\((x - 1)\\) does not change the solution set","Only \\(x = 1\\) is a solution, because \\(x = 0\\) makes a numerator 0","Neither is a solution, because the equation has a fraction in it"],
+    ["Both are solutions, because both satisfy the multiplied-out equation \\(x^2 = x\\), and multiplying both sides by \\((x - 1)\\) does not change the solution set","Only \\(x = 1\\) is a solution, because \\(x = 0\\) makes a numerator 0, and a value that makes a numerator 0 must be rejected if it is to count as a solution","Neither is a solution, because an equation with a fraction on each side can never be solved by multiplying out, so values obtained that way never count"],
     "Multiplying by \\((x - 1)\\) gives \\(x^2 = x\\), with roots 0 and 1. Checking in the original equation: \\(x = 0\\) gives \\(0 = 0\\), which works, but \\(x = 1\\) divides by zero. A numerator of 0 is fine; a denominator of 0 is not.",{});}
 ]));
 E("u1-context-work",1,["3.16"],3,"gen",function(){
@@ -1207,7 +1213,7 @@ E("u2-interpret-model",2,["3.21"],2,"var",varset([
     "Substitute \\(x = 2\\): \\[ \\begin{aligned} V(2) &= 2(20 - 4)(14 - 4) \\\\ &= 2 \\times 16 \\times 10 \\\\ &= 320 \\end{aligned} \\] The volume is <b>320 cm\\(^3\\)</b>. The three factors are the height and the two reduced inside dimensions.",{});},
   function(){return mcq("A food truck's monthly profit, in dollars, is modelled by \\(P(x) = -2x^3 + 30x^2 - 4500\\), where \\(x\\) is the number of months since opening. What does the value \\(P(0) = -4500\\) represent?",
     "The truck started $4500 in the hole (start-up costs) before any monthly profit was made",
-    ["The truck loses $4500 every month","The truck breaks even after 4500 months","The profit in the first month was $4500"],
+    ["The truck loses $4500 every month because the profit falls by that amount each month","The truck breaks even after 4500 months of operation, when its profit reaches zero","The profit in the first month was $4500, earned during the first month after opening"],
     "At \\(x = 0\\) no time has passed, so the value is the starting position: negative because of the initial costs. It is a one-time starting value, not a monthly rate.",{});},
   function(){return numq("The population of a town, in hundreds of people, \\(t\\) years after 2015 is modelled by \\(P(t) = 0.02t^3 - 0.3t^2 + 2t + 48\\). According to the model, how many <b>people</b> live in the town in 2025?",
     5800,1,
@@ -1235,9 +1241,21 @@ E("u2-model-decision",2,["3.22"],3,"var",varset([
     "First differences: 10, 6, 2, -2. Second differences: -4, -4, -4, constant, so a quadratic fits (the rise-then-fall shape agrees). Extending: next first difference -6, so week 5 profit is 21 - 6 = 15 dollars.",{});},
   function(){return mcq("A rumour spreads through a school. The number of students who have heard it by each day is recorded. "+tblHTML([0,1,2,3,4],[3,5,9,17,33],"Day","Students")+" Which statement best describes modelling this data with a polynomial function?",
     "No low-degree polynomial fits well: the first differences (2, 4, 8, 16) keep doubling, which is exponential behaviour, not polynomial",
-    ["A cubic model fits the data exactly","A quadratic model fits the data exactly","A linear model fits the data exactly"],
+    ["A cubic model fits the data exactly, because the third differences settle to a constant value as the count keeps growing each day","A quadratic model fits the data exactly, because the second differences settle to a constant value as the count keeps growing each day","A linear model fits the data exactly, because the first differences settle to a constant value and the count grows evenly each day"],
     "For a polynomial fit, some level of differences must settle to a constant. Here the differences double each step (2, 4, 8, 16), and the second and third differences grow too. That doubling pattern is the signature of exponential growth, so a polynomial is the wrong family.",{});}
 ]));
+
+/* ================= Unit 3: Sinusoidal Functions ================= */
+function radFrac(deg){var g=gcd2(deg,180);return [deg/g,180/g];}
+function radStr(n,d){if(n===0)return "0";if(d===1)return n===1?"\\pi":(n+"\\pi");if(n===1)return "\\frac{\\pi}{"+d+"}";return "\\frac{"+n+"\\pi}{"+d+"}";}
+function sinS(a,trig,b,c,d){
+  var s=(a===1?"":(a===-1?"-":(a<0?"- "+Math.abs(a):""+a)))+" \\"+trig+" ";
+  if(b!==1)s+=fmt(b);
+  s+=" (x"+(c===0?"":(c>0?" - "+c+"^\\circ":" + "+(-c)+"^\\circ"))+")";
+  if(d!==0)s+=(d>0?" + ":" - ")+Math.abs(d);
+  return "y = "+s;
+}
+function sinFn(a,trig,b,c,d){return function(x){var ang=b*(x-c)*Math.PI/180;return a*(trig==="sin"?Math.sin(ang):Math.cos(ang))+d;};}
 
 /* ================= Unit 3: Sinusoidal Functions ================= */
 function radFrac(deg){var g=gcd2(deg,180);return [deg/g,180/g];}
@@ -1363,13 +1381,13 @@ E("u3-ferris-interpret",3,["7.3"],2,"var",varset([
   function(){var fn=function(t){return 11-9*Math.cos(22.5*t*Math.PI/180);};
     var q=mcq("The graph shows a rider's height on a Ferris wheel over one full rotation. The period of the graph is 16 minutes. What does the <b>period</b> represent in this situation?",
       "The time the wheel takes to complete one full rotation",
-      ["The time it takes to first reach the top of the wheel","The height of the centre (axle) of the wheel","The diameter of the wheel"],
+      ["The time it takes to first reach the very top of the wheel","The height of the centre (axle) of the wheel above the ground","The diameter of the wheel, measured from side to side"],
       "The period is the length of one complete cycle of the repeating pattern. Here one cycle is one full trip around the wheel, so the period is the time for one complete rotation, 16 minutes.",{});
     q.figure=plotSVG(fn,0,16,0,22,{gx:2,gy:2,labelX:true,labelY:true});return q;},
   function(){var fn=function(t){return 10-8*Math.cos(36*t*Math.PI/180);};
     var q=mcq("The graph shows a rider's height on a Ferris wheel, in metres, over time. The midline of the graph is \\(y = 10\\). What does the <b>midline</b> represent in this situation?",
       "The height of the wheel's centre (axle) above the ground",
-      ["The greatest height a rider reaches","The diameter of the wheel","The height where riders board the wheel"],
+      ["The greatest height a rider reaches at the top of the wheel","The diameter of the wheel, measured from side to side","The height above the ground where riders board the wheel"],
       "The height oscillates evenly between 2 m and 18 m around the midline y = 10. Halfway between the top and bottom of the ride is the centre of the wheel, so the midline gives the axle height, 10 m.",{});
     q.figure=plotSVG(fn,0,10,0,20,{gx:1,gy:2,labelX:true,labelY:true});return q;}
 ]));
@@ -1378,15 +1396,34 @@ E("u3-eq-amplitude-period",3,["7.4"],2,"gen",function(){
   var a=pick([2,3,4,5])*pick([1,-1]),b=pick([0.5,1,2,3]),c=pick([0,20,40]),d=pick([-3,-1,0,2]),trig=pick(["sin","cos"]),tries=0;
   while((Math.abs(a)===b||d===Math.abs(a)||b===d)&&tries<40){a=pick([2,3,4,5])*pick([1,-1]);b=pick([0.5,1,2,3]);d=pick([-3,-1,0,2]);tries++;}
   var eq=sinS(a,trig,b,c,d);
+  function normOpts(key,ds){
+    function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
+    function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
+    var all=[key].concat(ds),guard=0;
+    while(guard++<12){
+      var dps=all.map(dp);if(dps.some(function(d){return d===null;}))break;
+      var cnt={};dps.forEach(function(d){cnt[d]=(cnt[d]||0)+1;});
+      var sing=Object.keys(cnt).filter(function(k){return cnt[k]===1;}).map(Number);
+      if(!sing.length)break;
+      var s=Math.max.apply(null,sing),cand=-1,candDp=-1,i;
+      for(i=1;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}
+      if(cand<0){for(i=0;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}}
+      if(cand<0){var idxS=dps.indexOf(s),above=dps.filter(function(d){return d>s;});if(!above.length)break;all[idxS]=pad(all[idxS],Math.min.apply(null,above));}
+      else{all[cand]=pad(all[cand],s);}
+    }
+    return [all[0],all.slice(1)];
+  }
   if(feat==="amplitude"){
+    var _na=normOpts(""+Math.abs(a),[""+b,""+d,""+(2*Math.abs(a))]);
     return mcq("What is the <b>amplitude</b> of \\("+eq+"\\)?",
-      ""+Math.abs(a),[""+b,""+d,""+(2*Math.abs(a))],
+      _na[0],_na[1],
       "The amplitude is \\(|a|\\), the size of the coefficient in front of the "+trig+" term: \\(|"+a+"| = "+Math.abs(a)+"\\). The sign of \\(a\\) only flips the graph; it does not change the amplitude.",
       {feat:feat,a:a,b:b});
   }
   var per=360/b;
+  var _np=normOpts(""+per,[""+b,""+(360*b===per?180:360*b),""+(per===360?90:360)]);
   return mcq("What is the <b>period</b>, in degrees, of \\("+eq+"\\)?",
-    ""+per,[""+b,""+(360*b===per?180:360*b),""+(per===360?90:360)],
+    _np[0],_np[1],
     "The period is \\(\\frac{360^\\circ}{b} = \\frac{360^\\circ}{"+b+"} = "+per+"^\\circ\\). The coefficient \\(b = "+b+"\\) compresses or stretches the basic cycle; it is not the period itself.",
     {feat:feat,b:b,per:per});
 });
@@ -1457,13 +1494,13 @@ E("u3-data-fit-params",3,["7.6"],2,"gen",function(){
   var xs=[0,3,6,9,12],ys=[d,d+a,d,d-a,d];
   var tbl=tblHTML(xs,ys.map(function(v){return fmt(v);}),"Time (h)","Height (m)");
   if(feat==="amplitude"){
-    return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value is the <b>amplitude</b> of a sinusoidal model of this data?",
-      fmt(a)+" m",[fmt(d)+" m",fmt(d+a)+" m",fmt(2*a)+" m"],
+    return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value, in metres, is the <b>amplitude</b> of a sinusoidal model of this data?",
+      fmt(a),[fmt(d),fmt(d+a),fmt(2*a)],
       "The heights run from a low of "+fmt(d-a)+" m to a high of "+fmt(d+a)+" m around a midline of "+fmt(d)+" m. The amplitude is the distance from the midline to the high: "+fmt(d+a)+" - "+fmt(d)+" = <b>"+fmt(a)+" m</b>.",
       {feat:feat,a:a,d:d});
   }
-  return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value is the <b>period</b> of a sinusoidal model of this data?",
-    "12 h",["6 h","24 h","3 h"],
+  return mcq("Heights of a tide in Petty Harbour are recorded every 3 hours. "+tbl+" Which value, in hours, is the <b>period</b> of a sinusoidal model of this data?",
+    "12",["6","24","3"],
     "The pattern high, mid, low, mid returns to its starting height at 12 h (high at 3 h repeats at 15 h), so one full cycle takes <b>12 h</b>. The 6 h figure is only the high-to-low half cycle.",
     {feat:feat,a:a,d:d});
 });
@@ -1513,7 +1550,16 @@ E("u4-identify-exponential",4,["4.12"],1,"gen",function(){
   var A=pick([2,3,4,5,6,7,8,9]),bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4],[4,5],[5,4],[3,2]]);
   var corr="\\(y = "+expS(A,bp[0],bp[1])+"\\)";
   var pool=["\\(y = x^2 + "+ri(1,9)+"\\)","\\(y = "+ri(2,7)+"x + "+ri(1,9)+"\\)","\\(y = x^"+pick([3,4,5])+"\\)","\\(y = (-"+pick([2,3])+")^x\\)","\\(y = \\frac{"+pick([2,3,6])+"}{x}\\)","\\(y = "+pick([5,7,11])+"\\)","\\(y = \\sqrt{x} + "+ri(1,4)+"\\)"];
-  var ds=[];while(ds.length<3){var c=pick(pool);if(ds.indexOf(c)<0)ds.push(c);}
+  var ds=[];
+  if(bp[1]>1){
+    var pq=pick([[2,3],[3,4],[2,5],[3,5]]);
+    var nd="\\(y = \\left(\\frac{"+pq[0]+"}{"+pq[1]+"}x\\right)^2 + "+ri(1,4)+"\\)";
+    var longPool=[pool[0],pool[1],pool[3],pool[6]];
+    ds.push(nd);
+    while(ds.length<3){var c2=pick(longPool);if(ds.indexOf(c2)<0)ds.push(c2);}
+  }else{
+    while(ds.length<3){var c=pick(pool);if(ds.indexOf(c)<0)ds.push(c);}
+  }
   return mcq("Which of the following is an <b>exponential function</b>?",
     corr,ds,
     "An exponential function has the variable in the exponent with a positive constant base (not 1): \\(y = a(b)^x\\). The correct choice has that form. The others are a polynomial, a linear function, a power of \\(x\\), a negative base (not allowed for exponential functions in this course), a reciprocal, a constant, or a root function.",
@@ -1558,6 +1604,23 @@ E("u4-express-as-power",4,["4.7"],1,"gen",function(){
     {B:B,k:k});
 });
 E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
+  function normOpts(key,ds){
+    function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
+    function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
+    var all=[key].concat(ds),guard=0;
+    while(guard++<12){
+      var dps=all.map(dp);if(dps.some(function(d){return d===null;}))break;
+      var cnt={};dps.forEach(function(d){cnt[d]=(cnt[d]||0)+1;});
+      var sing=Object.keys(cnt).filter(function(k){return cnt[k]===1;}).map(Number);
+      if(!sing.length)break;
+      var s=Math.max.apply(null,sing),cand=-1,candDp=-1,i;
+      for(i=1;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}
+      if(cand<0){for(i=0;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}}
+      if(cand<0){var idxS=dps.indexOf(s),above=dps.filter(function(d){return d>s;});if(!above.length)break;all[idxS]=pad(all[idxS],Math.min.apply(null,above));}
+      else{all[cand]=pad(all[cand],s);}
+    }
+    return [all[0],all.slice(1)];
+  }
   var feat=pick(["range","yint","direction"]);
   var A=pick([1,2,3,4,5]),bp=pick([[2,1],[3,1],[1,2],[1,3]]),bv=bp[0]/bp[1];
   var fn=function(x){return A*Math.pow(bv,x);};
@@ -1572,8 +1635,9 @@ E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
     q.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q;
   }
   if(feat==="yint"){
+    var ny=normOpts(""+A,yintDistrs());
     var q2=mcq("What is the <b>y-intercept</b> of the exponential function shown?",
-      ""+A,yintDistrs(),
+      ny[0],ny[1],
       "The y-intercept is where the curve crosses the y-axis, at \\(x = 0\\). Reading the graph there gives <b>"+A+"</b>.",
       {feat:feat,A:A,bp:bp});
     q2.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q2;
@@ -1589,13 +1653,31 @@ E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
   q3.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q3;
 });
 E("u4-eq-characteristics",4,["4.13"],2,"gen",function(){
+  function normOpts(key,ds){
+    function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
+    function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
+    var all=[key].concat(ds),guard=0;
+    while(guard++<12){
+      var dps=all.map(dp);if(dps.some(function(d){return d===null;}))break;
+      var cnt={};dps.forEach(function(d){cnt[d]=(cnt[d]||0)+1;});
+      var sing=Object.keys(cnt).filter(function(k){return cnt[k]===1;}).map(Number);
+      if(!sing.length)break;
+      var s=Math.max.apply(null,sing),cand=-1,candDp=-1,i;
+      for(i=1;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}
+      if(cand<0){for(i=0;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}}
+      if(cand<0){var idxS=dps.indexOf(s),above=dps.filter(function(d){return d>s;});if(!above.length)break;all[idxS]=pad(all[idxS],Math.min.apply(null,above));}
+      else{all[cand]=pad(all[cand],s);}
+    }
+    return [all[0],all.slice(1)];
+  }
   var feat=pick(["yint","range","factor"]);
   var A=pick([2,3,4,5,6,8]),bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4]]),bv=bp[0]/bp[1],tries=0;
   while(new Set([bv,A,A*bv,bv*bv,A+1]).size<5&&tries<60){A=pick([2,3,4,5,6,8]);bp=pick([[2,1],[3,1],[4,1],[1,2],[1,3],[1,4]]);bv=bp[0]/bp[1];tries++;}
   var eq="y = "+expS(A,bp[0],bp[1]);
   if(feat==="yint"){
+    var ny=normOpts(""+A,[""+fmt(bv),""+(A+1),"1"]);
     return mcq("What is the <b>y-intercept</b> of \\("+eq+"\\)?",
-      ""+A,[""+fmt(bv),""+(A+1),"1"],
+      ny[0],ny[1],
       "Set \\(x = 0\\): any base to the power 0 is 1, so \\(y = "+A+" \\times 1 = "+A+"\\). The y-intercept of \\(y = a(b)^x\\) is always \\(a\\): <b>"+A+"</b>.",
       {feat:feat,A:A});
   }
@@ -1606,8 +1688,9 @@ E("u4-eq-characteristics",4,["4.13"],2,"gen",function(){
       "Powers of a positive base are always positive, and multiplying by \\(a = "+A+" > 0\\) keeps them positive, so every output is greater than 0 and the x-axis is a horizontal asymptote. The range is <b>\\(\\{y \\mid y > 0\\}\\)</b>, whatever the values of \\(a\\) and \\(b\\).",
       {feat:feat,A:A});
   }
+  var nf=normOpts(fmt(bv),[""+A,""+fmt(A*bv),""+fmt(bv*bv)]);
   return mcq("For \\("+eq+"\\), by what <b>factor</b> does the value of \\(y\\) change each time \\(x\\) increases by 1?",
-    fmt(bv),[""+A,""+fmt(A*bv),""+fmt(bv*bv)],
+    nf[0],nf[1],
     "Each increase of 1 in \\(x\\) adds one more multiplication by the base: \\(y\\) is multiplied by \\(b = "+fmt(bv)+"\\) every step. That constant multiple is the growth (or decay) factor; \\(a = "+A+"\\) is only the starting value at \\(x = 0\\).",
     {feat:feat,A:A,bp:bp});
 });
@@ -1678,13 +1761,13 @@ E("u4-interpret-graph-model",4,["4.3"],2,"var",varset([
   function(){var fn=function(t){return 150*Math.pow(2,t/2);};
     var q=mcq("The graph models the population of bacteria in a sample, over time in hours. What does the value where the graph crosses the vertical axis represent?",
       "The initial population: 150 bacteria at time 0",
-      ["The population after 150 hours","The doubling time of the bacteria","The maximum population the sample can hold"],
+      ["The population of the sample after 150 hours","The time the bacteria take to double in size","The maximum population that the sample can hold"],
       "The crossing point is at t = 0, the start of the experiment, and its value is 150. In a model P(t) = a(b)^t, that starting value is a, the initial population.",{});
     q.figure=plotSVG(fn,0,8,0,1300,{gx:1,gy:200,labelX:true});return q;},
   function(){var fn=function(t){return 18000*Math.pow(0.5,t/6);};
     var q=mcq("The graph models the value of a side-by-side ATV bought in Labrador, in dollars, over time in years. Which statement is correct?",
       "The value halves every 6 years, dropping toward $0 without ever reaching it",
-      ["The value drops by $3000 every year","The value reaches $0 after 36 years","The value halves every year"],
+      ["The value drops by $3000 every year, falling by the same amount year after year","The value reaches $0 after 36 years, dropping until nothing is left at all","The value halves every year, dropping by half with each year that passes"],
       "The curve falls by a constant ratio, not a constant amount: it passes $9000 at 6 years and $4500 at 12 years, halving every 6 years. Like all decay of the form a(b)^t with 0 < b < 1, it approaches $0 but mathematically never arrives.",{});
     q.figure=plotSVG(fn,0,24,0,19000,{gx:2,gy:3000,labelX:true});return q;},
   function(){var fn=function(t){return 60*Math.pow(3,t/4);};
@@ -1985,8 +2068,26 @@ E("u5-evaluate-mixed",5,["1.2"],1,"gen",function(){
       "The argument is \\("+b+"^{-"+m+"}\\), a reciprocal power, so the exponent on \\("+b+"\\) is negative: \\("+lgS(b,FR("1",b+"^{"+m+"}"))+" = -"+m+"\\).",
       {shape:shape,b:b,m:m});
   }
+function normOpts(key,ds){
+  function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
+  function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
+  var all=[key].concat(ds),guard=0;
+  while(guard++<12){
+    var dps=all.map(dp);if(dps.some(function(d){return d===null;}))break;
+    var cnt={};dps.forEach(function(d){cnt[d]=(cnt[d]||0)+1;});
+    var sing=Object.keys(cnt).filter(function(k){return cnt[k]===1;}).map(Number);
+    if(!sing.length)break;
+    var s=Math.max.apply(null,sing),cand=-1,candDp=-1,i;
+    for(i=1;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}
+    if(cand<0){for(i=0;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}}
+    if(cand<0){var idxS=dps.indexOf(s),above=dps.filter(function(d){return d>s;});if(!above.length)break;all[idxS]=pad(all[idxS],Math.min.apply(null,above));}
+    else{all[cand]=pad(all[cand],s);}
+  }
+  return [all[0],all.slice(1)];
+}
+  var nopts=normOpts("0.5",dis3(0.5,[2,1,b]));
   return mcq("What is the value of \\("+lgS(b,"\\sqrt{"+b+"}")+"\\)?",
-    "0.5",dis3(0.5,[2,1,b]),
+    nopts[0],nopts[1],
     "A square root is the power \\(\\frac{1}{2}\\): \\(\\sqrt{"+b+"} = "+b+"^{1/2}\\), so the exponent, and therefore the logarithm, is \\(\\frac{1}{2}\\).",
     {shape:shape,b:b});
 });
@@ -2136,8 +2237,8 @@ E("u5-estimate-log",5,["1.5"],2,"gen",function(){
     n=b===2?ri(5,150):b===3?ri(4,120):ri(15,90000);
     tv=Math.log(n)/Math.log(b);fl=Math.floor(tv);tries++;
   }while((Math.pow(b,fl)===n||Math.pow(b,fl+1)===n)&&tries<60);
-  var corr=fmt(tv,1);
-  var ds=dis3s(corr,[fmt(tv+0.5,1),fmt(tv-0.5,1),fmt(fl,1),fmt(tv+1,1)],[fmt(tv-1,1),fmt(tv+1.5,1)]);
+  var corr=fmtF(tv,1);
+  var ds=dis3s(corr,[fmtF(tv+0.5,1),fmtF(tv-0.5,1),fmtF(fl,1),fmtF(tv+1,1)],[fmtF(tv-1,1),fmtF(tv+1.5,1)]);
   return mcq("Without technology, which is the <b>best approximation</b> of \\("+lgS(b,""+n)+"\\)?",
     corr,ds,
     "Bracket the argument between consecutive powers of \\("+b+"\\): \\("+b+"^{"+fl+"} = "+Math.pow(b,fl)+"\\) and \\("+b+"^{"+(fl+1)+"} = "+Math.pow(b,fl+1)+"\\), so the logarithm lies between \\("+fl+"\\) and \\("+(fl+1)+"\\) \\((\\log_{"+b+"} "+n+" \\approx "+fmt(tv,2)+")\\). Of the choices, only \\("+corr+"\\) sits in that bracket at the right distance from the ends.",
@@ -2175,7 +2276,7 @@ E("u5-interpret-graph",5,["4.4"],2,"gen",function(){
   if(feat==="factor"){
     q=mcq("A quantity \\(y\\) is modelled against an input \\(x\\) by the logarithmic function graphed below. When the input \\(x\\) is multiplied by \\("+b+"\\), what happens to \\(y\\)?",
       "It increases by exactly 1",
-      ["It increases by "+b,"It is multiplied by "+b,"It stays the same"],
+      ["It increases by "+b+" too","It is multiplied by "+b+" as well","It stays the same throughout"],
       "Multiplying the argument of a logarithm by its base raises the logarithm by exactly 1: \\(\\log_{"+b+"}("+b+"x) = \\log_{"+b+"} x + 1\\). Read it off the graph: equal multiplications of \\(x\\) always produce the same increase of 1 in \\(y\\), which is the defining behaviour of this model.",
       {feat:feat,b:b,k:k});
     q.figure=fig([]);
@@ -2442,7 +2543,7 @@ E("u5-graph-char",5,["4.14"],2,"gen",function(){
   } else {
     q=mcq("The graph shows a logarithmic function. What is its <b>range</b>?",
       "All real numbers",
-      [MV("y > "+k),MV("y > 0"),MV("x > 0")],
+      ["All y-values greater than "+k,"All y-values greater than 0",MV("x > 0")],
       "The curve rises through every height: as \\(x\\) grows the values climb without bound, and near the asymptote at \\(x = 0\\) they fall without bound. So the range is all real numbers; it is the domain that is restricted, to \\(x > 0\\).",
       {form:form,feat:feat2,b:b,k:k});
   }
@@ -2526,7 +2627,7 @@ function finPick(){var s=pick(FINC);return {r:s.r,fw:s.fw,m:s.m,n:s.n,term:s.ter
 E("u6-identify-compound",6,["1.7"],1,"var",varset([
   function(){return mcq("Which situation involves <b>compound interest</b>?",
     "A savings account where the interest is added to the balance each year, so the next year's interest is calculated on the larger balance",
-    ["A loan where the interest each year is calculated only on the original amount borrowed","A one-time administration fee charged when a loan is opened","Rent that stays the same every month for the length of a lease"],
+    ["A loan where the interest each year is calculated only on the original amount borrowed, even as the years of the loan go by one after another","A one-time administration fee charged when a loan is opened, paid once by the borrower at the start and never charged again during the term","Rent that stays the same every month for the length of a lease, with the same payment due on the same date each month of the agreement term"],
     "Compound interest means interest is earned on interest: once the interest is added to the balance, it becomes part of the amount that grows. Interest calculated only on the original principal is simple interest, however long it runs.",{});},
   function(){return mcq("Which formula calculates the amount owing under <b>compound interest</b>?",
     MV("A = P(1 + i)^n"),
@@ -2534,39 +2635,62 @@ E("u6-identify-compound",6,["1.7"],1,"var",varset([
     "Compound growth applies the periodic rate repeatedly, which is why the number of periods appears as an exponent: \\(A = P(1 + i)^n\\). The first two distractors are simple interest formulas (no exponent), and the last applies the rate only once.",{});},
   function(){return mcq("A credit card balance grows faster each month even though no new purchases are made. What causes this?",
     "Interest is charged on the unpaid balance, including on interest that was added in earlier months",
-    ["The interest rate increases every month","A monthly fee is added to the balance","The bank rounds every balance up to the nearest dollar"],
+    ["The interest rate increases every month, rising a little at a time while the balance stays unpaid","A monthly fee is added to the balance, and the fee grows a little larger with each passing month","The bank rounds every balance up to the nearest dollar, and the roundings build up month by month"],
     "The unpaid interest becomes part of the balance, and the next month's interest is charged on that larger balance: interest on interest, the defining feature of compound interest.",{});}
 ]));
 E("u6-simple-vs-compound",6,["1.6"],1,"var",varset([
   function(){return mcq("At the same stated rate and term, why does an <b>investor</b> usually prefer compound interest over simple interest?",
     "The interest itself earns interest, so the investment grows faster and faster over time",
-    ["Compound interest is paid out in cash every month","Simple interest rates are always lower in practice","Compound interest is guaranteed never to lose value"],
+    ["Compound interest is paid out in cash every month, giving the investor steady income","Simple interest rates are always lower in practice, so compound accounts pay out more in the end","Compound interest is guaranteed never to lose value, so the deposit is always fully protected"],
     "Under compound interest the interest is added to the principal, so each period's interest is calculated on a larger amount. That snowball effect is the investor's advantage, and it grows stronger the longer the money stays invested.",{});},
   function(){return mcq("At the same stated rate and term, what is the <b>borrower's</b> advantage with simple interest?",
     "Interest is charged only on the original principal, so the total cost is lower and easy to predict",
-    ["The borrower can skip payments without penalty","The interest rate drops every year of the loan","The loan never has to be repaid in full"],
+    ["The borrower can skip payments without penalty whenever money is tight during the term of the loan","The interest rate drops every year of the loan, so each yearly payment is smaller than the one before","The loan never has to be repaid in full, because part of the balance is forgiven at the end of the term"],
     "Simple interest never charges interest on interest: the cost is just \\(I = Prt\\), fixed by the amount borrowed, the rate, and the time. A compound loan at the same rate and term costs more, because the interest itself starts accruing interest.",{});},
   function(){return mcq("Two accounts start with the same deposit at the same rate, one paying simple interest and one compound interest. After many years, which statement is true?",
     "The compound account is worth more, and the gap between the two accounts keeps widening",
-    ["The two accounts are worth exactly the same","The simple account is worth more, because its interest is steady","The compound account is worth more at first, but the simple account catches up"],
+    ["The two accounts are worth exactly the same, as both pay the same rate on the deposit","The simple account is worth more, because its interest is steady and is paid in full each year","The compound account is worth more at first, but the simple account catches up in later years"],
     "Simple interest adds the same amount every year, while compound interest adds a growing amount. The compound account pulls ahead in the second period and the lead grows every period after that.",{});}
 ]));
+/* --- reading formulas and basic calculations (1.8, 1.10) --- */
+/* --- reading formulas and basic calculations (1.8, 1.10) --- */
 /* --- reading formulas and basic calculations (1.8, 1.10) --- */
 E("u6-read-formula",6,["1.8"],1,"gen",function(){
   var s=finPick(),P=pick([400,500,800,1000,1200,1500,2000,2500,3000,4000,5000]),feat=pick(["principal","perrate","periods","freq"]);
   var formula="A = "+P+"("+fmt(1+s.i,4)+")^{"+s.n+"}";
+function normOpts(key,ds){
+  function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
+  function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
+  var all=[key].concat(ds),guard=0;
+  while(guard++<12){
+    var dps=all.map(dp);if(dps.some(function(d){return d===null;}))break;
+    var cnt={};dps.forEach(function(d){cnt[d]=(cnt[d]||0)+1;});
+    var sing=Object.keys(cnt).filter(function(k){return cnt[k]===1;}).map(Number);
+    if(!sing.length)break;
+    var s=Math.max.apply(null,sing),cand=-1,candDp=-1,i;
+    for(i=1;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}
+    if(cand<0){for(i=0;i<all.length;i++){if(dps[i]<s&&dps[i]>candDp){cand=i;candDp=dps[i];}}}
+    if(cand<0){var idxS=dps.indexOf(s),above=dps.filter(function(d){return d>s;});if(!above.length)break;all[idxS]=pad(all[idxS],Math.min.apply(null,above));}
+    else{all[cand]=pad(all[cand],s);}
+  }
+  return [all[0],all.slice(1)];
+}
   if(feat==="principal")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>principal</b>?",
     mon(P),[mon(Math.round(P*(1+s.i))),mon(P*2),mon(Math.round(P/2))],
     "In \\(A = P(1 + i)^n\\) the principal is the starting amount the growth factor is applied to: here \\(P\\) is "+mon(P)+". The first distractor is the amount after one period, not the amount invested.",
     {feat:feat,P:P});
-  if(feat==="perrate")return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>interest rate per compounding period</b>?",
-    fmt(s.r/s.m,2)+"%",s.m===1?[fmt(s.r/2,2)+"%",fmt(s.r*2,2)+"%",fmt(s.r+1,2)+"%"]:[s.r+"%",fmt(s.r/s.m/2,2)+"%",fmt(s.r/s.m+1,2)+"%"],
+  if(feat==="perrate"){
+    var prOpts=normOpts(fmt(s.r/s.m,2)+"%",s.m===1?[fmt(s.r/2,2)+"%",fmt(s.r*2,2)+"%",fmt(s.r+1,2)+"%"]:[s.r+"%",fmt(s.r/s.m/2,2)+"%",fmt(s.r/s.m+1,2)+"%"]);
+    return mcq("A financial calculation uses the formula \\("+formula+"\\). What is the <b>interest rate per compounding period</b>?",
+    prOpts[0],prOpts[1],
     "The number added to 1 in the growth factor is the periodic rate: \\(i = "+fmt(s.i,4)+"\\), which is \\("+fmt(s.r/s.m,2)+"\\%\\). That is the annual rate of "+s.r+"% divided by the "+s.m+" compounding period(s) per year; using the full annual rate is the first distractor's error.",
-    {feat:feat,P:P});
-  if(feat==="periods")return mcq("A financial calculation uses the formula \\("+formula+"\\). How many <b>compounding periods</b> are there in total?",
-    ""+s.n,dis3(s.n,[s.n/s.m,s.n*s.m,s.m]),
+    {feat:feat,P:P});}
+  if(feat==="periods"){
+    var pdOpts=normOpts(""+s.n,dis3(s.n,[s.n/s.m,s.n*s.m,s.m]).map(function(v){var x=parseFloat(v);return isNaN(x)?v:fmt(x,2);}));
+    return mcq("A financial calculation uses the formula \\("+formula+"\\). How many <b>compounding periods</b> are there in total?",
+    pdOpts[0],pdOpts[1],
     "The exponent in \\(A = P(1 + i)^n\\) counts the periods directly: \\(n = "+s.n+"\\). It already combines the term ("+s.term+") with the "+s.m+" period(s) per year; dividing by the frequency again is the first distractor's error.",
-    {feat:feat,P:P});
+    {feat:feat,P:P});}
   return mcq("A financial calculation uses the formula \\("+formula+"\\) for an annual rate of "+s.r+"%. How often is the interest <b>compounded</b>?",
     s.fw,["annually","semi-annually","quarterly","monthly"].filter(function(w){return w!==s.fw;}),
     "The periodic rate inside the formula is \\("+fmt(s.i,4)+"\\), and \\("+s.r+"\\% \\div "+fmt(s.i*100,2)+"\\% = "+s.m+"\\), so the annual rate is split into "+s.m+" period(s) per year: the interest is compounded "+s.fw+".",
@@ -2868,11 +2992,11 @@ E("u7-set-concepts",7,["2.1"],1,"var",varset([
     "Disjoint sets have no elements in common, and here the overlap is empty by the given information. The sets are not equal (they hold different students), and neither is the complement of the other unless together they covered every student, which is not stated.",{});},
   function(){return mcq("Let U be the set of all students in a school, and let G be the set of grade 9 students in that school. Which statement is true?",
     "G is a subset of U, because every grade 9 student in the school is a student in the school",
-    ["U is a subset of G, because U is the bigger set","G is disjoint from U, because grade 9 is only one grade","G is the complement of U"],
+    ["U is a subset of G, because U is the bigger set and the bigger set always contains the smaller one","G is disjoint from U, because grade 9 is only one grade and different grades never overlap","G is the complement of U, because it names only the grade 9 students and leaves out all the rest"],
     "A set is a subset of another when every element of the first is also in the second. Every member of G is by definition a member of U, so G is a subset of U. The larger set is never a subset of the smaller one here.",{});},
   function(){return mcq("A survey asks the 28 students in one class about their weekend jobs. For this survey, the <b>universal set</b> is",
     "the 28 students in the class who were surveyed",
-    ["all students in the school","all teenagers in the province","the students who have weekend jobs"],
+    ["all students in the school, in every grade level","all teenagers in the province, wherever they live","the students who have weekend jobs"],
     "The universal set is the set of everything under consideration for the problem at hand. Here every question is about the 28 surveyed students, so they form the universal set; the students with jobs are just a subset of it.",{});}
 ]));
 E("u7-subset-relation",7,["2.1"],1,"gen",function(){
@@ -2903,16 +3027,17 @@ E("u7-disjoint-check",7,["2.1"],2,"gen",function(){
   var aOnly=A.filter(function(x){return B.indexOf(x)<0;}),bOnly=B.filter(function(x){return A.indexOf(x)<0;});
   var neither=U.filter(function(x){return A.indexOf(x)<0&&B.indexOf(x)<0;});
   if(inter.length===1)return mcq("Let U = {1, 2, ..., "+U.length+"}. A is the set of "+got.pa.n+" and B is the set of "+got.pb.n+". Which statement about A and B is true?",
-    inter[0]+" is in both A and B",
-    [aOnly[0]+" is in both A and B",bOnly[0]+" is in both A and B","A and B are disjoint: they have no elements in common"],
+    inter[0]+" is in both A and B, so A and B are not disjoint",
+    [aOnly[0]+" is in both A and B, so A and B are not disjoint",bOnly[0]+" is in both A and B, so A and B are not disjoint","A and B are disjoint: they have no elements in common"],
     "A = "+roster(A)+" and B = "+roster(B)+". Comparing the lists, the only element appearing in both is "+inter[0]+", so the sets overlap but are not disjoint. "+aOnly[0]+" is only in A and "+bOnly[0]+" is only in B.",
     {a:got.pa.n,b:got.pb.n});
   return mcq("Let U = {1, 2, ..., "+U.length+"}. A is the set of "+got.pa.n+" and B is the set of "+got.pb.n+". Which statement about A and B is true?",
     "A and B are disjoint: they have no elements in common",
-    [A[0]+" is in both A and B",B[0]+" is in both A and B",neither[0]+" is in both A and B"],
+    [A[0]+" is in both A and B, so A and B are not disjoint",B[0]+" is in both A and B, so A and B are not disjoint",neither[0]+" is in both A and B, so A and B are not disjoint"],
     "A = "+roster(A)+" and B = "+roster(B)+". No element appears in both lists, so the sets are disjoint. Each distractor names an element from only one set (or from neither).",
     {a:got.pa.n,b:got.pb.n});
 });
+/* --- elements of operations (2.4) --- */
 /* --- elements of operations (2.4) --- */
 E("u7-complement-elements",7,["2.4"],1,"gen",function(){
   var n=pick([8,9,10,11,12]),U=[];for(var i=1;i<=n;i++)U.push(i);
@@ -3108,15 +3233,15 @@ E("u7-three-set-problem",7,["2.5"],2,"gen",function(){
 E("u7-error-identify",7,["2.6"],2,"var",varset([
   function(){return mcq("In a class, 18 students take music and 14 take art, and 6 students take both. A student writes: <i>n(music ∪ art) = 18 + 14 = 32</i>. What is the error?",
     "The 6 students who take both were counted twice; the overlap must be subtracted once",
-    ["The two numbers should have been multiplied instead of added","There is no error; 32 is correct","The overlap should have been added a second time to give 38"],
+    ["The two numbers should have been multiplied instead of added to find the size of the union","There is no error; 32 is correct, since each student is counted only once in the two totals","The overlap should have been added a second time to give 38, since the 6 took both subjects"],
     "The 6 students taking both sit inside both the 18 and the 14, so adding counts them twice. The correct union is \\(18 + 14 - 6 = 26\\). Recognizing double counting is the most common fix needed in set problems.",{});},
   function(){return mcq("A school has 400 students, 130 of whom are in the band. One class in the school has 32 students, 9 of whom are in the band. Asked how many students <b>in the class</b> are not in the band, a student answers 400 − 130 = 270. What is the error?",
     "The student used the whole school as the universal set instead of the class named in the question",
-    ["The student should have divided 400 by 32 first","There is no error; 270 is correct","The student should have added 130 and 9"],
+    ["The student should have divided 400 by 32 first to find the size of one class in the whole school","There is no error; 270 is correct, because the complement is always taken from the largest group available","The student should have added 130 and 9, because both numbers count students who are in the band"],
     "A complement is always taken against the universal set of the problem. The question is about the class, so the complement is \\(32 - 9 = 23\\) students. The school-wide numbers are a distraction: they belong to a different universal set.",{});},
   function(){return mcq("Let A = {2, 4, 6, 8} and B = {2, 4, 8}. A student claims B is <b>not</b> a subset of A because B has fewer elements than A. What is the error?",
     "A subset does not need the same number of elements; every element of B is in A, so B is a subset of A",
-    ["The student is right; subsets must have the same number of elements","The error is that A is actually the empty set","The error is that 8 is not an element of A"],
+    ["The student is right; subsets must have the same number of elements, so a smaller set can never be a subset","The error is that A is actually the empty set, because it contains no element that also belongs to B","The error is that 8 is not an element of A, because it appears only at the end of the list for B"],
     "Subset is about membership, not size: B is a subset of A whenever every element of B appears in A. Here 2, 4 and 8 all appear in A, so B is a (proper) subset of A, and its smaller size is exactly what makes it proper.",{});}
 ]));
 E("u7-error-correct",7,["2.6"],3,"gen",function(){
@@ -3143,15 +3268,15 @@ E("u7-error-venn",7,["2.6"],2,"gen",function(){
 E("u7-applications",7,["2.7"],1,"var",varset([
   function(){return mcq("A search engine query uses the terms <b>whales AND kayaking</b>. In set terms, the results page shows pages that are in",
     "the intersection of the two sets of pages, because each result must contain both terms",
-    ["the union of the two sets of pages, because either term is enough","the complement of both sets of pages","neither set, because AND removes all pages"],
+    ["the union of the two sets of pages, because either term is enough for a page to appear","the complement of both sets of pages, because AND lists the pages that contain neither term","neither set, because AND removes all pages that contain only one of the two search terms"],
     "AND works like an intersection: a page qualifies only if it belongs to both sets at once. That is why adding an AND term narrows a search instead of widening it, a direct application of set theory in Internet searches.",{});},
   function(){return mcq("An online store filter is set to <b>size = large OR colour = red</b>. The items shown are those that",
     "satisfy at least one of the two conditions, including items that satisfy both",
-    ["satisfy both conditions at the same time","satisfy neither condition","satisfy the first condition only"],
+    ["satisfy both conditions at the same time, just as an AND filter would require","satisfy neither condition, so only items that are not large and not red are shown","satisfy the first condition only, since the colour part of the filter is ignored"],
     "OR works like a union: an item needs to be in at least one of the two sets, and items in the overlap (large and red) are included once. Database and shopping filters are everyday uses of unions and intersections.",{});},
   function(){return mcq("A researcher analyzing survey data wants the respondents who are <b>not</b> in the control group. In set terms she needs",
     "the complement of the control group, taken within the set of all respondents",
-    ["the intersection of the control group with the treatment group","the union of all the groups in the study","the empty set"],
+    ["the intersection of the control group with the treatment group in the study","the union of all the groups in the study, covering everyone who took part in it","the empty set, because every respondent belongs to some group in the study"],
     "Everyone who is not in the control group, within the universal set of all respondents, is exactly the complement of the control group. Data analysis queries lean on complements in precisely this way.",{});}
 ]));
 E("u7-search-logic",7,["2.7"],2,"gen",function(){
@@ -3243,7 +3368,7 @@ E("u8-fcp-pattern",8,["9.17"],1,"gen",function(){
   var a=ri(2,5),b=ri(2,6),s=pick([2,3,4,5]);
   return mcq("A sandwich counter offers "+a+" kinds of bread and "+b+" fillings. A tree diagram shows "+a+" × "+b+" = "+(a*b)+" sandwiches. The counter then adds "+s+" kinds of sauce. What is the correct way to count the new total?",
     "Multiply the previous total by "+s+": "+(a*b)+" × "+s+" = "+(a*b*s),
-    ["Add the choices: "+a+" + "+b+" + "+s+" = "+(a+b+s),"Multiply only the new choices: "+s+" × "+s+" = "+(s*s),"Add "+s+" to the previous total: "+(a*b)+" + "+s+" = "+(a*b+s)],
+    ["Add the choices: "+a+" + "+b+" + "+s+" = "+(a+b+s)+", all at once","Multiply only the newest choices: "+s+" × "+s+" = "+(s*s),"Add "+s+" to the previous total: "+(a*b)+" + "+s+" = "+(a*b+s)+" in all"],
     "Adding a stage to a counting problem multiplies the total by the number of choices at that stage; it never adds them. Generalizing this pattern from small cases is exactly how the Fundamental Counting Principle is built.",{a:a,b:b,s:s});
 });
 E("u8-assumptions",8,["9.18"],2,"var",varset([
@@ -3253,11 +3378,11 @@ E("u8-assumptions",8,["9.18"],2,"var",varset([
     "Using 26 choices at every position, including positions after a letter has already been used, only works if repetition is allowed. If letters could not repeat, the count would be 26 × 25 × 24. Naming the assumption matters because the count collapses if the assumption is false.",{});},
   function(){return mcq("A student counts outfits as 4 shirts × 3 pants × 2 hats = 24 outfits. What <b>assumption</b> does this count make?",
     "Every shirt can be worn with every pair of pants and every hat; there are no clashes or restrictions",
-    ["The student already owns exactly 24 outfits","Each item can be worn only once per week","A hat must always be worn"],
+    ["The student already owns exactly 24 outfits, one for every combination the multiplication produces in total","Each item can be worn only once per week, so no shirt, pants or hat is ever repeated in an outfit","A hat must always be worn, so every outfit counted in the total includes one of the two hats"],
     "The multiplication pairs every choice at each stage with every choice at the others. If some shirt could not be worn with some pants, those branches would have to be removed and the product would overcount. The count is only as good as this no-restrictions assumption.",{});},
   function(){return mcq("A student counts the arrangements of 5 people in a line as 5! = 120. One <b>assumption</b> behind this count is that",
     "the 5 people are all different from one another, so swapping any two of them makes a new arrangement",
-    ["the line must contain exactly 5 chairs","no two of the people are friends","the people are standing in alphabetical order"],
+    ["the line must contain exactly 5 chairs, and each person must have a chair of their own to stand by in the line","no two of the people are friends, because friends standing together would count as one unit","the people are standing in alphabetical order, so only the arrangement in name order is counted"],
     "Factorial counting treats every swap as a new arrangement, which requires the people to be distinguishable. If two of the five were identical (like identical twins in matching outfits being treated as interchangeable), arrangements would have to be divided to correct the overcount.",{});}
 ]));
 E("u8-fcp-context",8,["9.19"],2,"gen",function(){
@@ -3405,7 +3530,7 @@ E("u8-factorial-fraction",8,["9.21"],2,"gen",function(){
     MV("n + 1"),[MV("n"),MV("1"),MV("(n + 1) \\times n")],
     "Expand the numerator one step: \\((n + 1)! = (n + 1) \\times n!\\), so the \\(n!\\) cancels and only \\(n + 1\\) remains.",{shape:shape});
   if(shape==="p2")return mcq("Simplify \\(\\frac{(n + 2)!}{n!}\\).",
-    MV("(n + 2)(n + 1)"),[MV("n + 2"),MV("(n + 2)^2"),MV("2n + 3")],
+    MV("(n + 2)(n + 1)"),[MV("(n + 1) + 1"),MV("(n + 2)(n + 2)"),MV("2n + 3")],
     "Expand the numerator two steps: \\((n + 2)! = (n + 2)(n + 1) \\times n!\\), so the \\(n!\\) cancels and \\((n + 2)(n + 1)\\) remains.",{shape:shape});
   if(shape==="p3")return mcq("Simplify \\(\\frac{(n + 3)!}{(n + 1)!}\\).",
     MV("(n + 3)(n + 2)"),[MV("n + 3"),MV("(n + 3)(n + 2)(n + 1)"),MV("2n + 5")],
@@ -3423,25 +3548,25 @@ E("u8-factorial-fraction",8,["9.21"],2,"gen",function(){
     MV("(n + 4)(n + 3)"),[MV("n + 4"),MV("(n + 4)(n + 3)(n + 2)"),MV("2n + 7")],
     "Expand the numerator down to the denominator: \\((n + 4)! = (n + 4)(n + 3) \\times (n + 2)!\\), so \\((n + 2)!\\) cancels and \\((n + 4)(n + 3)\\) remains.",{shape:shape});
   if(shape==="two")return mcq("Simplify \\(\\frac{(2n)!}{(2n - 1)!}\\).",
-    MV("2n"),[MV("n"),MV("2n - 1"),MV("(2n)(2n - 1)")],
+    MV("2n"),[MV("1"),MV("2n - 1"),MV("(2n)(2n - 1)")],
     "Expand the numerator one step: \\((2n)! = 2n \\times (2n - 1)!\\), so the \\((2n - 1)!\\) cancels and only \\(2n\\) remains.",{shape:shape});
   if(shape==="pmix")return mcq("Simplify \\(\\frac{(n + 1)!}{(n - 1)!}\\).",
     MV("(n + 1)n"),[MV("n + 1"),MV("n^2"),MV("(n + 1)n(n - 1)")],
     "Expand the numerator down to the denominator: \\((n + 1)! = (n + 1)n \\times (n - 1)!\\), so the \\((n - 1)!\\) cancels and \\((n + 1)n\\) remains.",{shape:shape});
   if(shape==="p3b")return mcq("Simplify \\(\\frac{(n + 3)!}{n!}\\).",
-    MV("(n + 3)(n + 2)(n + 1)"),[MV("(n + 3)(n + 2)"),MV("n + 3"),MV("3n + 6")],
+    MV("(n + 3)(n + 2)(n + 1)"),[MV("(n + 3)(n + 2)"),MV("(n + 2) + 1"),MV("(n + 3) + (n + 2) + (n + 1)")],
     "Expand the numerator three steps: \\((n + 3)! = (n + 3)(n + 2)(n + 1) \\times n!\\), so the \\(n!\\) cancels and \\((n + 3)(n + 2)(n + 1)\\) remains.",{shape:shape});
   if(shape==="n2b")return mcq("Simplify \\(\\frac{(n - 2)!}{(n - 3)!}\\).",
     MV("n - 2"),[MV("n - 3"),MV("1"),MV("(n - 2)(n - 3)")],
     "Expand the numerator one step: \\((n - 2)! = (n - 2) \\times (n - 3)!\\), so the \\((n - 3)!\\) cancels and only \\(n - 2\\) remains.",{shape:shape});
   if(shape==="three")return mcq("Simplify \\(\\frac{(3n)!}{(3n - 1)!}\\).",
-    MV("3n"),[MV("n"),MV("3n - 1"),MV("(3n)(3n - 1)")],
+    MV("3n"),[MV("1"),MV("3n - 1"),MV("(3n)(3n - 1)")],
     "Expand the numerator one step: \\((3n)! = 3n \\times (3n - 1)!\\), so the \\((3n - 1)!\\) cancels and only \\(3n\\) remains.",{shape:shape});
   if(shape==="p5")return mcq("Simplify \\(\\frac{(n + 5)!}{(n + 4)!}\\).",
     MV("n + 5"),[MV("n + 4"),MV("1"),MV("(n + 5)(n + 4)")],
     "Expand the numerator one step: \\((n + 5)! = (n + 5) \\times (n + 4)!\\), so the \\((n + 4)!\\) cancels and only \\(n + 5\\) remains.",{shape:shape});
   if(shape==="n3")return mcq("Simplify \\(\\frac{n!}{(n - 3)!}\\).",
-    MV("n(n - 1)(n - 2)"),[MV("n(n - 1)"),MV("n^3"),MV("n - 2")],
+    MV("n(n - 1)(n - 2)"),[MV("n(n - 1)"),MV("(n)(n)(n)"),MV("(n - 1) - 1")],
     "Expand the numerator three steps: \\(n! = n(n - 1)(n - 2) \\times (n - 3)!\\), so the \\((n - 3)!\\) cancels and \\(n(n - 1)(n - 2)\\) remains.",{shape:shape});
   return mcq("Simplify \\(\\frac{n!}{(n - 1)!}\\).",
     MV("n"),[MV("n - 1"),MV("1"),MV("n(n - 1)")],
@@ -3520,15 +3645,15 @@ E("u8-together-apart",8,["9.24"],3,"gen",function(){
 E("u8-perm-strategy",8,["9.25"],1,"var",varset([
   function(){return mcq("To count the ways to award 1st, 2nd and 3rd place among 8 runners, the efficient strategy is to multiply 8 × 7 × 6. Why does this work?",
     "Each place filled removes one runner from the choices for the next place: 8 choices, then 7, then 6",
-    ["There are 3 places, so 8 is multiplied by itself 3 times","Factorials always begin at 8 in a race","The places are independent, so the choices should be added"],
+    ["There are 3 places, so 8 is multiplied by itself 3 times, giving 8 × 8 × 8 for the three places","Factorials always begin at 8 in a race, because 8 is the number of runners entered in the event","The places are independent, so the choices should be added: 8 + 7 + 6 gives the total number of ways"],
     "A permutation is built position by position: once a runner takes 1st place they cannot also take 2nd, so the pool shrinks by one each time. Generalizing this shrinking-pool pattern gives the permutation formula.",{});},
   function(){return mcq("Why does the calculation of P(10, 3) stop after three factors (10 × 9 × 8) instead of using all of 10!?",
     "Only three positions are being filled; the remaining factors of 10! would arrange the people who were not chosen",
-    ["Because 10! is too large to calculate","Because the last seven factors are all equal to 1","Because permutations never use more than three factors"],
+    ["Because 10! is too large to calculate, so the multiplication is stopped early to keep the numbers manageable","Because the last seven factors are all equal to 1, so including them would not change the value of the product at all","Because permutations never use more than three factors, no matter how many positions are being filled in total"],
     "P(n, r) fills r positions from n candidates. Here r = 3, so exactly three factors appear; in the formula \\(P(10, 3) = \\frac{10!}{7!}\\) the other factors cancel. The strategy generalizes: the number of factors equals the number of positions.",{});},
   function(){return mcq("Six finalists are to be arranged in finishing order, and one particular finalist must finish first. Which strategy counts the arrangements correctly?",
     "Fix that finalist in first place, then arrange the remaining 5 finalists freely: 1 × 5!",
-    ["Arrange all 6 finalists (6!), then divide by 2","Choose any of the 6 finalists for first place, then arrange the other 5","Arrange all 6 finalists and subtract the arrangements where she finishes last"],
+    ["Arrange all 6 finalists (6!), then divide by 2 to account for the finalist who must finish first","Choose any of the 6 finalists for first place, then arrange the other 5 finalists","Arrange all 6 finalists and subtract the arrangements where she finishes last instead of first"],
     "A restriction is handled by dealing with the restricted position first: first place is forced (1 choice), and the other five positions are a free arrangement of 5. Choosing 'any of the 6' for first place ignores the restriction and counts all 6! orders.",{});}
 ]));
 E("u8-identical-perm",8,["9.26"],2,"gen",function(){
@@ -3560,7 +3685,7 @@ E("u8-identical-perm",8,["9.26"],2,"gen",function(){
 E("u8-identical-effect",8,["9.27"],1,"var",varset([
   function(){return mcq("Four different letters can be arranged in 24 ways. Two of the letters are now replaced by copies of a third letter, so the multiset has a pair of identical letters, and the count drops to 12. Why?",
     "Each arrangement was being counted twice, once for each order of the two identical letters, and those orders are no longer different",
-    ["Identical letters cannot be arranged, so half the arrangements are impossible","Two letters were removed from the set","The count is halved because the word is shorter"],
+    ["Identical letters cannot be arranged among themselves, so every arrangement that used the swapped pair becomes impossible and is removed","Two letters were removed from the set and replaced by nothing, so the shorter word that remains has far fewer arrangements","The count is halved because the word is shorter than it was, and halving is what always happens when a word loses letters from it"],
     "With distinct letters, swapping the two positions of the pair produced a different arrangement. Once the letters are identical, those swaps produce the same arrangement, so every arrangement has been double-counted and the total is divided by 2! = 2. This is the general effect of identical elements: the count is divided by the factorial of each repeat count.",{});},
   function(){return mcq("Which collection has <b>more</b> arrangements in a row?",
     "5 completely different books (120 arrangements)",
@@ -3568,26 +3693,27 @@ E("u8-identical-effect",8,["9.27"],1,"var",varset([
     "Distinct items maximize the count at 5! = 120. Every set of identical items divides that total by the factorial of its size: one pair divides by 2, two pairs divide by 2 × 2, and five identical books leave just one arrangement. Identical elements can only shrink the count, never grow it.",{});},
   function(){return mcq("A student claims that making two elements of a set identical could <b>increase</b> the number of permutations. The claim is wrong because",
     "identical elements merge arrangements that were previously different, so the count can only stay the same or decrease",
-    ["permutations are only defined for numbers, not objects","factorials always get bigger when elements repeat","arrangements are counted with combinations instead"],
+    ["permutations are only defined for numbers, not objects, so swapping objects was never part of the count at all","factorials always get bigger when elements repeat, because each repeated element adds another factor to the count","arrangements are counted with combinations instead, and combinations always give larger counts than permutations"],
     "When two elements become indistinguishable, every arrangement pairs up with the one that swaps them, and the pair collapses into one. Nothing new is created, so the total falls (here, it is divided by 2!). The student's claim reverses the effect.",{});}
 ]));
+/* --- does order matter? (9.29) --- */
 /* --- does order matter? (9.29) --- */
 E("u8-order-matters",8,["9.29"],2,"var",varset([
   function(){return mcq("A club with 10 members elects a president and a vice-president. Does <b>order matter</b> in this counting problem?",
     "Yes: the two roles are different, so electing Alex as president and Blair as vice-president is a different outcome from the reverse (a permutation)",
-    ["No: the same two people are chosen either way, so it is a combination","No: order never matters when only two people are chosen","Yes: order always matters in every counting problem"],
+    ["No: the same two people are chosen either way, so it is a combination; the order their names are announced in does not change who holds office at all","No: order never matters when only two people are chosen, because a pair of names is just a set, and a set has no first or second member at all","Yes: order always matters in every counting problem, because items are always selected one at a time and the sequence is part of the result"],
     "Order matters whenever swapping two selected items produces a genuinely different result. Here a swap exchanges the roles, which is a different executive, so the count is a permutation: 10 × 9 = 90, not C(10, 2) = 45.",{});},
   function(){return mcq("A teacher chooses 3 of the 10 students in a class for a cleanup crew. Does <b>order matter</b> in this counting problem?",
     "No: the crew is the same set of 3 students regardless of the order they were picked in (a combination)",
-    ["Yes: the first student picked becomes the crew leader","Yes: order always matters when people are chosen","No: order never matters when more than two are chosen"],
+    ["Yes: the first student picked becomes the crew leader, so the picking order decides who leads the crew","Yes: order always matters when people are chosen, because each person picked takes the next place in line","No: order never matters when more than two are chosen, because a group larger than two is always just a set"],
     "All three chosen students do the same job, so picking Alex, then Blair, then Casey gives the same crew as any other order of the same three. That makes it a combination: C(10, 3) = 120, not 10 × 9 × 8 = 720.",{});},
   function(){return mcq("Gold, silver and bronze medals are awarded in a race with 12 runners. Does <b>order matter</b> in this counting problem?",
     "Yes: finishing order decides which medal each runner gets, so different orders are different results (a permutation)",
-    ["No: the same three runners stand on the podium either way, so it is a combination","No: medals are objects, and order only matters for people","Yes: because 12 is greater than 10"],
+    ["No: the same three runners stand on the podium either way, so it is a combination, since only the set of medallists matters","No: medals are objects, and order only matters for people, because objects cannot hold different positions in a result","Yes: because 12 is greater than 10, and a field that large always makes the order of finishing matter in the count"],
     "A swap between gold and silver changes who gets what, so order matters and the count is a permutation: 12 × 11 × 10 = 1320. The identity of the medallists alone (a combination) would only be the right model if the medals were identical.",{});},
   function(){return mcq("A camper chooses 4 books from 9 to pack in a bag. Does <b>order matter</b> in this counting problem?",
     "No: the bag holds the same 4 books no matter which order they were picked in (a combination)",
-    ["Yes: the book picked first sits at the bottom of the bag","Yes: choosing is always a permutation","No: order never matters for objects, only for people"],
+    ["Yes: the book picked first sits at the bottom of the bag, so the packing order is part of the outcome","Yes: choosing is always a permutation, because items are picked one at a time in some order","No: order never matters for objects, only for people, because people can hold ranked roles"],
     "The outcome is just the set of 4 books in the bag; reordering the picks changes nothing about the result. So the count is a combination, C(9, 4) = 126. What the items are (books or people) is irrelevant; what matters is whether a swap changes the outcome.",{});}
 ]));
 E("u8-perm-or-comb",8,["9.29"],2,"gen",function(){
@@ -3650,17 +3776,19 @@ E("u8-committee-atleast",8,["9.30"],3,"gen",function(){
 E("u8-comb-strategy",8,["9.31"],1,"var",varset([
   function(){return mcq("Why is C(8, 3) equal to P(8, 3) divided by 3!?",
     "Every group of 3 people was counted 3! times in the permutation count, once for each order, and combinations ignore order",
-    ["Because 3! happens to be the number of people not chosen","Because permutations always overcount by exactly 6","Because dividing makes the answer a whole number"],
+    ["Because 3! happens to be the number of people not chosen from the eight, so dividing removes the unchosen people from the count","Because permutations always overcount by exactly 6, no matter how many people are in the group or how many are chosen from it","Because dividing makes the answer a whole number, and a count of people must always come out as a whole number anyway"],
     "P(8, 3) counts ordered triples. Each unordered group of 3 can be ordered in 3! = 6 ways, so each group appears 6 times in the permutation count. Dividing by 3! collapses those 6 copies into 1, which is the general strategy behind the combination formula.",{});},
   function(){return mcq("C(10, 7) and C(10, 3) are equal. Why?",
     "Choosing the 7 people to include is the same action as choosing the 3 people to leave out",
-    ["Because 7 and 3 add to 10, and combinations always pair up this way by coincidence","Because 10! is divisible by both","Because order matters for one and not the other"],
+    ["Because 7 and 3 add to 10, and combinations always pair up this way by coincidence","Because 10! is divisible by both, since both counts are built from the same factorial","Because order matters for one and not the other, which makes the two counts balance out exactly"],
     "Every selection of 7 leaves behind a unique selection of 3, and vice versa, so the two counts must match. This symmetry, C(n, r) = C(n, n − r), is a useful check and a shortcut when r is large.",{});},
   function(){return mcq("A student counts committees of 3 from 8 people by first counting ordered triples (336) and then dividing by 6. What is the 6?",
     "3!, the number of different orders in which any one committee of 3 can be arranged",
-    ["The number of people not chosen","The number of committees","The number of positions on the committee, doubled"],
+    ["The number of people not chosen, counted from the full group of eight people in the room","The number of committees that can be formed from the eight people in total","The number of positions on the committee, doubled to allow for the two directions"],
     "The ordered count lists each committee once for every arrangement of its 3 members, and 3 members can be arranged in 3! = 6 ways. Dividing by 6 removes the ordering: 336 ÷ 6 = 56 committees. Recognizing what the divisor means is the strategy, not just the arithmetic.",{});}
 ]));
+/* --- probability with combinations (9.32) --- */
+/* --- probability with combinations (9.32) --- */
 /* --- probability with combinations (9.32) --- */
 E("u8-prob-comb",8,["9.32"],2,"gen",function(){
   var ctx=pick([
@@ -3715,11 +3843,11 @@ function pick3Frac(corr,pool){
 E("u9-media-statements",9,["9.1"],1,"var",varset([
   function(){return mcq("A weather page reports: \"Chance of rain tomorrow: 30%.\" In the language of this unit, that statement is",
     "a probability: in about 30 of 100 similar situations, it rains",
-    ["odds of 30 to 1 in favour of rain","a guarantee that it will rain for 30% of the day","a subjective judgement with no data behind it"],
+    ["odds of 30 to 1 in favour of rain, as bookmakers quote them","a guarantee that it will rain for 30% of the day and stay dry otherwise","a subjective judgement with no data behind it, a forecaster's guess"],
     "Percent chances in weather, medicine and sports reporting are probabilities: a part-to-whole comparison. A 30% chance means the event is expected in roughly 30 out of 100 similar cases, not that it is guaranteed for part of the day.",{});},
   function(){return mcq("A sports page lists a team at \"5 : 2 odds against\" winning. The correct reading of this is",
     "in 7 similar games, the team would be expected to lose about 5 and win about 2",
-    ["the team is expected to win about 5 of every 7 games","the probability that the team wins is 5/7","the team will definitely lose its next game"],
+    ["the team is expected to win about 5 of every 7 games it plays in the season","the probability that the team wins is 5/7, read straight from the odds as a fraction","the team will definitely lose its next game, because the odds quoted are against it"],
     "Odds against compare losing outcomes to winning outcomes (part to part): 5 losses for every 2 wins, out of 7 similar games. The probability of winning is the part-to-whole version, 2/7. Media odds are easy to misread precisely because the two parts are not a whole.",{});},
   function(){return mcq("A medicine leaflet says a side effect occurs in \"about 1 in 1000\" patients. Expressed as a probability, that is",
     MV(frN(1,1000)),
@@ -3729,17 +3857,18 @@ E("u9-media-statements",9,["9.1"],1,"var",varset([
 E("u9-odds-vs-prob",9,["9.2"],1,"var",varset([
   function(){return mcq("The odds in favour of an event are 3 : 2. Which statement about the event is true?",
     "Its probability is 3/5, because the 3 favourable outcomes are part of 5 outcomes in total",
-    ["Its probability is 3/2, because odds and probability are the same thing","Its probability is 2/5, because the second number is the favourable one","Its probability is 3/2, because there are 3 favourable outcomes"],
+    ["Its probability is 3/2, because odds and probability are the same thing in every situation","Its probability is 2/5, because the second number is the favourable one in the odds ratio","Its probability is 3/2, because there are 3 favourable outcomes and 2 unfavourable ones"],
     "Odds are part to part (favourable : unfavourable) while probability is part to whole (favourable : total). With odds 3 : 2 there are 3 + 2 = 5 equally likely outcomes, 3 of them favourable, so the probability is 3/5. A probability can never exceed 1, which rules out 3/2 at a glance.",{});},
   function(){return mcq("An event has probability 1/2. Its odds in favour are",
     "1 : 1, because favourable and unfavourable outcomes are equally numerous",
-    ["1 : 2, matching the numerator and denominator of the fraction","2 : 1, because the whole is named first","It is impossible to give odds for a probability of 1/2"],
+    ["1 : 2, matching the numerator and denominator of the fraction as written","2 : 1, because the whole is named first and the favourable part is named second","It is impossible to give odds for a probability of 1/2 in a simple ratio"],
     "A probability of 1/2 means half of all outcomes are favourable and half are not, so the part-to-part comparison is 1 : 1 (even odds). Reading the fraction 1/2 directly as odds of 1 : 2 is the classic confusion between part-whole and part-part.",{});},
   function(){return mcq("Why do bookmakers and games usually quote <b>odds</b> while scientists usually quote <b>probabilities</b>?",
     "Odds compare wins directly with losses, which suits payouts; probability compares an event with everything that could happen, which suits analysis",
-    ["Odds and probability are different names for exactly the same number","Probabilities can only be used with dice and cards","Odds are always larger than probabilities"],
+    ["Odds and probability are different names for exactly the same number, so either word can be used in place of the other without any change in meaning","Probabilities can only be used with dice and cards, because those are the only random experiments whose outcomes can be counted in advance","Odds are always larger than probabilities, because an odds ratio compares two counts directly instead of comparing one count with a total"],
     "Both describe the same uncertainty from different angles: odds (part to part) make payout ratios easy to see, while probability (part to whole) fits into calculations and comparisons. Converting between them needs the total: odds a : b correspond to probability a/(a + b).",{});}
 ]));
+/* --- determining probability and odds (9.3, 9.4) --- */
 /* --- determining probability and odds (9.3, 9.4) --- */
 E("u9-prob-basics",9,["9.3"],1,"gen",function(){
   var ctx=pick([
@@ -3809,13 +3938,14 @@ E("u9-decisions",9,["9.6"],2,"var",varset([
     "The goalie's call rests on a personal impression, not on numbers: that is a subjective judgement. The other three decisions all rest on data or calculated odds, even though none of them guarantees the outcome.",{});},
   function(){return mcq("A student who holds 1 of 100 raffle tickets says: \"I feel lucky today, so my chance of winning is much better than 1 in 100.\" The flaw in the reasoning is that",
     "feelings do not change the objective probability, which stays 1 in 100",
-    ["the probability was actually 1 in 99","raffle tickets are never equally likely to win","confidence is one of the factors in the probability formula"],
+    ["the probability was actually 1 in 99, because one ticket is the holder's own","raffle tickets are never equally likely to win in a real draw","confidence is one of the factors in the probability formula for raffles"],
     "Probability here is fixed by the setup: 1 favourable ticket out of 100 equally likely ones. A feeling of luck is a subjective judgement layered on top; it may change how the student feels about the decision, but not the 1/100 itself.",{});},
   function(){return mcq("A town must decide whether to hold its festival outdoors. Records show rain on 20 of the last 100 festival days. Which use of this information is sound?",
     "Treat the chance of rain as about 20/100 and weigh the cost of a rain plan against that likelihood",
-    ["Conclude it will definitely not rain, because 80 days were dry","Conclude it will rain, because rain is possible","Ignore the record, since past weather has no connection to probability"],
+    ["Conclude it will definitely not rain, because 80 days were dry and dry days outnumber wet days","Conclude it will rain, because rain is possible and any possible outcome should be planned as certain","Ignore the record, since past weather has no connection to probability or to future festival days"],
     "The record gives an experimental probability of about 1/5 for rain. A sound decision uses that estimate together with the stakes (how bad is a washout, how costly is a tent) rather than treating the outcome as certain either way.",{});}
 ]));
+/* --- complementary events (9.8) --- */
 /* --- complementary events (9.8) --- */
 E("u9-complementary",9,["9.8"],2,"gen",function(){
   var mode=pick(["frac","decimal","comp","menotcomp","notme"]);
@@ -3836,22 +3966,24 @@ E("u9-complementary",9,["9.8"],2,"gen",function(){
     var T=pick([6,8,10,12]),rc=pick([2,3,4,5]);if(rc>=T-1)rc=T-3;
     return mcq("On a spinner with "+T+" equal sections ("+rc+" red and "+(T-rc)+" blue), event A is \"lands on red\" and event B is \"lands on blue\". Are A and B complementary?",
       "Yes: they cannot both happen, and together they cover every possible outcome",
-      ["No: complementary events must each have probability 1/2","No: they are mutually exclusive, and mutually exclusive events are never complementary","Yes, because any two events on the same spinner are complementary"],
+      ["No: complementary events must each have probability 1/2, which these two events do not","No: they are mutually exclusive, and mutually exclusive events are never complementary","Yes, because any two events on the same spinner are complementary here"],
       "Complementary events are mutually exclusive AND exhaustive: one of them must happen and both cannot. Here every spin is red or blue and never both, so the pair is complementary: their probabilities, \\("+frN(rc,T)+"\\) and \\("+frN(T-rc,T)+"\\), add to 1.",{mode:mode,T:T});
   }
   if(mode==="menotcomp"){
     var T2=pick([8,9,10,12]),r2=pick([2,3,4]),g2=pick([2,3]),b2=T2-r2-g2;
     return mcq("On a spinner with "+T2+" equal sections ("+r2+" red, "+g2+" green and "+b2+" blue), event A is \"lands on red\" and event B is \"lands on green\". Are A and B complementary?",
       "No: they are mutually exclusive, but they are not complementary, because the spinner can also land on blue",
-      ["Yes: mutually exclusive events are always complementary","Yes: their probabilities add to 1","No: they are not even mutually exclusive"],
+      ["Yes: mutually exclusive events are always complementary, because one of them must happen on every single spin","Yes: their probabilities add to 1, because the red and green sections make up the whole spinner","No: they are not even mutually exclusive, because a single spin can land on red and green at the same time"],
       "The events cannot happen together (mutually exclusive), but complementary also requires that one of them must happen. The "+b2+" blue outcomes make both fail, and their probabilities add to only \\("+frN(r2+g2,T2)+"\\), not 1.",{mode:mode,T:T2});
   }
   var pair=pick([["a heart","red"],["a diamond","red"],["a spade","black"],["a club","black"]]);
   return mcq("A card is drawn from a standard deck. Event A is \"the card is "+pair[0]+"\" and event B is \"the card is "+pair[1]+"\". Are A and B complementary?",
     "No: they are not mutually exclusive (a "+pair[1]+" "+pair[0].slice(2)+" satisfies both), so they cannot be complementary",
-    ["Yes: the suit makes up half of the "+pair[1]+" cards","Yes: every card is either "+pair[0]+" or "+pair[1]+"","No: complementary events must have equal probabilities"],
+    ["Yes: the suit makes up half of the "+pair[1]+" cards, so the two events split the deck evenly between them","Yes: every card is either "+pair[0]+" or "+pair[1]+", and no card in the deck falls outside the two events","No: complementary events must have equal probabilities, which these two events fail to have in any case"],
     "Complementary events must first be mutually exclusive. The "+pair[0].slice(2)+"s that are "+pair[1]+" belong to both events at once, so the pair fails at the first requirement, before any checking of totals.",{mode:mode,pair:pair[0]});
 });
+/* --- representing events (9.9) and ME probability (9.10) --- */
+/* --- representing events (9.9) and ME probability (9.10) --- */
 /* --- representing events (9.9) and ME probability (9.10) --- */
 E("u9-represent-events",9,["9.9"],2,"gen",function(){
   if(Math.random()<0.5){
@@ -3970,15 +4102,15 @@ E("u9-create-problem",9,["9.11"],2,"gen",function(){
 E("u9-dep-vs-indep",9,["9.12"],2,"var",varset([
   function(){return mcq("Two cards are drawn from a deck <b>without replacement</b>. The two draws are",
     "dependent events, because the first draw changes the deck, and so changes the probabilities for the second draw",
-    ["independent events, because the draws happen at different times","dependent events, because cards are physical objects","independent events, because each draw is random"],
+    ["independent events, because the draws happen at different times and the timing of a draw cannot matter","dependent events, because cards are physical objects and physical objects always affect each other somehow","independent events, because each draw is random, and purely random draws can never influence one another at all"],
     "Dependence is about whether one event changes the probabilities of the other. Removing a card leaves 51 cards with a different mix, so the second draw's probabilities shift: dependent. Timing and randomness are not the test.",{});},
   function(){return mcq("A spinner is spun twice. The two spins are",
     "independent events, because the first spin leaves the spinner unchanged, so the second spin has the same probabilities",
-    ["dependent events, because there are two spins","independent events, because the spinner is fair","dependent events, because the outcomes are recorded in order"],
+    ["dependent events, because there are two spins, and a second event always depends on the event that came before it","independent events, because the spinner is fair, and fairness of the device is what makes two events independent","dependent events, because the outcomes are recorded in order, and writing them down in order links the two spins together"],
     "Nothing about the spinner changes between spins, so the probability distribution of the second spin is exactly the same whatever the first showed: the definition of independent events. Contrast this with drawing without replacement, where the sample space itself shrinks.",{});},
   function(){return mcq("Which pair of events is <b>dependent</b>?",
     "Drawing a marble from a bag and then drawing a second marble without putting the first back",
-    ["Rolling a die and flipping a coin","Spinning a spinner and then spinning it again","Drawing a card, replacing it, shuffling, and drawing again"],
+    ["Rolling a die and flipping a coin, two separate experiments done at the same time","Spinning a spinner and then spinning it again, with the spinner left exactly as it was","Drawing a card, replacing it, shuffling, and drawing again from the restored full deck of cards"],
     "Only the marble pair has one event change the other's probabilities (the bag's contents change). The replacement draw is the instructive contrast: putting the card back restores the original deck and makes the draws independent.",{});}
 ]));
 E("u9-independent-prob",9,["9.13"],2,"gen",function(){
@@ -4116,19 +4248,19 @@ E("u9-compare-games",9,["9.13"],3,"gen",function(){
 E("u9-classify-events",9,["9.7"],1,"var",varset([
   function(){return mcq("One card is drawn from a standard deck. Event A is \"the card is a heart\" and event B is \"the card is a spade\". The two events are",
     "mutually exclusive, because a single card cannot be both a heart and a spade",
-    ["not mutually exclusive, because both suits are in the same deck","mutually exclusive, because hearts are red and spades are black","not mutually exclusive, because the deck has 52 cards"],
+    ["not mutually exclusive, because both suits are found in the same standard deck","mutually exclusive, because hearts are red and spades are black, so the suits differ","not mutually exclusive, because the deck has 52 cards in four suits"],
     "Mutually exclusive means the events cannot happen together. One card has exactly one suit, so a heart and a spade cannot occur on the same draw. (They are not complementary, though: the card could be a diamond or a club.)",{});},
   function(){return mcq("A standard die is rolled. Event A is \"the roll is even\" and event B is \"the roll is a multiple of 3\". The two events are",
     "not mutually exclusive, because a roll of 6 is both even and a multiple of 3",
-    ["mutually exclusive, because even numbers and multiples of 3 are different lists","mutually exclusive, because 6 is only one face of the die","not mutually exclusive, because both events have probability greater than zero"],
+    ["mutually exclusive, because even numbers and multiples of 3 are different lists","mutually exclusive, because 6 is only one face and cannot do both","not mutually exclusive, because both events have probability greater than zero"],
     "The test is whether any single outcome can satisfy both events at once. The face 6 is even and a multiple of 3, so the events overlap and are not mutually exclusive. An event pair can overlap on even one outcome and fail the test.",{});},
   function(){return mcq("One student is chosen at random from a class. Event A is \"the student is in the band\" and event B is \"the student is in the choir\". Without more information, the two events should be classified as",
     "not mutually exclusive, because a student can be in both the band and the choir",
-    ["mutually exclusive, because band and choir are different activities","mutually exclusive, because only one student is chosen","not mutually exclusive, only if most students do both"],
+    ["mutually exclusive, because band and choir are different activities at school","mutually exclusive, because only one student is chosen and one student has one activity","not mutually exclusive, only if most students do both, rather than just a few of them"],
     "Nothing in the setup prevents one student from belonging to both groups, so the events can happen together for the chosen student: not mutually exclusive. Classification follows what is possible, not what is common.",{});},
   function(){return mcq("A coin is flipped once. Event A is \"the coin lands heads\" and event B is \"the coin lands tails\". The two events are",
     "mutually exclusive (and also complementary), because one flip gives exactly one of the two results",
-    ["not mutually exclusive, because the coin could land on its edge","mutually exclusive but not complementary, because other outcomes exist","not mutually exclusive, because both outcomes are equally likely"],
+    ["not mutually exclusive, because the coin could land on its edge and show both faces at once","mutually exclusive but not complementary, because other outcomes exist besides the two faces","not mutually exclusive, because both outcomes are equally likely and equal chances can coincide here"],
     "A single flip produces one face: heads and tails cannot happen together (mutually exclusive), and one of them must happen (complementary as well). Equal likelihood is not part of either definition.",{});}
 ]));
 
