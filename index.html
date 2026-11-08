@@ -4468,7 +4468,9 @@ var REF_HTML={
 8:"<b>Combinations:</b> \\({}_nC_r = \\binom{n}{r} = \\frac{n!}{(n-r)!\\,r!}\\)<br><b>Permutations:</b> \\({}_nP_r = \\frac{n!}{(n-r)!}\\)<br><b>Permutations with repeated items:</b> \\(\\frac{n!}{a!\\,b!\\,c!\\,\\ldots}\\)",
 9:"<b>Probability of A or B:</b> \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\)<br><b>Probability of A and B:</b> \\(P(A\\ \\text{and}\\ B) = P(A) \\times P(B)\\)<br><b>Conditional probability:</b> \\(P(A \\cap B) = P(A) \\cdot P(B \\mid A)\\)"
 };
-function refPanelsHtml(units){var h="";units.forEach(function(u){if(REF_HTML[u])h+='<details class="refpanel"><summary>Formulas and facts for Unit '+u+": "+UNITS[u]+'</summary><div class="refbody">'+REF_HTML[u]+"</div></details>";});return h;}
+/* Quadratic Formula panel: always shown, regardless of unit selection (Jason, November 8, 2026). Formula as printed on the official Math 3201 formula sheet. */
+var REF_QUADRATIC='<details class="refpanel"><summary>Quadratic Formula</summary><div class="refbody">\\(x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\\)</div></details>';
+function refPanelsHtml(units){var h=REF_QUADRATIC;units.forEach(function(u){if(REF_HTML[u])h+='<details class="refpanel"><summary>Formulas and facts for Unit '+u+": "+UNITS[u]+'</summary><div class="refbody">'+REF_HTML[u]+"</div></details>";});return h;}
 function stopExamTimer(){try{if(window._examTimerInt){clearInterval(window._examTimerInt);window._examTimerInt=null;}}catch(e){}}
 function refreshFace(){
   var fs=$("faceScope");if(!fs)return;
