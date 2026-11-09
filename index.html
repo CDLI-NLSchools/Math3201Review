@@ -799,7 +799,7 @@ E("u1-equiv-forms",1,["3.3"],1,"gen",function(){
     "An equivalent expression is made by multiplying the numerator and the denominator by the same nonzero expression, here \\("+fac+"\\). Multiplying only the top, only the bottom, or the top by a different factor changes the value of the expression.",
     {a:a,rb:rb,rm:rm});
 });
-E("u1-create-equivalent",1,["3.4"],2,"gen",function(){
+E("u1-create-equivalent",1,["3.4"],1,"gen",function(){
   var a=ri(2,5),b=ri(-7,7),c=ri(1,4),d=ri(-7,7),t=0;
   while((b===0||d===0||(a===c&&b===d))&&t<60){b=ri(-7,7);d=ri(-7,7);t++;}
   var kf=ri(2,7),s=pick([1,-1]),mid=a*s*kf+b,last=b*s*kf;
@@ -833,7 +833,7 @@ E("u1-reverse-restrictions",1,["3.6"],3,"gen",function(){
     "The original denominator must be zero at both non-permissible values, so it needs the factors \\("+linF(r1)+"\\) and \\("+linF(r3)+"\\). Cancelling the shared factor \\("+linF(r1)+"\\) must leave \\("+FR(linF(r2),linF(r3))+"\\), so the numerator needs \\("+linF(r1)+"\\) and \\("+linF(r2)+"\\). Only the correct option satisfies both conditions at once.",
     {r1:r1,r2:r2,r3:r3});
 });
-E("u1-error-simplify",1,["3.7"],2,"var",varset([
+E("u1-error-simplify",1,["3.7"],1,"var",varset([
   function(){return mcq("A student simplifies \\("+FR("5x + 20","5")+"\\) and gets \\(x + 20\\). What is the <b>correct</b> simplified form?",
     "\\(x + 4\\)",
     ["\\(x + 20\\)","\\(5x + 4\\)","\\(25x + 20\\)"],
@@ -923,7 +923,7 @@ E("u1-sub-monomial-den",1,["3.11"],2,"gen",function(){
     "The lowest common denominator is \\(x^2\\), so the first fraction becomes \\(\\frac{"+a+"x}{x^2}\\). Combining gives \\(\\frac{"+linS(a,nb)+"}{x^2}\\). The result is <b>\\("+FR(linS(a,nb),"x^2")+"\\)</b>. The denominators cannot be treated as equal, and the denominator of the answer is \\(x^2\\), not \\(x\\).",
     {a:a,b:b,op:op});
 });
-E("u1-lcd",1,["3.11"],2,"gen",function(){
+E("u1-lcd",1,["3.11"],1,"gen",function(){
   var pr=pick([[2,3],[3,2],[3,4],[4,3],[4,6],[6,4]]),k1=pr[0],k2=pr[1];
   var L=k1*k2/gcd2(k1,k2);
   var p=ri(-6,6),q=ri(-6,6),t=0;
@@ -936,7 +936,7 @@ E("u1-lcd",1,["3.11"],2,"gen",function(){
     "The second denominator already contains both variable factors, \\("+linF(p)+"\\) and \\("+linF(q)+"\\). For the coefficients, the least common multiple of \\("+k1+"\\) and \\("+k2+"\\) is \\("+L+"\\), so the LCD is <b>\\("+lcd+"\\)</b>. The second denominator alone uses \\("+k2+"\\) instead of \\("+L+"\\), and multiplying the two denominators gives more than the lowest common one.",
     {k1:k1,k2:k2,p:p,q:q});
 });
-E("u1-mult",1,["3.12"],2,"gen",function(){
+E("u1-mult",1,["3.12"],1,"gen",function(){
   var a=ri(-8,8),b=ri(-8,8),c=ri(-8,8),t=0;
   while((a===b||a===c||b===c)&&t<80){a=ri(-8,8);b=ri(-8,8);c=ri(-8,8);t++;}
   var m=ri(1,5),n=ri(1,5),coef=frN(m,n),coefI=frN(n,m);
@@ -976,7 +976,7 @@ E("u1-npv-operations",1,["3.9"],2,"gen",function(){
     "Three spots cause trouble: the first denominator \\("+linF(p)+"\\) (zero at \\(x = "+p+"\\)) and the divisor \\("+FR(linF(q),linF(r))+"\\), which is undefined at \\(x = "+r+"\\) and equal to zero at \\(x = "+q+"\\), and a divisor of zero is not allowed. The non-permissible values are <b>"+lst([p,q,r])+"</b>. The root of the first numerator does not restrict anything.",
     {shape:"div",p:p,q:q,r:r,s:s});
 });
-E("u1-strategy-compare",1,["3.8"],2,"var",varset([
+E("u1-strategy-compare",1,["3.8"],1,"var",varset([
   function(){return mcq("Which statement correctly compares adding rational expressions with adding rational numbers (fractions)?",
     "Both must first be rewritten with a common denominator; the denominators themselves are never added",
     ["In both cases, the numerators and the denominators are added straight across to give the sum in one step","Rational expressions can be added straight across because the denominators contain variables too","The common denominator for rational expressions is always the sum of the two denominators being added"],
@@ -1186,7 +1186,7 @@ E("u2-turning-points-graph",2,["3.17"],1,"gen",function(){
     "This cubic keeps moving in the same direction the whole way across; it may flatten briefly but never changes direction, so there are <b>0 turning points</b>.",{kind:kind});
   q3.figure=plotSVG(fn,-3.5,3.5,-22,22);return q3;
 });
-E("u2-end-behaviour",2,["3.18"],2,"gen",function(){
+E("u2-end-behaviour",2,["3.18"],1,"gen",function(){
   var deg=pick([1,2,3]),sgn=pick([1,-1]),a=sgn*ri(2,6),b=ri(-8,8),c=ri(-8,8);
   var fs=(deg===1)?linS(a,c):(deg===2?quadS(a,b,c):(""+a+"x^3 "+(b>=0?"+ ":"- ")+Math.abs(b)+"x^2 "+(c>=0?"+ ":"- ")+Math.abs(c)+"x"));
   var pats={"odd+":"Quadrant III to Quadrant I","odd-":"Quadrant II to Quadrant IV","even+":"Quadrant II to Quadrant I","even-":"Quadrant III to Quadrant IV"};
@@ -1198,7 +1198,7 @@ E("u2-end-behaviour",2,["3.18"],2,"gen",function(){
     "The degree "+deg+" is "+(deg%2===1?"odd":"even")+" and the leading coefficient "+a+" is "+(sgn>0?"positive":"negative")+". "+(deg%2===1?("For an odd degree, the two ends go in opposite directions; a positive leading coefficient sends the right end up, so the graph runs from Quadrant III to Quadrant I."):("For an even degree, both ends go the same way; the sign of the leading coefficient decides whether both ends rise or both fall."))+" Here the graph extends from <b>"+correct+"</b>.",
     {deg:deg,a:a});
 });
-E("u2-characteristics-equation",2,["3.18"],2,"gen",function(){
+E("u2-characteristics-equation",2,["3.18"],1,"gen",function(){
   var feat=pick(["yint","end","count"]);
   if(feat==="end"){
     var a=pick([2,3,-2,-3]),r1=ri(-6,6),r2=ri(-6,6),r3=ri(-6,6),t=0;
@@ -1289,7 +1289,7 @@ E("u2-fit-value",2,["3.20"],2,"gen",function(){
     "Look at the differences: "+ys.join(", ")+" has first differences "+(function(){var d=[];for(var i=1;i<ys.length;i++)d.push(ys[i]-ys[i-1]);return d.join(", ");})()+". "+(kind==="quadratic"?"The second differences are constant, confirming a quadratic pattern; extending the differences gives the next value.":"The third differences are constant, confirming a cubic pattern; extending the differences gives the next value.")+" When \\(x = "+ask+"\\), <b>\\(y = "+fn(ask)+"\\)</b>.",
     {kind:kind,ans:fn(ask)});
 });
-E("u2-graph-characteristics",2,["3.17"],2,"gen",function(){
+E("u2-graph-characteristics",2,["3.17"],1,"gen",function(){
   var feat=pick(["yint","xint","range"]);
   if(feat==="range"){
     var s=pick([1,-1]),h=ri(-2,2),k=pick([-4,-2,2,3,5]);
@@ -1320,7 +1320,7 @@ E("u2-graph-characteristics",2,["3.17"],2,"gen",function(){
     "The y-intercept is where the curve crosses the y-axis, at \\(x = 0\\). Reading the graph there gives <b>"+Y3+"</b>. (The vertex value "+k3+" is the distractor: it is read at the turning point, not at the y-axis.)",{feat:feat});
   q3.figure=plotSVG(fn3,-6,6,-10,14);return q3;
 });
-E("u2-sketch-match",2,["3.17"],2,"gen",function(){
+E("u2-sketch-match",2,["3.17"],1,"gen",function(){
   var s=pick([1,-1]),h=pick([-1,0,0,1]),u=(h===0?pick([1,1.25,1.5]):1),k=pick([-6,-4,-2,0,3,5,7]);
   var fn=function(x){var t=x-h;return s*(t*t*t-3*u*u*t)+k;};
   var Y=fn(0);
@@ -1435,7 +1435,7 @@ E("u3-decimal-convert",3,["7.1"],1,"gen",function(){
     "Multiply by \\(\\frac{\\pi}{180^\\circ}\\): \\("+dg+" \\times \\frac{\\pi}{180} \\approx "+fmt(rad,3)+"\\), which rounds to <b>"+fmt(Math.round(rad*100)/100,2)+"</b> radians.",
     {dg:dg});
 });
-E("u3-graph-amplitude",3,["7.2"],2,"gen",function(){
+E("u3-graph-amplitude",3,["7.2"],1,"gen",function(){
   var a=pick([2,3,4,5]),d=pick([-3,-2,-1,1,2,3,4]),trig=pick(["sin","cos"]),b=pick([1,2]);
   while(d===a||d===2*a)d=pick([-3,-2,-1,1,2,3,4]);
   var fn=sinFn(a,trig,b,0,d);
@@ -1447,7 +1447,7 @@ E("u3-graph-amplitude",3,["7.2"],2,"gen",function(){
   q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
   return q;
 });
-E("u3-graph-period-midline",3,["7.2"],2,"gen",function(){
+E("u3-graph-period-midline",3,["7.2"],1,"gen",function(){
   var feat=pick(["period","midline"]);
   var b=pick([1,2]),a=pick([2,3,4]),d=pick([-3,-2,-1,0,1,2,3]),trig=pick(["sin","cos"]);
   while(new Set([d,a,d+a,(-d===0?1:-d)]).size<4){a=pick([2,3,4]);d=pick([-3,-2,-1,0,1,2,3]);}
@@ -1468,7 +1468,7 @@ E("u3-graph-period-midline",3,["7.2"],2,"gen",function(){
   q2.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:90,gy:1,labelX:true,labelY:true});
   return q2;
 });
-E("u3-graph-range",3,["7.2"],2,"gen",function(){
+E("u3-graph-range",3,["7.2"],1,"gen",function(){
   var a=pick([2,3,4,5]),d=pick([-4,-3,-1,2,3,5]),trig=pick(["sin","cos"]),bb=pick([1,2]);
   var fn=sinFn(a,trig,bb,0,d),lo=d-a,hi=d+a;
   var corr="\\(\\{y \\mid "+lo+" \\le y \\le "+hi+", \\ y \\in \\mathbb{R}\\}\\)";
@@ -1482,7 +1482,7 @@ E("u3-graph-range",3,["7.2"],2,"gen",function(){
   q.figure=plotSVG(fn,0,720,lo-2,hi+2,{gx:90,gy:1,labelX:true,labelY:true});
   return q;
 });
-E("u3-periodic-or-sinusoidal",3,["7.3"],2,"gen",function(){
+E("u3-periodic-or-sinusoidal",3,["7.3"],1,"gen",function(){
   var fam=pick(["sinusoidal","triangle","square","parabola"]),fn,x1=pick([9,10,12]);
   if(fam==="sinusoidal"){var A1=pick([1.5,2,2.5]),W1=pick([1.2,1.6,2.1]),D1=pick([-0.5,0,0.8]);fn=function(x){return A1*Math.sin(W1*x)+D1;};}
   else if(fam==="triangle"){var P1=pick([3,4,5]),A2=pick([1,1.5]);fn=function(x){var t=((x%P1)+P1)%P1,u=t/P1*4;return A2*(u<1?u:(u<3?2-u:u-4));};}
@@ -1499,7 +1499,7 @@ E("u3-periodic-or-sinusoidal",3,["7.3"],2,"gen",function(){
   q.figure=plotSVG(fn,0,x1,-3,4,{gx:1,gy:1});
   return q;
 });
-E("u3-ferris-interpret",3,["7.3"],2,"var",varset([
+E("u3-ferris-interpret",3,["7.3"],1,"var",varset([
   function(){var fn=function(t){return 9-7*Math.cos(30*t*Math.PI/180);};
     var q=mcq("The graph shows the height of a rider on a Ferris wheel at a St. John's fair, in metres, over time in minutes. Riders board at the lowest point of the ride. What is the <b>boarding height</b>?",
       "2 m",["9 m","16 m","7 m"],
@@ -1518,7 +1518,7 @@ E("u3-ferris-interpret",3,["7.3"],2,"var",varset([
       "The height oscillates evenly between 2 m and 18 m around the midline y = 10. Halfway between the top and bottom of the ride is the centre of the wheel, so the midline gives the axle height, 10 m.",{});
     q.figure=plotSVG(fn,0,10,0,20,{gx:1,gy:2,labelX:true,labelY:true});return q;}
 ]));
-E("u3-eq-amplitude-period",3,["7.4"],2,"gen",function(){
+E("u3-eq-amplitude-period",3,["7.4"],1,"gen",function(){
   var feat=pick(["amplitude","period"]);
   var a=pick([2,3,4,5])*pick([1,-1]),b=pick([0.5,1,2,3]),c=pick([0,20,40]),d=pick([-3,-1,0,2]),trig=pick(["sin","cos"]),tries=0;
   while((Math.abs(a)===b||d===Math.abs(a)||b===d)&&tries<40){a=pick([2,3,4,5])*pick([1,-1]);b=pick([0.5,1,2,3]);d=pick([-3,-1,0,2]);tries++;}
@@ -1554,7 +1554,7 @@ E("u3-eq-amplitude-period",3,["7.4"],2,"gen",function(){
     "The period is \\(\\frac{360^\\circ}{b} = \\frac{360^\\circ}{"+b+"} = "+per+"^\\circ\\). The coefficient \\(b = "+b+"\\) compresses or stretches the basic cycle; it is not the period itself.",
     {feat:feat,b:b,per:per});
 });
-E("u3-eq-range-midline",3,["7.4"],2,"gen",function(){
+E("u3-eq-range-midline",3,["7.4"],1,"gen",function(){
   var feat=pick(["range","midline"]);
   var a=pick([2,3,4,5])*pick([1,-1]),d=pick([-4,-2,-1,1,3]),trig=pick(["sin","cos"]),tg=0;
   while((new Set([d,a,-d,d+Math.abs(a)]).size<4||d===0)&&tg<60){a=pick([2,3,4,5])*pick([1,-1]);d=pick([-4,-2,-1,1,3]);tg++;}
@@ -1571,7 +1571,7 @@ E("u3-eq-range-midline",3,["7.4"],2,"gen",function(){
     "The amplitude is \\(|a| = "+Math.abs(a)+"\\), so the graph runs from \\(d - |a| = "+lo+"\\) up to \\(d + |a| = "+hi+"\\) around the midline \\(y = "+d+"\\). The interval that stops at the midline, and the one that forgets the vertical shift, are the traps.",
     {feat:feat,a:a,d:d});
 });
-E("u3-eq-phase-shift",3,["7.4"],2,"gen",function(){
+E("u3-eq-phase-shift",3,["7.4"],1,"gen",function(){
   var c=pick([15,30,45,60,90])*pick([1,-1]),a=pick([1,2,3]),d=pick([-2,0,1]),trig=pick(["sin","cos"]);
   var eq=sinS(a,trig,pick([1,2]),c,d);
   var corr=(c>0)?("Shifted right "+c+"°"):("Shifted left "+(-c)+"°");
@@ -1615,7 +1615,7 @@ E("u3-graph-full-equation",3,["7.2","7.5"],3,"gen",function(){
   q.figure=plotSVG(fn,0,720,-(a+Math.abs(d)+2),a+Math.abs(d)+2,{gx:30,gy:1,labelX:true,labelY:true});
   return q;
 });
-E("u3-data-fit-params",3,["7.6"],2,"gen",function(){
+E("u3-data-fit-params",3,["7.6"],1,"gen",function(){
   var a=pick([1.5,2,2.5,3,3.5,4]),d=pick([2,3,4,5,6,8,10]),feat=pick(["amplitude","period"]);
   while(d===a||2*a===d)d=pick([2,3,4,5,6,8,10]);
   var xs=[0,3,6,9,12],ys=[d,d+a,d,d-a,d];
@@ -1730,7 +1730,7 @@ E("u4-express-as-power",4,["4.7"],1,"gen",function(){
     "\\("+B+"^"+k+"\\) means "+B+" multiplied by itself "+k+" times: \\("+Array(k).fill(B).join(" \\times ")+" = "+N+"\\). (Multiplying the base by the exponent, "+(B*k)+", is the classic trap.)",
     {B:B,k:k});
 });
-E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
+E("u4-graph-characteristics",4,["4.12"],1,"gen",function(){
   function normOpts(key,ds){
     function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
     function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
@@ -1779,7 +1779,7 @@ E("u4-graph-characteristics",4,["4.12"],2,"gen",function(){
     {feat:feat,A:A,bp:bp});
   q3.figure=plotSVG(fn,win.x0,win.x1,win.y0,win.y1,{gx:1,gy:5,labelX:true});return q3;
 });
-E("u4-eq-characteristics",4,["4.13"],2,"gen",function(){
+E("u4-eq-characteristics",4,["4.13"],1,"gen",function(){
   function normOpts(key,ds){
     function dp(s){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);return m?(m[2]?m[2].length:0):null;}
     function pad(s,t){var m=String(s).match(/^(-?\d+(?:\.(\d+))?)(%?)$/);if(!m)return s;var cur=m[2]?m[2].length:0;if(cur>=t)return s;var base=m[1];if(cur===0)base+=".";for(var i=cur;i<t;i++)base+="0";return base+(m[3]||"");}
@@ -1869,7 +1869,7 @@ E("u4-data-fit-equation",4,["4.1"],2,"gen",function(){
     "Check the pattern: each step multiplies the value by "+fmt(g.bv)+" ("+g.ys.slice(0,3).map(function(v){return fmt(v);}).join(" to ")+" ...), a constant ratio, so the model is exponential, not linear. The starting value at \\(t = 0\\) is "+g.A+", giving \\(a = "+g.A+"\\), and the ratio gives \\(b = "+fmt(g.bv)+"\\). The model is \\("+eqv(g.A,g.bp)+"\\).",
     {A:g.A,bp:g.bp,step:g.step});
 });
-E("u4-data-next-value",4,["4.1"],2,"gen",function(){
+E("u4-data-next-value",4,["4.1"],1,"gen",function(){
   var g=expDataGen(),ask=pick(["next","missing"]);
   if(ask==="next"){
     var ans=g.A*Math.pow(g.bv,5);
@@ -1946,7 +1946,7 @@ E("u4-solve-two-sided",4,["4.7"],2,"gen",function(){
     "Rewrite the fraction base: \\(\\left(\\frac{1}{"+B3+"}\\right)^x = "+B3+"^{-x}\\), and the right side is \\("+B3+"^{"+K3+"}\\). So \\(-x = "+K3+"\\), giving \\(x = "+x3+"\\). A fraction base with a positive value greater than 1 on the right forces a negative solution.",
     {fam:fam,B:B3});
 });
-E("u4-estimate-solution",4,["4.8"],2,"gen",function(){
+E("u4-estimate-solution",4,["4.8"],1,"gen",function(){
   if(Math.random()<0.35){
     var k2=pick([2,3,4]),lo2=Math.pow(2,k2),hi2=Math.pow(2,k2+1);
     var N2=lo2+ri(1,hi2-lo2-1);
@@ -2358,7 +2358,7 @@ E("u5-solve-condense",5,["1.4"],3,"gen",function(){
 });
 
 /* --- estimating, data, graphs and models (1.5, 4.2, 4.4, 4.6) --- */
-E("u5-estimate-log",5,["1.5"],2,"gen",function(){
+E("u5-estimate-log",5,["1.5"],1,"gen",function(){
   var b=pick([2,2,3,3,10]),n,tv,fl,tries=0;
   do{
     n=b===2?ri(5,150):b===3?ri(4,120):ri(15,90000);
@@ -2385,7 +2385,7 @@ E("u5-data-fit-log",5,["4.2"],2,"gen",function(){
     "Each time \\(x\\) is multiplied by \\("+base+"\\), \\(y\\) increases by exactly \\("+d+"\\): a constant increase per multiplication is the signature of a logarithmic model (an exponential model would multiply \\(y\\) instead). At \\(x = 1\\) the logarithm is 0, so the constant term is \\("+c+"\\), and the per-step increase is the coefficient of the logarithm: \\("+corr+"\\).",
     {mode:mode,c:c,d:d});
 });
-E("u5-interpret-graph",5,["4.4"],2,"gen",function(){
+E("u5-interpret-graph",5,["4.4"],1,"gen",function(){
   var bg=pick([{b:2,x1:16,gx:2},{b:3,x1:27,gx:3},{b:10,x1:120,gx:10}]),b=bg.b,k=pick([-1,0,1,2]);
   var fn=function(x){return Math.log(x)/Math.log(b)+k;};
   var feats=["valueAt","factor","domain"];if(k>=-1&&k<=1)feats.push("xint");
@@ -2535,7 +2535,7 @@ E("u5-catch-up",5,["4.9"],3,"gen",function(){
     {f:f,k:k,s:s});
 });
 /* --- logarithmic scales (4.10) --- */
-E("u5-ph-scale",5,["4.10"],2,"gen",function(){
+E("u5-ph-scale",5,["4.10"],1,"gen",function(){
   var CTX={2:["lemon juice","vinegar"],3:["orange juice","apple juice"],4:["tomato juice","a carbonated soft drink"],5:["black coffee","rainwater"],6:["milk","human saliva"],7:["pure water","distilled water"],8:["seawater","a baking soda solution"],9:["a soap solution","a laundry detergent solution"]};
   var shape=pick(["findpH","findpH","findConc","compare","vsWater"]);
   if(shape==="findpH"){
@@ -2566,7 +2566,7 @@ E("u5-ph-scale",5,["4.10"],2,"gen",function(){
     "Compare concentrations through the pH gap: \\(7 - "+p3+" = "+(7-p3)+"\\) pH units, and each unit is a factor of 10, so the concentration is \\(10^{"+(7-p3)+"} = "+Math.pow(10,7-p3)+"\\) times as large.",
     {shape:shape,p:p3});
 });
-E("u5-richter-decibel",5,["4.10"],2,"gen",function(){
+E("u5-richter-decibel",5,["4.10"],1,"gen",function(){
   var shape=pick(["db","db","richter","concept"]);
   if(shape==="db"){
     var L=[40,50,60,70,80,90,100,110,120],prs=[];
@@ -2626,7 +2626,7 @@ E("u5-match-graph",5,["4.11"],2,"gen",function(){
   q2.figure=plotSVG(fn2,h+0.02,(b===10?60:12)+Math.max(h,0),-5,5,{gx:b===10?10:(b===3||b===1/3?3:2),gy:1,labelX:true,labelY:true});
   return q2;
 });
-E("u5-graph-char",5,["4.14"],2,"gen",function(){
+E("u5-graph-char",5,["4.14"],1,"gen",function(){
   var form=Math.random()<0.5?"A":"B",b=pick([2,3]),q;
   if(form==="A"){
     var h=pick([-3,-2,-1,1,2,3]);
@@ -2677,7 +2677,7 @@ E("u5-graph-char",5,["4.14"],2,"gen",function(){
   q.figure=figB;
   return q;
 });
-E("u5-eq-char",5,["4.15"],2,"gen",function(){
+E("u5-eq-char",5,["4.15"],1,"gen",function(){
   var form=pick(["a","k","h"]),b=pick([2,3,5,10]),eq,feat;
   if(form==="a"){
     var av=pick([2,3,-1,-2,-3]);
@@ -2919,7 +2919,7 @@ E("u6-payments-term",6,["1.11"],1,"gen",function(){
   return numq("A loan is repaid with "+f.w+" payments over "+y+" years. How many payments are made in total?",
     count,0.001,"There are "+f.per+" "+f.w+" payments in each year, and \\("+f.per+" \\times "+y+" = "+count+"\\), so "+count+" payments are made in total.",{f:f.w,y:y});
 });
-E("u6-amortization-read",6,["1.11"],2,"gen",function(){
+E("u6-amortization-read",6,["1.11"],1,"gen",function(){
   var rows=null,P=0,rate=0,tries=0;
   while(tries++<80){
     var Pc=pick([600,800,1000,1200,1500,2000]),ic=pick([0.05,0.10]),payc=pick([200,250,300,400,500]);
@@ -2980,7 +2980,7 @@ E("u6-deferred-offer",6,["1.13"],3,"gen",function(){
     {P:P,r:r,paid:paid});
 });
 /* --- assets: appreciate and depreciate (1.14) --- */
-E("u6-appreciate-depreciate",6,["1.14"],2,"var",varset([
+E("u6-appreciate-depreciate",6,["1.14"],1,"var",varset([
   function(){return mcq("A classic car bought for $18,000 is now worth $24,000. By what percent did the car <b>appreciate</b>?",
     "33.3%",["25%","66.7%","6%"],
     "The value rose by \\(24000 - 18000 = 6000\\) dollars. Percent change is measured against the original value: \\(6000 \\div 18000 = 0.333\\), an appreciation of about 33.3%. Dividing by the new value instead gives the 25% distractor.",{});},
@@ -3256,7 +3256,7 @@ var U7SURVEY=[
   {lA:"Basketball",lB:"Volleyball",aP:"play basketball",bP:"play volleyball"}
 ];
 function u7regions(){return {aO:ri(3,16),both:ri(2,11),bO:ri(3,16),none:ri(0,11)};}
-E("u7-venn-read",7,["2.2"],2,"gen",function(){
+E("u7-venn-read",7,["2.2"],1,"gen",function(){
   var c=pick(U7SURVEY),r=u7regions(),fig=venn2(r.aO,r.both,r.bO,r.none,c.lA,c.lB,null);
   var total=r.aO+r.both+r.bO+r.none,union=r.aO+r.both+r.bO;
   var target=pick(["aonly","both","bonly","none","inA","inB","union","total"]);
@@ -3294,7 +3294,7 @@ E("u7-venn-missing",7,["2.2"],2,"gen",function(){
   return numq("A survey of "+total+" students (A: "+c.lA+", B: "+c.lB+") has a Venn diagram showing "+r.both+" students in both sets, "+r.bO+" in B only, and "+r.none+" in neither. How many students are in A only?",
     r.aO,0.001,"The four regions must add to the total surveyed, so the missing region is \\("+total+" - "+r.both+" - "+r.bO+" - "+r.none+" = "+r.aO+"\\) students.",{ctx:c.lA});
 });
-E("u7-venn-three-read",7,["2.2"],2,"gen",function(){
+E("u7-venn-three-read",7,["2.2"],1,"gen",function(){
   var r={a:ri(1,9),b:ri(1,9),c:ri(1,9),ab:ri(0,7),ac:ri(0,7),bc:ri(0,7),abc:ri(1,5),none:ri(0,9)};
   var fig=venn3(r.a,r.b,r.c,r.ab,r.ac,r.bc,r.abc,r.none,"Skiing","Skating","Hockey");
   var target=pick(["bonly","acnotb","allthree","atleasttwo","none"]);
@@ -3383,7 +3383,7 @@ E("u7-error-correct",7,["2.6"],3,"gen",function(){
   return numq(head+"A student writes: \"The number who "+c.aP+" only is "+nA+".\" What is the <b>correct</b> number who "+c.aP+" only?",
     r.aO,0.001,"The student reported all of A, including the "+r.both+" students who also "+c.bP+". Removing the overlap: \\[ \\begin{aligned} n(A \\cap B') &= "+nA+" - "+r.both+" \\\\ &= "+r.aO+" \\end{aligned} \\] Justification for Level 3: spotting that the given answer answers a different question (all of A, not A only) is the key step.",{ctx:c.lA,kind:kind});
 });
-E("u7-error-venn",7,["2.6"],2,"gen",function(){
+E("u7-error-venn",7,["2.6"],1,"gen",function(){
   var c=pick(U7SURVEY),r=u7regions(),total=r.aO+r.both+r.bO+r.none;
   var kind=pick(["forgotNone","doubleBoth","forgotBoth"]);
   var wrong=kind==="forgotNone"?r.aO+r.both+r.bO:kind==="doubleBoth"?total+r.both:r.aO+r.bO+r.none;
@@ -3426,7 +3426,7 @@ function nPr(n,r){return fact(n)/fact(n-r);}
 function nCr(n,r){return fact(n)/(fact(r)*fact(n-r));}
 
 /* --- graphic organizers and the counting principle (9.16, 9.17, 9.18, 9.19) --- */
-E("u8-tree-diagram",8,["9.16"],2,"gen",function(){
+E("u8-tree-diagram",8,["9.16"],1,"gen",function(){
   var use3=Math.random()<0.6;
   var ctx=pick([
     {parts:use3?[[ri(2,5),"shirts"],[ri(2,5),"pairs of pants"],[ri(2,4),"hats"]]:[[ri(2,5),"shirts"],[ri(2,5),"pairs of pants"]],lead:"An outfit is built from"},
@@ -3498,7 +3498,7 @@ E("u8-fcp-pattern",8,["9.17"],1,"gen",function(){
     ["Add the choices: "+a+" + "+b+" + "+s+" = "+(a+b+s)+", all at once","Multiply only the newest choices: "+s+" × "+s+" = "+(s*s),"Add "+s+" to the previous total: "+(a*b)+" + "+s+" = "+(a*b+s)+" in all"],
     "Adding a stage to a counting problem multiplies the total by the number of choices at that stage; it never adds them. Generalizing this pattern from small cases is exactly how the Fundamental Counting Principle is built.",{a:a,b:b,s:s});
 });
-E("u8-assumptions",8,["9.18"],2,"var",varset([
+E("u8-assumptions",8,["9.18"],1,"var",varset([
   function(){return mcq("A student counts the possible three-letter codes from the alphabet as 26 × 26 × 26. What <b>assumption</b> is built into this count?",
     "Letters are allowed to repeat in the code",
     ["The code cannot contain any vowels","Each position must use a different letter","The order of the letters in the code does not matter"],
@@ -3512,7 +3512,7 @@ E("u8-assumptions",8,["9.18"],2,"var",varset([
     ["the line must contain exactly 5 chairs, and each person must have a chair of their own to stand by in the line","no two of the people are friends, because friends standing together would count as one unit","the people are standing in alphabetical order, so only the arrangement in name order is counted"],
     "Factorial counting treats every swap as a new arrangement, which requires the people to be distinguishable. If two of the five were identical (like identical twins in matching outfits being treated as interchangeable), arrangements would have to be divided to correct the overcount.",{});}
 ]));
-E("u8-fcp-context",8,["9.19"],2,"gen",function(){
+E("u8-fcp-context",8,["9.19"],1,"gen",function(){
   var T=pick(["pin","code","outfit","routes","menu","password"]);
   if(T==="pin"){var d=pick([4,5,6]);return numq("A bank PIN is "+d+" digits long, and digits may be repeated. How many different PINs are possible?",
     Math.pow(10,d),0.001,"Each of the "+d+" positions has 10 choices, and digits may repeat, so the Fundamental Counting Principle gives \\(10^{"+d+"} = "+Math.pow(10,d)+"\\) PINs.",{T:T});}
@@ -3717,7 +3717,7 @@ E("u8-factorial-equation",8,["9.22"],2,"gen",function(){
     s.ans,0.001,s.sol,{eq:s.eq});
 });
 /* --- permutations (9.23, 9.24, 9.25) --- */
-E("u8-arrange-all",8,["9.23"],2,"gen",function(){
+E("u8-arrange-all",8,["9.23"],1,"gen",function(){
   var ctx=pick([
     {n:pick([4,5,6,7,8,9]),what:"books are arranged in a row on a shelf",item:"books"},
     {n:pick([4,5,6,7,8]),what:"people stand in a line for a photo",item:"people"},
@@ -3825,7 +3825,7 @@ E("u8-identical-effect",8,["9.27"],1,"var",varset([
 ]));
 /* --- does order matter? (9.29) --- */
 /* --- does order matter? (9.29) --- */
-E("u8-order-matters",8,["9.29"],2,"var",varset([
+E("u8-order-matters",8,["9.29"],1,"var",varset([
   function(){return mcq("A club with 10 members elects a president and a vice-president. Does <b>order matter</b> in this counting problem?",
     "Yes: the two roles are different, so electing Alex as president and Blair as vice-president is a different outcome from the reverse (a permutation)",
     ["No: the same two people are chosen either way, so it is a combination; the order their names are announced in does not change who holds office at all","No: order never matters when only two people are chosen, because a pair of names is just a set, and a set has no first or second member at all","Yes: order always matters in every counting problem, because items are always selected one at a time and the sequence is part of the result"],
@@ -4012,7 +4012,7 @@ E("u9-prob-basics",9,["9.3"],1,"gen",function(){
     "Probability is favourable outcomes over total outcomes: there are "+tc+" "+tn+" out of "+T+" in total, giving \\("+frN(tc,T)+"\\) (part to whole). The distractor \\("+frN(tc,T-tc)+"\\) is the odds form (part to part), which answers a different question.",
     {ctx:ctx.thing,target:target});
 });
-E("u9-prob-odds-determine",9,["9.3"],2,"gen",function(){
+E("u9-prob-odds-determine",9,["9.3"],1,"gen",function(){
   var a=pick([2,3,4,5,6,8]),b=pick([2,3,4,5,6,8]);if(a===b)b=b===8?6:b+1;
   var ctx=pick([
     {w:"In a class survey, "+a+" students chose the museum trip and "+b+" chose the science centre. A student is picked at random from these "+(a+b)+" students.",fav:"the student having chosen the museum trip"},
@@ -4029,7 +4029,7 @@ E("u9-prob-odds-determine",9,["9.3"],2,"gen",function(){
     [ratioStr(a,b),ratioStr(b,a+b),(2*b)+" : "+(2*a)],
     "Odds against compare unfavourable outcomes to favourable outcomes: "+b+" to "+a+", which reduces to "+ratioStr(b,a)+". Watch the order: against reverses the pair, and the answer must be in lowest terms.",{a:a,b:b,f:0});
 });
-E("u9-convert-odds-prob",9,["9.4"],2,"gen",function(){
+E("u9-convert-odds-prob",9,["9.4"],1,"gen",function(){
   if(Math.random()<0.5){
     var a=pick([1,2,3,4,5]),b=pick([1,2,3,4,5,6]);
     return mcq("The odds in favour of an event are "+a+" : "+b+". What is the <b>probability</b> of the event?",
@@ -4045,7 +4045,7 @@ E("u9-convert-odds-prob",9,["9.4"],2,"gen",function(){
     [againstStr,ratioStr(p,q),(2*p)+" : "+(2*(q-p))],
     "The probability says p favourable outcomes out of q in total, so the unfavourable count is q − p = "+(q-p)+". Odds in favour compare the parts: "+ratioStr(p,q-p)+". The second option reads the probability itself as odds, the standard confusion.",{p:p,q:q,dir:"p2o"});
 });
-E("u9-context-prob",9,["9.5"],2,"gen",function(){
+E("u9-context-prob",9,["9.5"],1,"gen",function(){
   var ctx=pick([
     {x:pick([6,8,9,10,12]),y:pick([4,5,7,8,11]),w:function(x,y){return "In a survey of "+(x+y)+" students, "+x+" said they prefer autumn and "+y+" said they prefer spring. One student is chosen at random.";},tx:"prefer autumn"},
     {x:pick([5,7,9,11]),y:pick([6,8,10,13]),w:function(x,y){return "A raffle has "+(x+y)+" tickets out for one prize draw entry pool: "+x+" held by adults and "+y+" held by students. One ticket is drawn.";},tx:"is held by an adult"},
@@ -4133,7 +4133,7 @@ E("u9-represent-events",9,["9.9"],2,"gen",function(){
     MV(sym),[MV(nA+nB-inter),MV(inter),MV(U-(nA+nB-inter))],
     "\"A or B but not both\" is the union with the overlap removed twice over: \\(n(A) + n(B) - 2 \\times n(A \\cap B) = "+nA+" + "+nB+" - "+(2*inter)+" = "+sym+"\\). The first distractor is the full union (both included); the last is the complement of the union.",{nA:nA,nB:nB});
 });
-E("u9-me-prob",9,["9.10"],2,"gen",function(){
+E("u9-me-prob",9,["9.10"],1,"gen",function(){
   var T=pick(["die2","die3","suits","suits3","ranks","colours"]);
   if(T==="die2"){var vals=shuffle([1,2,3,4,5,6]).slice(0,2).sort();
     return numq("A standard die is rolled. What is the probability of rolling a "+vals[0]+" or a "+vals[1]+"? Give your answer as a decimal (to three decimal places).",
@@ -4213,7 +4213,7 @@ E("u9-me-or-not",9,["9.10"],3,"gen",function(){
     "First classify: every multiple of 4 on a die (just 4) is already even, so the second event sits inside the first and the union is just the even outcomes: \\(\\frac{3}{6} = 0.5\\). Adding the two probabilities and subtracting a generic overlap without noticing the containment overcomplicates it."+J,{T:T});
 });
 /* --- creating probability problems (9.11) --- */
-E("u9-create-problem",9,["9.11"],2,"gen",function(){
+E("u9-create-problem",9,["9.11"],1,"gen",function(){
   var device=pick([
     {w:"spinner with {T} equal sections, some coloured red",unit:"sections should be red"},
     {w:"bag holding {T} counters, some of them red",unit:"counters should be red"},
@@ -4226,7 +4226,7 @@ E("u9-create-problem",9,["9.11"],2,"gen",function(){
     "The probability is (number of red) ÷ (total). Set the fraction equal to the target: red = "+T+" × \\("+frN(frac[0],frac[1])+"\\) = "+need+". Designing the device to hit a stated probability is the reverse of the usual direction: start from the probability and build the sample space to match.",{T:T,frac:frac.join("/")});
 });
 /* --- dependent and independent events (9.12, 9.13, 9.14) --- */
-E("u9-dep-vs-indep",9,["9.12"],2,"var",varset([
+E("u9-dep-vs-indep",9,["9.12"],1,"var",varset([
   function(){return mcq("Two cards are drawn from a deck <b>without replacement</b>. The two draws are",
     "dependent events, because the first draw changes the deck, and so changes the probabilities for the second draw",
     ["independent events, because the draws happen at different times and the timing of a draw cannot matter","dependent events, because cards are physical objects and physical objects always affect each other somehow","independent events, because each draw is random, and purely random draws can never influence one another at all"],
@@ -4240,7 +4240,7 @@ E("u9-dep-vs-indep",9,["9.12"],2,"var",varset([
     ["Rolling a die and flipping a coin, two separate experiments done at the same time","Spinning a spinner and then spinning it again, with the spinner left exactly as it was","Drawing a card, replacing it, shuffling, and drawing again from the restored full deck of cards"],
     "Only the marble pair has one event change the other's probabilities (the bag's contents change). The replacement draw is the instructive contrast: putting the card back restores the original deck and makes the draws independent.",{});}
 ]));
-E("u9-independent-prob",9,["9.13"],2,"gen",function(){
+E("u9-independent-prob",9,["9.13"],1,"gen",function(){
   var T=pick(["coin-die","two-coins","die-die-six","spinner-coin","two-spinners"]);
   if(T==="coin-die"){var cond=pick([{d:"an even number",p:1/2},{d:"a number greater than 4",p:1/3},{d:"a prime number",p:1/2},{d:"a 6",p:1/6},{d:"an odd number",p:1/2},{d:"a number less than 3",p:1/3},{d:"a multiple of 3",p:1/3}]);
     var ans=0.5*cond.p;
