@@ -1372,6 +1372,81 @@ E("u2-model-decision",2,["3.22"],3,"var",varset([
     "For a polynomial fit, some level of differences must settle to a constant. Here the differences double each step (2, 4, 8, 16), and the second and third differences grow too. That doubling pattern is the signature of exponential growth, so a polynomial is the wrong family.",{});}
 ]));
 
+/* ---------- Unit-test pool fix, Nov 9, 2026: two Level 3 CR entries (3 and 2 marks) and two Level 2 CR entries (3 and 2 marks). The unit had a single Level 3 CR entry and an all-2-mark Level 2 pool. ---------- */
+function u2lead(a){ return a===1?"x^3":a===-1?"-x^3":a+"x^3"; }
+function u2tm(v,p){ if(v===0) return ""; var m=Math.abs(v); var core=p? (m===1? p : m+p) : ""+m; return (v>0?" + ":" - ")+core; }
+function u2polyLead(lead,b,c,d){ return lead+u2tm(b,"x^2")+u2tm(c,"x")+u2tm(d,""); }
+E("u2-recover-and-predict-cr",2,["3.20","3.22"],3,"gen",function(){
+  var a=pick([2,3,-2,-3]), b=ri(-4,4), c=ri(-5,5), d=ri(-6,6), x0=pick([2,3]);
+  var t=pick([1,4,-1,5]); if(t===x0) t=t+2;
+  function P(x){ return a*x*x*x + b*x*x + c*x + d; }
+  var v0=P(x0), rest=b*x0*x0 + c*x0 + d, cube=x0*x0*x0, ans=P(t);
+  return numq("A cubic model is given by \\(f(x) = "+u2polyLead("ax^3",b,c,d)+"\\), where \\(a\\) is a constant. The model satisfies \\(f("+x0+") = "+v0+"\\). Determine \\(f("+t+")\\).",
+    ans,0.001,
+    "Substitute \\(x = "+x0+"\\): \\("+cube+"a + ("+rest+") = "+v0+"\\), so \\("+cube+"a = "+(v0-rest)+" = "+(a*cube)+"\\), giving \\(a = "+a+"\\). The model is \\(f(x) = "+u2polyLead(u2lead(a),b,c,d)+"\\). Evaluating at \\(x = "+t+"\\): \\(f("+t+") = "+a+"("+t+")^3"+u2tm(b,"("+t+")^2")+u2tm(c,"("+t+")")+u2tm(d,"")+" = <b>"+ans+"</b>\\).",
+    {a:a,x0:x0,t:t});
+});
+E("u2-correct-the-claim-cr",2,["3.17"],3,"var",varset([
+  function(){
+    var a=pick([-1,-2]), b=ri(-4,4), c=ri(-5,5), d=ri(-6,6);
+    return mcq("A student looks at the cubic \\(f(x) = "+u2polyLead(u2lead(a),b,c,d)+"\\) and claims that as \\(x \\to \\infty\\), \\(f(x) \\to \\infty\\) as well. Which statement correctly describes the end behaviour of \\(f\\)?",
+      "As \\(x \\to -\\infty\\), \\(f(x) \\to \\infty\\), and as \\(x \\to \\infty\\), \\(f(x) \\to -\\infty\\)",
+      ["As \\(x \\to -\\infty\\), \\(f(x) \\to -\\infty\\), and as \\(x \\to \\infty\\), \\(f(x) \\to \\infty\\)",
+       "Both ends of the graph rise without bound",
+       "Both ends of the graph fall without bound"],
+      "The degree is odd and the leading coefficient is negative, so the two ends go in opposite directions: the left end rises and the right end falls. The student described the end behaviour of a cubic with a positive leading coefficient.",
+      {sc:"end-behaviour"});
+  },
+  function(){
+    var r=pick([1,2,3]), s=pick([-3,-2,-1,4]);
+    var fs=linF(r)+"^2"+linF(s);
+    return mcq("A student looks at the cubic \\(f(x) = "+fs+"\\) and claims that the graph crosses the x-axis at \\(x = "+r+"\\). Which statement is correct?",
+      "The graph touches the x-axis at \\(x = "+r+"\\) and turns around, because that zero has multiplicity 2",
+      ["The graph crosses the x-axis at \\(x = "+r+"\\), as the student says",
+       "The graph touches the x-axis at \\(x = "+s+"\\) and turns around",
+       "The graph crosses the x-axis at \\(x = "+r+"\\) and flattens there"],
+      "The factor "+linF(r)+" appears squared, so the zero at \\(x = "+r+"\\) has multiplicity 2, an even multiplicity: the graph touches the axis there and turns around rather than crossing. The zero at \\(x = "+s+"\\) has multiplicity 1, so the graph crosses there.",
+      {sc:"multiplicity"});
+  },
+  function(){
+    var a=pick([1,2,-1,-2]), b=ri(-4,4), c=ri(-5,5), d=ri(-6,6);
+    return mcq("A student looks at the cubic \\(f(x) = "+u2polyLead(u2lead(a),b,c,d)+"\\) and claims that its graph has three turning points. Which statement is correct?",
+      "A cubic function has at most two turning points",
+      ["A cubic function always has exactly two turning points",
+       "A cubic function has exactly three turning points, as the student says",
+       "A cubic function can have any number of turning points"],
+      "The derivative of a cubic is a quadratic, which has at most two zeros, so a cubic graph has at most two turning points. (Some cubics, such as \\(y = x^3\\), have none, so exactly two is not guaranteed either.)",
+      {sc:"turning-points"});
+  }
+]));
+E("u2-zeros-and-intercept-cr",2,["3.18"],2,"gen",function(){
+  var roots=shuffle([-5,-4,-3,-2,-1,1,2,3,4,5]).slice(0,3).sort(function(x,y){return x-y;});
+  var a=pick([1,2]);
+  var Y=-a*roots[0]*roots[1]*roots[2];
+  var neg=roots.map(function(r){return -r;}).sort(function(x,y){return x-y;});
+  function opt(rs,y){ return "Zeros: "+rs.join(", ")+"; y-intercept: "+y; }
+  var fs=(a===1?"":a)+roots.map(function(r){return linF(r);}).join("");
+  return mcq("What are the zeros and the y-intercept of \\(f(x) = "+fs+"\\)?",
+    opt(roots,Y),
+    [opt(neg,Y), opt(roots,-Y), opt(neg,-Y)],
+    "Each factor is zero at one of the zeros, so the zeros are "+roots.join(", ")+". The y-intercept is \\(f(0) = "+(a===1?"":a+" \\times ")+"("+(-roots[0])+")("+(-roots[1])+")("+(-roots[2])+") = "+Y+"\\). Watch the signs: the constant in each factor is the opposite of the zero.",
+    {roots:roots,a:a});
+});
+E("u2-model-change-cr",2,["3.21"],2,"gen",function(){
+  var CTX=[
+    {name:"The value, in dollars, of a collectible card", unit:"years after it was purchased", v:"V"},
+    {name:"The volume, in litres, of water in a tank", unit:"minutes after it starts filling", v:"V"},
+    {name:"The height, in centimetres, of a sunflower", unit:"weeks after it was planted", v:"H"}
+  ];
+  var cx=pick(CTX), a=pick([1,2]), b=ri(0,3), c=ri(2,9), d=ri(30,300);
+  function P(x){ return a*x*x*x + b*x*x + c*x + d; }
+  var t1=ri(1,3), t2=t1+ri(2,3), ans=P(t2)-P(t1);
+  return numq(cx.name+" is modelled by \\("+cx.v+"(t) = "+u2polyLead(u2lead(a),b,c,d)+"\\), where \\(t\\) is the number of "+cx.unit+". Determine the change in the quantity from \\(t = "+t1+"\\) to \\(t = "+t2+"\\).",
+    ans,0.001,
+    "Evaluate the model at both times: \\("+cx.v+"("+t2+") = "+P(t2)+"\\) and \\("+cx.v+"("+t1+") = "+P(t1)+"\\). The change is \\("+P(t2)+" - "+P(t1)+" = <b>"+ans+"</b>\\).",
+    {a:a,t1:t1,t2:t2});
+});
+
 /* ================= Unit 3: Sinusoidal Functions ================= */
 function radFrac(deg){var g=gcd2(deg,180);return [deg/g,180/g];}
 function radStr(n,d){if(n===0)return "0";if(d===1)return n===1?"\\pi":(n+"\\pi");if(n===1)return "\\frac{\\pi}{"+d+"}";return "\\frac{"+n+"\\pi}{"+d+"}";}
@@ -1667,6 +1742,39 @@ E("u3-temp-model",3,["7.7"],3,"var",varset([
     2.6,0.01,
     "Evaluate the phase first: \\(30(9 - 3) = 180^\\circ\\), and \\(\\sin 180^\\circ = 0\\). So \\(H(9) = 1.8(0) + 2.6 = 2.6\\) m, the midline depth, halfway between high and low water.",{});}
 ]));
+
+/* ---------- Unit-test pool fix, Nov 9, 2026: three Level 2 CR entries (3, 2 and 2 marks). The Level 2 CR pool held only three 2-mark entries, so the remainders behind the Level 3 picks could not form. ---------- */
+E("u3-evaluate-equation-cr",3,["7.4"],2,"gen",function(){
+  var cb=pick([[15,30],[15,90],[15,150],[15,270],[30,30],[30,90],[30,150],[30,270],[45,90],[45,270],[60,90],[60,270],[90,90],[90,180],[90,270]]);
+  var b=cb[0], phase=cb[1];
+  var a=pick([2,3,4,5]), c=pick([0,15,30,45]), d=pick([-4,-3,-2,-1,0,1,2,3,4]);
+  var sv={30:0.5,90:1,150:0.5,180:0,270:-1}[phase];
+  var t=c+phase/b, ans=a*sv+d;
+  return numq("Given \\("+sinS(a,"sin",b,c,d)+"\\), determine the value of \\(y\\) when \\(x = "+t+"^\\circ\\).",
+    ans,0.01,
+    "Substitute \\(x = "+t+"^\\circ\\): the angle inside the sine is \\("+b+"("+t+" - "+c+")^\\circ = "+phase+"^\\circ\\), and \\(\\sin "+phase+"^\\circ = "+sv+"\\). So \\(y = "+a+" \\times "+sv+(d===0?"":" + ("+d+")")+" = <b>"+fmt(ans,2)+"</b>\\).",
+    {b:b,phase:phase,c:c,t:t});
+});
+E("u3-first-max-time-cr",3,["7.3"],2,"gen",function(){
+  var b=pick([15,30,45]), a=pick([2,3,4]), h=pick([0,1,2]), k=pick([6,8,10,12]);
+  var t=h+90/b;
+  var arg=h===0?"t":"(t - "+h+")";
+  return numq("The depth of water at a dock, in metres, is modelled by \\(D(t) = "+a+"\\sin "+b+arg+" + "+k+"\\), where \\(t\\) is the time in hours after midnight and the angles are in degrees. Determine the <b>first</b> time, in hours after midnight, at which the depth reaches its maximum.",
+    t,0.01,
+    "The depth is greatest when the sine factor first equals 1, which happens when its argument first reaches \\(90^\\circ\\). Solve \\("+b+arg+" = 90\\): \\(t = "+h+" + \\frac{90}{"+b+"} = <b>"+fmt(t,2)+"</b>\\) hours after midnight.",
+    {b:b,h:h});
+});
+E("u3-characteristics-combo-cr",3,["7.2"],2,"gen",function(){
+  var pr=pick([[11,-3],[9,-3],[9,1],[7,-1],[7,1],[11,1],[13,-1],[10,-2],[12,2]]);
+  var M=pr[0], m=pr[1], P=pick([120,180,360,720]);
+  var A=(M-m)/2, K=(M+m)/2;
+  function opt(x,y,z){ return "Amplitude "+x+", midline "+y+", period "+z+"°"; }
+  return mcq("A sinusoidal graph has a maximum value of "+M+" and a minimum value of "+m+", and it completes one full cycle over an interval of "+P+"°. Which set of characteristics is correct?",
+    opt(A,K,P),
+    [opt(K,A,P), opt(M-m,K,P), opt(A,K,2*P)],
+    "Amplitude is half the distance between the extremes: \\(\\frac{"+M+" - ("+m+")}{2} = "+A+"\\). The midline sits halfway between them: \\(\\frac{"+M+" + ("+m+")}{2} = "+K+"\\). The period is the length of one full cycle, "+P+"°.",
+    {M:M,m:m,P:P});
+});
 
 /* ================= Unit 4: Exponential Functions ================= */
 function bStr(bn,bd){return bd===1?(""+bn):"\\left(\\frac{"+bn+"}{"+bd+"}\\right)";}
@@ -3420,6 +3528,98 @@ E("u7-search-logic",7,["2.7"],2,"gen",function(){
     r.none,0.001,"Listings with at least one tag number \\("+nA+" + "+nB+" - "+r.both+" = "+union+"\\), so the listings with neither tag are \\("+total+" - "+union+" = "+r.none+"\\).",{board:board,target:target});
 });
 
+/* ---------- Unit-test pool fix, Nov 9, 2026: one Level 3 MC generator (the unit had no Level 3 selected-response entry), two Level 3 CR entries (3 and 2 marks) and three Level 2 CR entries (3, 3 and 2 marks). ---------- */
+E("u7-deduction-mc",7,["2.7","2.1"],3,"var",varset([
+  function(){
+    return mcq("Sets \\(A\\), \\(B\\) and \\(C\\) satisfy \\(A \\subseteq B\\) and \\(B \\cap C = \\varnothing\\). Which statement <b>must</b> be true?",
+      "\\(A\\) and \\(C\\) are disjoint",
+      ["\\(A\\) is a subset of \\(C\\)",
+       "\\(A\\) and \\(C\\) share an element",
+       "\\(B\\) is a subset of \\(A \\cup C\\)"],
+      "Every element of \\(A\\) is an element of \\(B\\), and no element of \\(B\\) is in \\(C\\). So no element of \\(A\\) can be in \\(C\\): \\(A \\cap C = \\varnothing\\), which means \\(A\\) and \\(C\\) are disjoint.",
+      {sc:"subset-chain"});
+  },
+  function(){
+    return mcq("A researcher wants web pages that mention solar panels or wind turbines, but wants to exclude every page that mentions subsidies. Which search string does this?",
+      "(solar panels OR wind turbines) NOT subsidies",
+      ["solar panels OR (wind turbines NOT subsidies)",
+       "solar panels AND wind turbines NOT subsidies",
+       "NOT (solar panels OR wind turbines OR subsidies)"],
+      "The NOT must apply to the whole OR group: pages about either topic, with subsidy pages removed. In the first distractor the NOT applies only to the wind turbine part, so subsidy pages about solar panels would still appear; the second requires both topics; the third excludes everything.",
+      {sc:"search-group"});
+  },
+  function(){
+    return mcq("A report claims that for sets \\(A\\) and \\(B\\), \\(n(A) = 12\\), \\(n(B) = 18\\) and \\(n(A \\cap B) = 15\\). Which statement is correct?",
+      "The report is impossible: the intersection cannot have more elements than \\(A\\) itself",
+      ["The report is possible if some elements are counted twice",
+       "The union of \\(A\\) and \\(B\\) would contain 45 elements",
+       "The intersection should be \\(12 + 18 = 30\\) elements"],
+      "The intersection \\(A \\cap B\\) is a subset of \\(A\\), so \\(n(A \\cap B) \\leq n(A) = 12\\). A count of 15 is impossible, whatever the report says.",
+      {sc:"impossible-data"});
+  }
+]));
+E("u7-exactly-two-cr",7,["2.5"],3,"gen",function(){
+  var CTX=[
+    {A:"play soccer",B:"play hockey",C:"swim competitively"},
+    {A:"take art",B:"take music",C:"study a second language"},
+    {A:"play chess",B:"play basketball",C:"run cross country"}
+  ];
+  var cx=pick(CTX);
+  var onlyA=ri(2,12), onlyB=ri(2,12), onlyC=ri(2,12), ab=ri(1,9), ac=ri(1,9), bc=ri(1,9), abc=ri(1,6), none=ri(0,10);
+  var nA=onlyA+ab+ac+abc, nB=onlyB+ab+bc+abc, nC=onlyC+ac+bc+abc;
+  var pAB=ab+abc, pAC=ac+abc, pBC=bc+abc;
+  var total=onlyA+onlyB+onlyC+ab+ac+bc+abc+none;
+  var target=pick(["two","one"]);
+  var head="In a survey of "+total+" students, let \\(A\\) be the set of students who "+cx.A+", \\(B\\) the set of students who "+cx.B+", and \\(C\\) the set of students who "+cx.C+". The counts are \\(n(A) = "+nA+"\\), \\(n(B) = "+nB+"\\), \\(n(C) = "+nC+"\\), \\(n(A \\cap B) = "+pAB+"\\), \\(n(A \\cap C) = "+pAC+"\\), \\(n(B \\cap C) = "+pBC+"\\), and \\(n(A \\cap B \\cap C) = "+abc+"\\). ";
+  if(target==="two") return numq(head+"How many students are in <b>exactly two</b> of the three sets?",
+    ab+ac+bc,0.001,
+    "Each pairwise count includes the "+abc+" students who are in all three sets. Removing them from each pair gives the exactly-two regions: \\(("+pAB+" - "+abc+") + ("+pAC+" - "+abc+") + ("+pBC+" - "+abc+") = "+ab+" + "+ac+" + "+bc+" = <b>"+(ab+ac+bc)+"</b>\\).",
+    {target:target});
+  return numq(head+"How many students are in <b>exactly one</b> of the three sets?",
+    onlyA+onlyB+onlyC,0.001,
+    "Work set by set, removing both pairwise overlaps and adding back the all-three group, which was removed twice: only \\(A\\): \\("+nA+" - "+pAB+" - "+pAC+" + "+abc+" = "+onlyA+"\\); only \\(B\\): \\("+nB+" - "+pAB+" - "+pBC+" + "+abc+" = "+onlyB+"\\); only \\(C\\): \\("+nC+" - "+pAC+" - "+pBC+" + "+abc+" = "+onlyC+"\\). The total in exactly one set is \\("+onlyA+" + "+onlyB+" + "+onlyC+" = <b>"+(onlyA+onlyB+onlyC)+"</b>\\).",
+    {target:target});
+});
+E("u7-relations-count-cr",7,["2.1","2.4"],3,"gen",function(){
+  var nB=ri(12,30), nA=ri(10,30), U=nA+nB, nC=ri(3,nB-4), ans=nB-nC;
+  return numq("Sets \\(A\\) and \\(B\\) are disjoint, with \\(n(A \\cup B) = "+U+"\\) and \\(n(A) = "+nA+"\\). Set \\(C\\) is a subset of \\(B\\), and \\(n(C) = "+nC+"\\). How many elements are in \\(B\\) but not in \\(C\\)?",
+    ans,0.001,
+    "Since \\(A\\) and \\(B\\) are disjoint, \\(n(B) = n(A \\cup B) - n(A) = "+U+" - "+nA+" = "+nB+"\\). Since \\(C \\subseteq B\\), the elements of \\(B\\) outside \\(C\\) number \\("+nB+" - "+nC+" = <b>"+ans+"</b>\\).",
+    {nA:nA,nB:nB,nC:nC});
+});
+E("u7-two-set-totals-cr",7,["2.2","2.4"],2,"gen",function(){
+  var c=pick(U7SURVEY), r=u7regions();
+  var nA=r.aO+r.both, total=r.aO+r.both+r.bO+r.none, union=r.aO+r.both+r.bO, nB=r.bO+r.both;
+  return numq("In a survey of "+total+" students, "+nA+" "+c.aP+", "+r.both+" students do both activities, and "+r.none+" do neither. How many students "+c.bP+" in total?",
+    nB,0.001,
+    "The number doing at least one activity is \\("+total+" - "+r.none+" = "+union+"\\). Of the "+nA+" students in A, "+r.both+" are also in B, so A only is \\("+nA+" - "+r.both+" = "+r.aO+"\\). Then B only is \\("+union+" - "+r.aO+" - "+r.both+" = "+r.bO+"\\), and the total in B is \\("+r.bO+" + "+r.both+" = <b>"+nB+"</b>\\).",
+    {ctx:c.lA});
+});
+E("u7-symmetric-difference-cr",7,["2.3"],2,"gen",function(){
+  var c=pick(U7SURVEY), r=u7regions();
+  var nA=r.aO+r.both, nB=r.bO+r.both, ans=r.aO+r.bO;
+  return numq("In a survey, "+nA+" students "+c.aP+", "+nB+" students "+c.bP+", and "+r.both+" students do both. How many students are in \\(A\\) or \\(B\\) but <b>not</b> in both (that is, they do exactly one of the two activities)?",
+    ans,0.001,
+    "Remove the overlap from each total: A only is \\("+nA+" - "+r.both+" = "+r.aO+"\\), and B only is \\("+nB+" - "+r.both+" = "+r.bO+"\\). Together, the students in exactly one set number \\("+r.aO+" + "+r.bO+" = <b>"+ans+"</b>\\).",
+    {ctx:c.lA});
+});
+E("u7-subset-difference-cr",7,["2.1"],2,"gen",function(){
+  var nA=ri(25,60), nB=ri(5,nA-8), target=pick(["diff","inter","union"]);
+  var head="Set \\(B\\) is a subset of set \\(A\\), with \\(n(A) = "+nA+"\\) and \\(n(B) = "+nB+"\\). ";
+  if(target==="diff") return numq(head+"How many elements are in \\(A\\) but not in \\(B\\)?",
+    nA-nB,0.001,
+    "Every element of \\(B\\) is already in \\(A\\), so the elements of \\(A\\) outside \\(B\\) number \\("+nA+" - "+nB+" = <b>"+(nA-nB)+"</b>\\).",
+    {target:target});
+  if(target==="inter") return numq(head+"What is \\(n(A \\cap B)\\)?",
+    nB,0.001,
+    "Since \\(B \\subseteq A\\), every element of \\(B\\) is in both sets, so \\(A \\cap B = B\\) and \\(n(A \\cap B) = <b>"+nB+"</b>\\).",
+    {target:target});
+  return numq(head+"What is \\(n(A \\cup B)\\)?",
+    nA,0.001,
+    "Since \\(B \\subseteq A\\), the union adds nothing beyond \\(A\\) itself: \\(A \\cup B = A\\), so \\(n(A \\cup B) = <b>"+nA+"</b>\\).",
+    {target:target});
+});
+
 /* ================= Unit 8: Counting Methods ================= */
 function fact(n){var f=1;for(var i=2;i<=n;i++)f*=i;return f;}
 function nPr(n,r){return fact(n)/fact(n-r);}
@@ -4395,7 +4595,48 @@ E("u9-classify-events",9,["9.7"],1,"var",varset([
 /* Exam Section B draws only from these entries (marks per question); every other
    entry is selected-response only in exam mode. Worksheet mode uses these plus
    all numeric-answer entries. */
-var CR_MARKS={"u1-add-diff-den":2,"u1-add-same-den":2,"u1-context-cost":3,"u1-context-wind":3,"u1-context-work":3,"u1-create-equivalent":1,"u1-div":2,"u1-equiv-forms":1,"u1-error-simplify":2,"u1-lcd":1,"u1-mult":2,"u1-npv-equation":1,"u1-npv-linear":1,"u1-npv-operations":1,"u1-npv-quadratic":2,"u1-reverse-restrictions":3,"u1-simplify-gcf":1,"u1-simplify-monomial":1,"u1-simplify-quad":2,"u1-solve-cross":2,"u1-solve-quad-eq":2,"u1-solve-simple":1,"u1-sub-monomial-den":2,"u1-two-step-simplify":3,"u2-degree-equation":1,"u2-end-behaviour":1,"u2-fit-value":2,"u2-graph-characteristics":1,"u2-interpret-model":2,"u2-match-equation-graph":2,"u2-reverse-intercepts":3,"u2-turning-points-graph":1,"u2-y-intercept":1,"u3-build-equation":2,"u3-data-equation":2,"u3-data-fit-params":1,"u3-decimal-convert":1,"u3-deg-to-rad":1,"u3-eq-amplitude-period":1,"u3-eq-phase-shift":1,"u3-eq-range-midline":1,"u3-ferris-interpret":1,"u3-graph-amplitude":1,"u3-graph-full-equation":4,"u3-graph-period-midline":1,"u3-graph-range":1,"u3-match-eq-graph":2,"u3-rad-to-deg":1,"u3-temp-model":3,"u3-tide-predict":3,"u4-compare-models":3,"u4-compound-model":1,"u4-data-fit-equation":2,"u4-data-next-value":1,"u4-eq-characteristics":1,"u4-estimate-solution":1,"u4-express-as-power":1,"u4-find-base":3,"u4-graph-characteristics":1,"u4-growth-model-eval":2,"u4-half-life":2,"u4-interpret-graph-model":1,"u4-match-by-description":2,"u4-match-graph":2,"u4-reverse-half-life":3,"u4-solve-common-base":2,"u4-solve-isolate":2,"u4-solve-rewrite-base":2,"u4-solve-two-sided":2,"u5-catch-up":3,"u5-condense-log":2,"u5-context-model":2,"u5-convert-form":1,"u5-data-fit-log":2,"u5-eq-char":1,"u5-estimate-log":1,"u5-evaluate-log":1,"u5-evaluate-mixed":1,"u5-expand-log":2,"u5-graph-char":1,"u5-growth-time":2,"u5-interpret-graph":1,"u5-law-numeric":2,"u5-match-graph":2,"u5-ph-scale":2,"u5-richter-decibel":2,"u5-simplify-eval":2,"u5-solve-condense":3,"u5-solve-log-basic":1,"u5-solve-with-logs":2,"u5-two-bases":3,"u5-which-law":1,"u6-amortization-read":1,"u6-appreciate-depreciate":1,"u6-compare-costs":3,"u6-compare-frequency":2,"u6-compound-amount":2,"u6-cost-benefit":3,"u6-credit-fees":2,"u6-deferred-offer":3,"u6-depreciation-value":2,"u6-find-term":2,"u6-interest-earned":2,"u6-payments-term":1,"u6-present-value":2,"u6-read-formula":1,"u6-rent-buy-lease":2,"u6-simple-interest":1,"u6-total-cost-loan":1,"u7-complement-elements":1,"u7-error-correct":2,"u7-error-venn":2,"u7-operations":2,"u7-region-meaning":1,"u7-search-logic":1,"u7-three-set-problem":2,"u7-two-set-notation":1,"u7-two-set-problem":1,"u7-venn-fill":1,"u7-venn-missing":2,"u7-venn-read":1,"u7-venn-three-read":2,"u8-arrange-all":1,"u8-comb-r":1,"u8-comb-two-group":2,"u8-committee-atleast":3,"u8-factorial-equation":2,"u8-factorial-fraction":2,"u8-factorial-value":1,"u8-fcp-cases":3,"u8-fcp-context":1,"u8-fcp-pattern":1,"u8-fcp-restricted":3,"u8-fixed-position":2,"u8-identical-perm":2,"u8-mixed-roles":2,"u8-perm-or-comb":1,"u8-perm-r":1,"u8-prob-comb":2,"u8-prob-comb-hard":3,"u8-together-apart":3,"u8-tree-diagram":1,"u8-tree-outcomes":2,"u9-compare-games":3,"u9-complementary":1,"u9-conditional":2,"u9-context-prob":1,"u9-convert-odds-prob":1,"u9-create-problem":2,"u9-create-solve-game":3,"u9-independent-prob":1,"u9-me-or-not":2,"u9-me-prob":1,"u9-nonme-prob":2,"u9-prob-basics":1,"u9-prob-comb-context":3,"u9-prob-odds-determine":1,"u9-prob-perm-context":3,"u9-represent-events":2};
+/* ---------- Unit-test pool fix, Nov 9, 2026: two Level 2 CR entries (3 and 2 marks). The Level 2 CR pool held only three 2-mark entries, so the 9-mark remainder behind the 5 Level 3 pick could not form. ---------- */
+E("u9-same-colour-cr",9,["9.14","9.15"],2,"gen",function(){
+  var CTX=[
+    {item:"marbles", place:"bag", c1:"red", c2:"blue"},
+    {item:"counters", place:"box", c1:"green", c2:"yellow"},
+    {item:"socks", place:"drawer", c1:"black", c2:"white"}
+  ];
+  var cx=pick(CTX), r=ri(3,8), b=ri(3,8); if(r===b) b=b+1;
+  var den=(r+b)*(r+b-1), n1=r*(r-1), n2=b*(b-1), num=n1+n2, p=num/den;
+  return numq("A "+cx.place+" contains "+r+" "+cx.c1+" "+cx.item+" and "+b+" "+cx.c2+" "+cx.item+". Two "+cx.item+" are drawn at random without replacement. What is the probability that both are the same colour? Give your answer as a decimal (to three decimal places).",
+    Math.round(p*1000)/1000,0.002,
+    "Add the two matching cases. Both "+cx.c1+": \\(\\frac{"+r+"}{"+(r+b)+"} \\times \\frac{"+(r-1)+"}{"+(r+b-1)+"} = \\frac{"+n1+"}{"+den+"}\\). Both "+cx.c2+": \\(\\frac{"+b+"}{"+(r+b)+"} \\times \\frac{"+(b-1)+"}{"+(r+b-1)+"} = \\frac{"+n2+"}{"+den+"}\\). Together: \\(\\frac{"+num+"}{"+den+"} \\approx <b>"+fmt(p,3)+"</b>\\).",
+    {r:r,b:b});
+});
+E("u9-independent-pair-cr",9,["9.13"],2,"var",varset([
+  function(){
+    var S=pick([6,8,10]), R=pick([2,3,4]); if(R>=S) R=2;
+    var p=R/S/2;
+    return numq("A spinner is divided into "+S+" equal sectors, of which "+R+" are red. The spinner is spun once and a fair coin is tossed once. What is the probability that the spinner lands on red and the coin lands on heads? Give your answer as a decimal (to three decimal places).",
+      Math.round(p*1000)/1000,0.002,
+      "The two events are independent, so multiply: \\(P(\\text{red}) \\times P(\\text{heads}) = \\frac{"+R+"}{"+S+"} \\times \\frac{1}{2} = \\frac{"+R+"}{"+(2*S)+"} \\approx <b>"+fmt(p,3)+"</b>\\).",
+      {sc:"spinner-coin"});
+  },
+  function(){
+    var S=pick([6,8,10]), R=pick([2,3,4]); if(R>=S) R=2;
+    var p=(R/S)*(2/6);
+    return numq("A spinner is divided into "+S+" equal sectors, of which "+R+" are red. The spinner is spun once and a fair die is rolled once. What is the probability that the spinner lands on red and the die shows a number greater than 4? Give your answer as a decimal (to three decimal places).",
+      Math.round(p*1000)/1000,0.002,
+      "The two events are independent, so multiply: \\(P(\\text{red}) \\times P(\\text{greater than 4}) = \\frac{"+R+"}{"+S+"} \\times \\frac{2}{6} \\approx <b>"+fmt(p,3)+"</b>\\).",
+      {sc:"spinner-die"});
+  },
+  function(){
+    var S1=pick([6,8]), R1=pick([2,3]), S2=pick([4,5,6,8]), R2=pick([1,2,3]); if(R2>=S2) R2=1;
+    var p=(R1/S1)*(R2/S2);
+    return numq("One spinner is divided into "+S1+" equal sectors, of which "+R1+" are red. A second spinner is divided into "+S2+" equal sectors, of which "+R2+" are blue. Both spinners are spun once. What is the probability that the first lands on red and the second lands on blue? Give your answer as a decimal (to three decimal places).",
+      Math.round(p*1000)/1000,0.002,
+      "The two spins are independent, so multiply: \\(P(\\text{red}) \\times P(\\text{blue}) = \\frac{"+R1+"}{"+S1+"} \\times \\frac{"+R2+"}{"+S2+"} \\approx <b>"+fmt(p,3)+"</b>\\).",
+      {sc:"two-spinners"});
+  }
+]));
+
+var CR_MARKS={"u1-add-diff-den":2,"u1-add-same-den":2,"u1-context-cost":3,"u1-context-wind":3,"u1-context-work":3,"u1-create-equivalent":1,"u1-div":2,"u1-equiv-forms":1,"u1-error-simplify":2,"u1-lcd":1,"u1-mult":2,"u1-npv-equation":1,"u1-npv-linear":1,"u1-npv-operations":1,"u1-npv-quadratic":2,"u1-reverse-restrictions":3,"u1-simplify-gcf":1,"u1-simplify-monomial":1,"u1-simplify-quad":2,"u1-solve-cross":2,"u1-solve-quad-eq":2,"u1-solve-simple":1,"u1-sub-monomial-den":2,"u1-two-step-simplify":3,"u2-degree-equation":1,"u2-end-behaviour":1,"u2-fit-value":2,"u2-graph-characteristics":1,"u2-interpret-model":2,"u2-match-equation-graph":2,"u2-reverse-intercepts":3,"u2-turning-points-graph":1,"u2-y-intercept":1,"u3-build-equation":2,"u3-data-equation":2,"u3-data-fit-params":1,"u3-decimal-convert":1,"u3-deg-to-rad":1,"u3-eq-amplitude-period":1,"u3-eq-phase-shift":1,"u3-eq-range-midline":1,"u3-ferris-interpret":1,"u3-graph-amplitude":1,"u3-graph-full-equation":4,"u3-graph-period-midline":1,"u3-graph-range":1,"u3-match-eq-graph":2,"u3-rad-to-deg":1,"u3-temp-model":3,"u3-tide-predict":3,"u4-compare-models":3,"u4-compound-model":1,"u4-data-fit-equation":2,"u4-data-next-value":1,"u4-eq-characteristics":1,"u4-estimate-solution":1,"u4-express-as-power":1,"u4-find-base":3,"u4-graph-characteristics":1,"u4-growth-model-eval":2,"u4-half-life":2,"u4-interpret-graph-model":1,"u4-match-by-description":2,"u4-match-graph":2,"u4-reverse-half-life":3,"u4-solve-common-base":2,"u4-solve-isolate":2,"u4-solve-rewrite-base":2,"u4-solve-two-sided":2,"u5-catch-up":3,"u5-condense-log":2,"u5-context-model":2,"u5-convert-form":1,"u5-data-fit-log":2,"u5-eq-char":1,"u5-estimate-log":1,"u5-evaluate-log":1,"u5-evaluate-mixed":1,"u5-expand-log":2,"u5-graph-char":1,"u5-growth-time":2,"u5-interpret-graph":1,"u5-law-numeric":2,"u5-match-graph":2,"u5-ph-scale":2,"u5-richter-decibel":2,"u5-simplify-eval":2,"u5-solve-condense":3,"u5-solve-log-basic":1,"u5-solve-with-logs":2,"u5-two-bases":3,"u5-which-law":1,"u6-amortization-read":1,"u6-appreciate-depreciate":1,"u6-compare-costs":3,"u6-compare-frequency":2,"u6-compound-amount":2,"u6-cost-benefit":3,"u6-credit-fees":2,"u6-deferred-offer":3,"u6-depreciation-value":2,"u6-find-term":2,"u6-interest-earned":2,"u6-payments-term":1,"u6-present-value":2,"u6-read-formula":1,"u6-rent-buy-lease":2,"u6-simple-interest":1,"u6-total-cost-loan":1,"u7-complement-elements":1,"u7-error-correct":2,"u7-error-venn":2,"u7-operations":2,"u7-region-meaning":1,"u7-search-logic":1,"u7-three-set-problem":2,"u7-two-set-notation":1,"u7-two-set-problem":1,"u7-venn-fill":1,"u7-venn-missing":2,"u7-venn-read":1,"u7-venn-three-read":2,"u8-arrange-all":1,"u8-comb-r":1,"u8-comb-two-group":2,"u8-committee-atleast":3,"u8-factorial-equation":2,"u8-factorial-fraction":2,"u8-factorial-value":1,"u8-fcp-cases":3,"u8-fcp-context":1,"u8-fcp-pattern":1,"u8-fcp-restricted":3,"u8-fixed-position":2,"u8-identical-perm":2,"u8-mixed-roles":2,"u8-perm-or-comb":1,"u8-perm-r":1,"u8-prob-comb":2,"u8-prob-comb-hard":3,"u8-together-apart":3,"u8-tree-diagram":1,"u8-tree-outcomes":2,"u9-compare-games":3,"u9-complementary":1,"u9-conditional":2,"u9-context-prob":1,"u9-convert-odds-prob":1,"u9-create-problem":2,"u9-create-solve-game":3,"u9-independent-prob":1,"u9-me-or-not":2,"u9-me-prob":1,"u9-nonme-prob":2,"u9-prob-basics":1,"u9-prob-comb-context":3,"u9-prob-odds-determine":1,"u9-prob-perm-context":3,"u9-represent-events":2, "u2-recover-and-predict-cr": 3, "u2-correct-the-claim-cr": 2, "u2-zeros-and-intercept-cr": 3, "u2-model-change-cr": 2, "u3-evaluate-equation-cr": 3, "u3-first-max-time-cr": 2, "u3-characteristics-combo-cr": 2, "u7-deduction-mc": 1, "u7-exactly-two-cr": 3, "u7-relations-count-cr": 2, "u7-two-set-totals-cr": 3, "u7-symmetric-difference-cr": 3, "u7-subset-difference-cr": 2, "u9-same-colour-cr": 3, "u9-independent-pair-cr": 2};
 /* BANK-SRC-END */
 </script>
 
